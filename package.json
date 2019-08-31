@@ -1,0 +1,22 @@
+{
+  "name": "willet-lang",
+  "version": "0.0.1",
+  "description": "Willet Programming Language",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "bin/build.sh"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jasongilman/willet-lang.git"
+  },
+  "author": "Jason Gilman",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jasongilman/willet-lang/issues"
+  },
+  "homepage": "https://github.com/jasongilman/willet-lang#readme",
+  "devDependencies": {
+    "pegjs": "^0.10.0"
+  }
+}
