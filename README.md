@@ -1,2 +1,2 @@
-# willet-lang
+# Willet
 The Willet Programming Language
