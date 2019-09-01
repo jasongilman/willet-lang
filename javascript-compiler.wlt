@@ -2,7 +2,6 @@
 _ = require('lodash')
 parser = require('./dist/willet-parser')
 
-// TODO comments
 // TODO predeclare vars
 def compileNode
 
@@ -51,7 +50,8 @@ compileNode = (node) => (
       throw(error)
     }
   }
-  error = new Error(`Unknown node type ${node.type}`)
+  // TODO new
+  error = new(Error(`Unknown node type ${node.type}`))
   error.path = [node.type]
   throw(error)
 );
