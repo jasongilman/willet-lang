@@ -56,7 +56,6 @@ fn() {}? (Optional code block passed to macro)
 
 ## TODOs
 
-* Test the parser
 * Add to npm
 * Travis CI
 * Update README

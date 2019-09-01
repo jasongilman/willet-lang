@@ -6,18 +6,16 @@ def compileNode
 
 compileStatements = (statements) => _(statements)
   .map(compileNode)
-  // TODO string concatenation
-  .map((s) => s + ";")
+  // TODO string common function that joins all strings
+  .map((s) => string(s ";"))
   .values()
   .join("\n");
 
 
 typeToConverter = #{
-  // TODO destructuring
   Program: (#{ statements }) => compileStatements(statements),
   // TODO string interpolation
   Assignment: (#{ target value }) => `${compileNode(target)} = ${compileNode(value)}`,
-  // FUTURE async and arguments
   Function: (#{ async arguments statements}) => `() => {
     ${compileStatements(statements)}
   }`,
