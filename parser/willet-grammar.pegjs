@@ -33,10 +33,10 @@ StatementList "statements" =
 	}
 
 
-Statement = Def / Assignment / ValueSequence / ValueReference
+Statement = Def / Assignment / Expression
 
 Assignment "assignment"
-  = id:Symbol __ "=" __ v:(ValueSequence / ValueReference) {
+  = id:Symbol __ "=" __ v:Expression {
 	return {
 		type: "Assignment",
 		symbol: id,
@@ -49,6 +49,8 @@ Def
   {
     return { type: "Def", symbol: s };
   }
+
+Expression = ValueSequence / ValueReference
 
 ValueSequence =
 	head:(
@@ -79,8 +81,35 @@ ValueReference =
       symbol: s
     };
   }
-  / String / FunctionLiteral
+  / String / FunctionLiteral / MapLiteral
 
+////////////////////////////////////////////////////////////////////////////////////////////////////
+/* Maps */
+
+MapLiteral
+  = "#{" __ "}" { return { type: "MapLiteral", properties: [] }; }
+  / "#{" __ properties:PropertyNameAndValueList __ "}" {
+       return { type: "MapLiteral", properties: properties };
+     }
+
+PropertyNameAndValueList
+  = head:PropertyAssignment tail:(__ PropertyAssignment)* {
+      return buildList(head, tail, 1);
+    }
+
+PropertyAssignment
+  = key:PropertyName __ ":" __ value:Expression {
+      return { type: "Property", key: key, value: value };
+    }
+
+PropertyName
+  = Symbol
+  / String
+  /* TODO after adding numbers */
+  /* / NumericLiteral */
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+/* Functions */
 
 FunctionCall "function call" =
 	"(" __ a:ArgumentList? __ ")"
@@ -147,7 +176,7 @@ Symbol "symbol" = s:[A-Za-z0-9_]+
 String "string"
   = quotation_mark chars:char* quotation_mark {
     return {
-      type: "String",
+      type: "StringLiteral",
       value: chars.join("")
     };
   }

@@ -34,6 +34,14 @@ const assignment = (symbol, value) => ({
 
 const def = (symbol) => ({ type: "Def", symbol });
 
+const map = (...properties) => ({ type: "MapLiteral", properties });
+
+const property = (key, value) => ({ type: "Property", key, value });
+
+const reference = (symbol) => ({ type: "Reference", symbol });
+
+const string = (value) => ({ type: 'StringLiteral', value });
+
 const functionDeclarationExamples = [
   [
     '() => {}',
@@ -53,6 +61,23 @@ const assignmentExamples = [
   ]
 ];
 
+const mapExamples = [
+  ['#{}', map()],
+  ['#{a:null}', map(property('a', reference('null')))],
+  ['#{ a: null b: "foo" }', map(
+    property('a', reference('null')),
+    property('b', string('foo'))
+  )],
+  [
+    'Map within a map',
+    '#{ a: #{ b: "foo" } c: d }',
+    map(
+      property('a', map(property('b', string('foo')))),
+      property('c', reference('d'))
+    )
+  ]
+];
+
 const miscExamples = [
   [
     'def a',
@@ -69,5 +94,8 @@ describe('Willet Parser', () => {
   });
   describe('assignment', () => {
     assertExamples(assignmentExamples);
+  });
+  describe('map', () => {
+    assertExamples(mapExamples);
   });
 });
