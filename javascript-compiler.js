@@ -28,6 +28,7 @@ const typeToConverter = {
   ValueSequence: ({ values }) => compileAndJoin(values, ''),
   Reference: ({ symbol }) => symbol,
   GetProperty: ({ attrib }) => `.${attrib}`,
+  GetPropertyDynamic: ({ attrib }) => `[${compileNode(attrib)}]`,
   FunctionCall: ({ arguments }) => `(${compileAndJoin(arguments)})`,
 
   StringLiteral: ({ value }) => JSON.stringify(value),

@@ -58,6 +58,7 @@ ValueSequence =
 	)
 	tail:(
 		v:GetProperty { return [v]; }
+    / v:GetPropertyDynamic { return [v]; }
 		/ v:FunctionCall { return [v]; }
 	)+
 	{
@@ -71,6 +72,13 @@ GetProperty = '.' v:Symbol {
   return {
     type: "GetProperty",
     attrib: v
+  };
+}
+
+GetPropertyDynamic = '[' e:Expression ']' {
+  return {
+    type: "GetPropertyDynamic",
+    attrib: e
   };
 }
 
@@ -140,12 +148,12 @@ FunctionCall "function call" =
 	}
 
 ArgumentList "arguments" =
-	e:ValueReference __ a:ArgumentList
+	e:Expression __ a:ArgumentList
 	{
 		a.unshift(e);
 		return a;
 	}
-	/ e:ValueReference
+	/ e:Expression
 	{
 		return [e];
 	}
@@ -174,18 +182,9 @@ ArgumentDecl "arguments" =
 	}
 
 FunctionBody "function body" =
-	e:ValueReference
-	{
-		return [e];
-	}
-	/ "{" __ "}"
-	{
-		return [];
-	}
-	/ "{" __ s:StatementList __ "}"
-	{
-		return s;
-	}
+	e:ValueReference { return [e]; }
+	/ "{" __ "}" { return []; }
+	/ "{" __ s:StatementList __ "}" { return s; }
 
 Symbol "symbol" = s:[A-Za-z0-9_]+
 {

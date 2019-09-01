@@ -1,6 +1,6 @@
 // FUTURE add lodash style functions to core willet library
-_ = require('lodash')
-parser = require('./dist/willet-parser')
+_ = require("lodash")
+parser = require("./dist/willet-parser")
 
 def compileNode
 
@@ -14,7 +14,6 @@ compileStatements = (statements) => _(statements)
 
 typeToConverter = #{
   Program: (#{ statements }) => compileStatements(statements),
-  // TODO string interpolation
   Assignment: (#{ target value }) => `${compileNode(target)} = ${compileNode(value)}`,
   Function: (#{ async arguments statements}) => `() => {
     ${compileStatements(statements)}
@@ -22,15 +21,14 @@ typeToConverter = #{
   ValueSequence: (#{ values }) => _.map(values compileNode).join(""),
   Reference: (#{ symbol }) => symbol,
   GetProperty: (#{ attrib }) => `.${attrib}`,
-  // TODO OR and not
-  // TODO strings with single quotes
-  FunctionCall: (#{ arguments }) => `(${_.map(arguments || [] compileNode).join(', ')})`,
+
+  // TODO add "or" and "and" and "not" functions
+  FunctionCall: (#{ arguments }) => `(${_.map(or(arguments []) compileNode).join(", ")})`,
   String: (#{ value }) => JSON.stringify(value)
 };
 
 
 compileNode = (node) => (
-  // TODO attribute lookup by value
   compiler = typeToConverter[node.type]
 
   // TODO if
@@ -59,7 +57,7 @@ compile = (program) => {
   }
   catch (error) {
     console.log(error)
-    console.log('Path: ' error.path)
+    console.log("Path: " error.path)
     throw(error)
   }
 }

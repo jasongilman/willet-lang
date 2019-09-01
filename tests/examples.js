@@ -36,6 +36,10 @@ const functionCall = (...arguments) => ({ type: 'FunctionCall', arguments });
 
 const valueSeq = (...values) => ({ type: 'ValueSequence', values });
 
+const getProperty = (attrib) => ({ type: "GetProperty", attrib });
+
+const getPropertyDynamic = (attrib) => ({ type: "GetPropertyDynamic", attrib });
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Examples are of format
 // name (optional)
@@ -120,6 +124,47 @@ const mapExamples = makeExamples(
   ]
 );
 
+const valueSequenceExamples = makeExamples(
+  [
+    'a',
+    reference('a'),
+    'a'
+  ],
+  [
+    'a.b',
+    valueSeq(
+      reference('a'),
+      getProperty('b')
+    ),
+    'a.b'
+  ],
+  [
+    'a[b]',
+    valueSeq(
+      reference('a'),
+      getPropertyDynamic(reference('b'))
+    ),
+    'a[b]'
+  ],
+  [
+    'a(b)',
+    valueSeq(
+      reference('a'),
+      functionCall(reference('b'))
+    ),
+    'a(b)'
+  ],
+  [
+    'a(b.c)[d]',
+    valueSeq(
+      reference('a'),
+      functionCall(valueSeq(reference('b'), getProperty('c'))),
+      getPropertyDynamic(reference('d'))
+    ),
+    'a(b.c)[d]'
+  ],
+);
+
 const miscExamples = makeExamples(
   [
     'def a',
@@ -148,5 +193,6 @@ module.exports = {
   functionDeclarationExamples,
   assignmentExamples,
   mapExamples,
-  miscExamples
+  miscExamples,
+  valueSequenceExamples
 }
