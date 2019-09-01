@@ -1,6 +1,7 @@
 // TODO should get rid of this dependency. (Will do this when rewriting into Willet)
 const _ = require('lodash');
 const parser = require('./dist/willet-parser');
+const esformatter = require('esformatter');
 
 let compileNode;
 
@@ -22,7 +23,10 @@ const typeToConverter = {
   Reference: ({ symbol }) => symbol,
   GetProperty: ({ attrib }) => `.${attrib}`,
   FunctionCall: ({ arguments }) => `(${_.map(arguments || [], compileNode).join(', ')})`,
-  String: ({ value }) => JSON.stringify(value)
+  StringLiteral: ({ value }) => JSON.stringify(value),
+  MapLiteral: ({ properties }) => `{ ${_.map(properties, compileNode).join(', ')} }`,
+  Property: ({ key, value }) => `${key}: ${compileNode(value)}`,
+  Def: ({ symbol }) => `let ${symbol}`
 };
 
 
@@ -44,12 +48,20 @@ compileNode = (node) => {
 };
 
 const compile = (program) => {
+  let compiledJs;
   try {
-    return compileNode(parser.parse(program));
+    compiledJs = compileNode(parser.parse(program));
   }
   catch (error) {
     console.log(error);
     console.log('Path: ', error.path);
+    throw error;
+  }
+  try {
+    return esformatter.format(compiledJs);
+  }
+  catch (error) {
+    console.error('Invalid JavaScript generated:', compiledJs);
     throw error;
   }
 }

@@ -22,6 +22,7 @@
     "pegjs": "^0.10.0"
   },
   "dependencies": {
+    "esformatter": "^0.10.0",
     "lodash": "^4.17.15"
   }
 }
