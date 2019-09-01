@@ -30,6 +30,12 @@ const reference = (symbol) => ({ type: "Reference", symbol });
 
 const string = (value) => ({ type: 'StringLiteral', value });
 
+const stringInterpolation = (...parts) => ({ type: 'StringInterpolation', parts });
+
+const functionCall = (...arguments) => ({ type: 'FunctionCall', arguments });
+
+const valueSeq = (...values) => ({ type: 'ValueSequence', values });
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Examples are of format
 // name (optional)
@@ -119,6 +125,21 @@ const miscExamples = makeExamples(
     'def a',
     def('a'),
     'let a'
+  ],
+  [
+    'string interpolation',
+    "`This is ${a} good $${money(b)} \\`not done`",
+    stringInterpolation(
+      "This is ",
+      reference('a'),
+      " good $",
+      valueSeq(
+        reference('money'),
+        functionCall(reference('b'))
+      ),
+      " \\`not done"
+    ),
+    "`This is ${a} good $${money(b)} \\`not done`",
   ]
 );
 

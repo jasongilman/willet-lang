@@ -29,9 +29,20 @@ const typeToConverter = {
   Reference: ({ symbol }) => symbol,
   GetProperty: ({ attrib }) => `.${attrib}`,
   FunctionCall: ({ arguments }) => `(${compileAndJoin(arguments)})`,
+
   StringLiteral: ({ value }) => JSON.stringify(value),
+  StringInterpolation: ({ parts }) => `\`${
+    _.map(parts, (part) => {
+      if (_.isString(part)) {
+        return part;
+      }
+      return "${" + compileNode(part) + "}";
+    }).join('')
+  }\``,
+
   MapLiteral: ({ properties }) => `{ ${compileAndJoin(properties)} }`,
   Property: ({ key, value }) => `${key}: ${compileNode(value)}`,
+
   Def: ({ symbol }) => `let ${symbol}`
 };
 

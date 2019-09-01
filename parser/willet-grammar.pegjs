@@ -19,7 +19,7 @@ Parts based on JavaScript Grammar here https://github.com/pegjs/pegjs/blob/maste
    }
 }
 
-Program = __ stmts:StatementList __ {
+Program = __ stmts:StatementList? __ {
   return {
     type: "Program",
     statements: stmts
@@ -81,7 +81,7 @@ ValueReference =
       symbol: s
     };
   }
-  / String / FunctionLiteral / MapLiteral
+  / StringLiteral / StringInterpolation / FunctionLiteral / MapLiteral
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /* Maps */
@@ -104,7 +104,7 @@ PropertyAssignment
 
 PropertyName
   = Symbol
-  / String
+  / StringLiteral
   /* TODO after adding numbers */
   /* / NumericLiteral */
 
@@ -192,7 +192,7 @@ Symbol "symbol" = s:[A-Za-z0-9_]+
 	return s.join("");
 }
 
-String "string"
+StringLiteral "string"
   = quotation_mark chars:char* quotation_mark {
     return {
       type: "StringLiteral",
@@ -200,11 +200,24 @@ String "string"
     };
   }
 
+StringInterpolation
+  = backtick head:StringInterpolationPart tail:StringInterpolationPart* backtick {
+    return {
+      type: "StringInterpolation",
+      parts: [head].concat(tail)
+    };
+  }
+
+StringInterpolationPart
+  =  "${" expr:Expression? "}" { return expr; }
+  / $(!"${" chars:char)+
+
 char
-  = unescaped
+  = $(!backtick unescaped)
   / escape
     sequence:(
-        '"'
+        backtick
+      / '"'
       / "\\"
       / "/"
       / "b" { return "\b"; }
@@ -223,6 +236,8 @@ escape
 
 quotation_mark
   = '"'
+
+backtick = "`"
 
 unescaped
   = [^\0-\x1F\x22\x5C]
