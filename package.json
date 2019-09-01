@@ -1,5 +1,5 @@
 {
-  "name": "willet-lang",
+  "name": "willet",
   "version": "0.0.1",
   "description": "Willet Programming Language",
   "scripts": {
@@ -18,5 +18,8 @@
   "homepage": "https://github.com/jasongilman/willet-lang#readme",
   "devDependencies": {
     "pegjs": "^0.10.0"
+  },
+  "dependencies": {
+    "lodash": "^4.17.15"
   }
 }

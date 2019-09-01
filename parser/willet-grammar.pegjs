@@ -1,5 +1,12 @@
 
-StatementList = 
+Program = stmts:StatementList {
+  return {
+    type: "Program",
+    statements: stmts
+  };
+}
+
+StatementList "statements" =
 	_ stmt:Statement _ stmts:StatementList
 	{
 		stmts.unshift(stmt);
@@ -12,21 +19,14 @@ StatementList =
 	}
 
 
-Statement = Const / Assignment / ValueSequence / ValueReference
+Statement = Assignment / ValueSequence / ValueReference
 
-Const = "const " _ a:Assignment
-{
-	return {
-		type: "Const",
-		assignment: a
-	};
-} 
-
-Assignment = id:Symbol _ "=" _ s:Statement {
+Assignment "assignment"
+  = id:Symbol _ "=" _ v:(ValueSequence / ValueReference) {
 	return {
 		type: "Assignment",
 		symbol: id,
-		statement: s
+		value: v
 	};
 }
 
@@ -35,22 +35,34 @@ ValueSequence =
 		v:ValueReference { return [v]; }
 	)
 	tail:(
-		'.' v:Symbol { return [v]; }
+		v:GetProperty { return [v]; }
 		/ v:FunctionCall { return [v]; }
-	)+ 
-	{ 
+	)+
+	{
 		return {
 			type: 'ValueSequence',
 			values: Array.prototype.concat.apply(head, tail)
 		};
 	}
-	
 
-ValueReference = 
-	Symbol / String / FunctionLiteral 
-	
-	
-FunctionCall = 
+GetProperty = '.' v:Symbol {
+  return {
+    type: "GetProperty",
+    attrib: v
+  };
+}
+
+ValueReference =
+  s:Symbol {
+    return {
+      type: "Reference",
+      symbol: s
+    };
+  }
+  / String / FunctionLiteral
+
+
+FunctionCall "function call" =
 	"(" _ a:ArgumentList? _ ")"
 	{
 		return {
@@ -58,8 +70,8 @@ FunctionCall =
 			arguments: a,
 		};
 	}
-	
-ArgumentList = 
+
+ArgumentList "arguments" =
 	e:ValueReference _ a:ArgumentList
 	{
 		a.unshift(e);
@@ -71,7 +83,7 @@ ArgumentList =
 	}
 
 // Function Literal
-FunctionLiteral = async:"async"? "(" _ a:ArgumentDecl? _ ")" _ "=>" _ body:FunctionBody 
+FunctionLiteral "function" = async:"async"? "(" _ a:ArgumentDecl? _ ")" _ "=>" _ body:FunctionBody
 	{
 		return {
 			type: "Function",
@@ -81,41 +93,43 @@ FunctionLiteral = async:"async"? "(" _ a:ArgumentDecl? _ ")" _ "=>" _ body:Funct
 		};
 	}
 
-ArgumentDecl = 
+ArgumentDecl "arguments" =
 	id:Symbol _ a:ArgumentDecl
 	{
 		a.unshift(id);
 		return a;
 	}
-	/ id:Symbol 
+	/ id:Symbol
 	{
 		return [id];
 	}
 
-FunctionBody =
+FunctionBody "function body" =
 	e:ValueReference
 	{
 		return [e];
 	}
 	/ "{" _ "}"
-	{ 
-		return []; 
+	{
+		return [];
 	}
 	/ "{" _ s:StatementList _ "}"
 	{
 		return s;
-	}	
+	}
 
-Symbol = s:[A-Za-z0-9_]+
+Symbol "symbol" = s:[A-Za-z0-9_]+
 {
-	return {
-		type: "Symbol",
-		name:  s.join("")
-	};
+	return s.join("");
 }
 
-String
-  = quotation_mark chars:char* quotation_mark { return chars.join(""); }
+String "string"
+  = quotation_mark chars:char* quotation_mark {
+    return {
+      type: "String",
+      value: chars.join("")
+    };
+  }
 
 char
   = unescaped
