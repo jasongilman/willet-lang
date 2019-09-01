@@ -17,6 +17,10 @@ Parts based on JavaScript Grammar here https://github.com/pegjs/pegjs/blob/maste
    function buildList(head, tail, index) {
      return [head].concat(extractList(tail, index));
    }
+
+   function concat(v1, v2) {
+     return Array.prototype.concat.apply(v1, v2);
+   }
 }
 
 Program = __ stmts:StatementList? __ {
@@ -50,7 +54,7 @@ Def
     return { type: "Def", symbol: s };
   }
 
-Expression = ValueSequence / ValueReference
+Expression = IfList / ValueSequence / ValueReference
 
 ValueSequence =
 	head:(
@@ -64,7 +68,7 @@ ValueSequence =
 	{
 		return {
 			type: 'ValueSequence',
-			values: Array.prototype.concat.apply(head, tail)
+			values: concat(head, tail)
 		};
 	}
 
@@ -82,14 +86,52 @@ GetPropertyDynamic = '[' e:Expression ']' {
   };
 }
 
-ValueReference =
-  s:Symbol {
+ValueReference
+  = s:Symbol {
     return {
       type: "Reference",
       symbol: s
     };
   }
   / StringLiteral / StringInterpolation / FunctionLiteral / MapLiteral
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+/* Branching and Conditionals */
+
+IfList = head:If elseIfs:(__ ElseIf)* __ e:Else? {
+  const items = concat([head], extractList(elseIfs, 1));
+  if (e) {
+    items.push(e);
+  }
+  return {
+    type: "IfList",
+    items: items
+  }
+}
+
+If = "if" __ "(" __ e:Expression __ ")" __ b:Block {
+  return {
+    type: "If",
+    cond: e,
+    bodyStatements: b
+  };
+}
+
+ElseIf = "else" __ "if" __ "(" __ e:Expression __ ")" __ b:Block {
+  return {
+    type: "ElseIf",
+    cond: e,
+    bodyStatements: b
+  };
+}
+
+Else = "else" __ b:Block {
+  return {
+    type: "Else",
+    bodyStatements: b
+  };
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /* Maps */
@@ -139,12 +181,16 @@ AssignmentTarget
 /* Functions */
 
 FunctionCall "function call" =
-	"(" __ a:ArgumentList? __ ")"
+	"(" __ a:ArgumentList? __ ")" __ b:Block?
 	{
-		return {
+		var fn = {
 			type: "FunctionCall",
 			arguments: a,
 		};
+    if (b) {
+      fn.bodyStatements = b;
+    }
+    return fn;
 	}
 
 ArgumentList "arguments" =
@@ -181,9 +227,12 @@ ArgumentDecl "arguments" =
 		return [id];
 	}
 
-FunctionBody "function body" =
-	e:ValueReference { return [e]; }
-	/ "{" __ "}" { return []; }
+FunctionBody "function body"
+  = e:Expression { return [e]; }
+  / Block
+
+Block
+  = "{" __ "}" { return []; }
 	/ "{" __ s:StatementList __ "}" { return s; }
 
 Symbol "symbol" = s:[A-Za-z0-9_]+

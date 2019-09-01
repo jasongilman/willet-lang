@@ -13,6 +13,14 @@ const compileStatements = (statements) => _(statements)
 
 const compileAndJoin = (nodes, join = ', ') => _.map(nodes, compileNode).join(join);
 
+const compileBodyStatements = (statements) => {
+  const front = _.slice(statements, 0, statements.length - 1);
+  const tail = _.last(statements);
+  return `{${
+    compileStatements(front)}
+    return ${compileNode(tail)}; }`
+};
+
 const typeToConverter = {
   Program: ({ statements }) => compileStatements(statements),
 
@@ -44,7 +52,22 @@ const typeToConverter = {
   MapLiteral: ({ properties }) => `{ ${compileAndJoin(properties)} }`,
   Property: ({ key, value }) => `${key}: ${compileNode(value)}`,
 
-  Def: ({ symbol }) => `let ${symbol}`
+  Def: ({ symbol }) => `let ${symbol}`,
+
+  IfList: ({ items }) => `(() => {${
+      _.map(items, compileNode).join('')
+    }
+      return null;
+    })()`,
+
+  If: ({ cond, bodyStatements }) => `if (${compileNode(cond)}) ${
+    compileBodyStatements(bodyStatements)}`,
+
+  ElseIf: ({ cond, bodyStatements }) => `else if (${compileNode(cond)}) ${
+    compileBodyStatements(bodyStatements)}`,
+
+  Else: ({ bodyStatements }) => `else ${compileBodyStatements(bodyStatements)}`
+
 };
 
 

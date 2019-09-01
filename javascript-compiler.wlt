@@ -31,7 +31,6 @@ typeToConverter = #{
 compileNode = (node) => (
   compiler = typeToConverter[node.type]
 
-  // TODO if
   if(compiler) {
     // TODO try catch
     try {
@@ -44,10 +43,12 @@ compileNode = (node) => (
       throw(error)
     }
   }
-  // TODO new
-  error = new(Error(`Unknown node type ${node.type}`))
-  error.path = [node.type]
-  throw(error)
+  else {
+    // TODO new
+    error = new(Error(`Unknown node type ${node.type}`))
+    error.path = [node.type]
+    throw(error)
+  }
 );
 
 compile = (program) => {

@@ -1,11 +1,13 @@
 const _ = require('lodash');
 
+
 const func = () => ({
   type: 'Function',
   async: false,
   arguments: null,
   statements: []
 });
+
 
 const symbolAssignment = (symbol) => ({ type: 'SymbolAssignment', symbol });
 
@@ -17,6 +19,14 @@ const assignment = (target, value) => {
     type: 'Assignment', target, value
   };
 };
+
+const ifList = (...items) => ({ type: "IfList", items });
+
+const ifNode = (cond, bodyStatements) => ({ type: "If", cond, bodyStatements });
+
+const elseIfNode = (cond, bodyStatements) => ({ type: "ElseIf", cond, bodyStatements });
+
+const elseNode = (bodyStatements) => ({ type: "Else", bodyStatements });
 
 const mapDestructuring = (...targets) => ({ type: 'MapDestructuring', targets });
 
@@ -33,6 +43,12 @@ const string = (value) => ({ type: 'StringLiteral', value });
 const stringInterpolation = (...parts) => ({ type: 'StringInterpolation', parts });
 
 const functionCall = (...arguments) => ({ type: 'FunctionCall', arguments });
+
+const functionCallWithBody = (arguments, bodyStmts) => {
+  const fn = functionCall(...arguments);
+  fn.bodyStatements = bodyStmts;
+  return fn;
+};
 
 const valueSeq = (...values) => ({ type: 'ValueSequence', values });
 
@@ -147,6 +163,19 @@ const valueSequenceExamples = makeExamples(
     'a[b]'
   ],
   [
+    'a(b.c)[d]',
+    valueSeq(
+      reference('a'),
+      functionCall(valueSeq(reference('b'), getProperty('c'))),
+      getPropertyDynamic(reference('d'))
+    ),
+    'a(b.c)[d]'
+  ],
+);
+
+const functionCallExamples = makeExamples(
+  [
+    'Basic',
     'a(b)',
     valueSeq(
       reference('a'),
@@ -155,13 +184,112 @@ const valueSequenceExamples = makeExamples(
     'a(b)'
   ],
   [
-    'a(b.c)[d]',
+    'Multiple arguments',
+    'a(b "foo")',
     valueSeq(
       reference('a'),
-      functionCall(valueSeq(reference('b'), getProperty('c'))),
-      getPropertyDynamic(reference('d'))
+      functionCall(
+        reference('b'),
+        string("foo")
+      )
     ),
-    'a(b.c)[d]'
+    'a(b, "foo")'
+  ],
+
+  // Function calls with a body are part of the basis of macros
+  [
+    'With body',
+    'foo(b) { log("hello") }',
+    valueSeq(
+      reference('foo'),
+      functionCallWithBody(
+        [reference('b')],
+        [valueSeq(reference('log'), functionCall(string('hello')))]
+      )
+    ),
+    // Don't attempt to test javascript generation. We'll add macro stuff later
+    null
+  ],
+);
+
+const ifExamples = makeExamples(
+  [
+    'if',
+    'if("true") { "a" }',
+    ifList(
+      ifNode(
+        string("true"),
+        [
+          string("a")
+        ]
+      )
+    ),
+    `(() => {
+      if("true") {
+        return "a";
+      }
+      return null;
+    })()`
+  ],
+  [
+    'if multi-statement',
+    'if("true") { "a" "b" "c"}',
+    ifList(
+      ifNode(
+        string("true"),
+        [
+          string("a"),
+          string("b"),
+          string("c"),
+        ]
+      )
+    ),
+    `(() => {
+      if("true") {
+        "a";
+        "b";
+        return "c";
+      }
+      return null;
+    })()`
+  ],
+  [
+    'if else',
+    'if("true") { "a" } else { "b" }',
+    ifList(
+      ifNode(string("true"), [string("a")]),
+      elseNode([string("b")])
+    ),
+    `(() => {
+      if("true") {
+        return "a";
+      }
+      else {
+        return "b";
+      }
+      return null;
+    })()`
+  ],
+  [
+    'if else-if else',
+    'if("true") { "a" } else if("false") { "c" } else { "b" }',
+    ifList(
+      ifNode(string("true"), [string("a")]),
+      elseIfNode(string("false"), [string("c")]),
+      elseNode([string("b")])
+    ),
+    `(() => {
+      if("true") {
+        return "a";
+      }
+      else if("false") {
+        return "c";
+      }
+      else {
+        return "b";
+      }
+      return null;
+    })()`
   ],
 );
 
@@ -194,5 +322,7 @@ module.exports = {
   assignmentExamples,
   mapExamples,
   miscExamples,
-  valueSequenceExamples
+  ifExamples,
+  valueSequenceExamples,
+  functionCallExamples
 }

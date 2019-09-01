@@ -23,9 +23,11 @@ describe('Willet JavaScript Compiler', () => {
   for (const [exampleSetName, exampleSet] of _.toPairs(examples)) {
     describe('exampleSetName', () => {
       for (const { name, willet, js } of exampleSet) {
-        it(`should compile ${name}`, async () => {
-          assertSingleStatement(willet, js);
-        });
+        if (js) {
+          it(`should compile ${name}`, async () => {
+            assertSingleStatement(willet, js);
+          });
+        }
       }
     });
   }
