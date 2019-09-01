@@ -2,7 +2,6 @@
 _ = require('lodash')
 parser = require('./dist/willet-parser')
 
-// TODO predeclare vars
 def compileNode
 
 compileStatements = (statements) => _(statements)
@@ -13,23 +12,22 @@ compileStatements = (statements) => _(statements)
   .join("\n");
 
 
-// TODO maps
 typeToConverter = #{
   // TODO destructuring
-  Program: ({ statements }) => compileStatements(statements),
+  Program: (#{ statements }) => compileStatements(statements),
   // TODO string interpolation
-  Assignment: ({ symbol value }) => `${symbol} = ${compileNode(value)}`,
+  Assignment: (#{ target value }) => `${compileNode(target)} = ${compileNode(value)}`,
   // FUTURE async and arguments
-  Function: ({ async arguments statements}) => `() => {
+  Function: (#{ async arguments statements}) => `() => {
     ${compileStatements(statements)}
   }`,
-  ValueSequence: ({ values }) => _.map(values compileNode).join(""),
-  Reference: ({ symbol }) => symbol,
-  GetProperty: ({ attrib }) => `.${attrib}`,
+  ValueSequence: (#{ values }) => _.map(values compileNode).join(""),
+  Reference: (#{ symbol }) => symbol,
+  GetProperty: (#{ attrib }) => `.${attrib}`,
   // TODO OR and not
   // TODO strings with single quotes
-  FunctionCall: ({ arguments }) => `(${_.map(arguments || [] compileNode).join(', ')})`,
-  String: ({ value }) => JSON.stringify(value)
+  FunctionCall: (#{ arguments }) => `(${_.map(arguments || [] compileNode).join(', ')})`,
+  String: (#{ value }) => JSON.stringify(value)
 };
 
 

@@ -11,20 +11,26 @@ const compileStatements = (statements) => _(statements)
   .values()
   .join('\n');
 
+const compileAndJoin = (nodes, join = ', ') => _.map(nodes, compileNode).join(join);
 
 const typeToConverter = {
   Program: ({ statements }) => compileStatements(statements),
-  Assignment: ({ symbol, value }) => `${symbol} = ${compileNode(value)}`,
+
+  // The parentheses allow map destructuring to always work
+  Assignment: ({ target, value }) => `(${compileNode(target)} = ${compileNode(value)})`,
+
+  SymbolAssignment: ({ symbol }) => symbol,
+  MapDestructuring: ({ targets }) => `{${compileAndJoin(targets)}}`,
   // TODO async and arguments
   Function: ({ async, arguments, statements}) => `() => {
     ${compileStatements(statements)}
   }`,
-  ValueSequence: ({ values }) => _.map(values, compileNode).join(''),
+  ValueSequence: ({ values }) => compileAndJoin(values, ''),
   Reference: ({ symbol }) => symbol,
   GetProperty: ({ attrib }) => `.${attrib}`,
-  FunctionCall: ({ arguments }) => `(${_.map(arguments || [], compileNode).join(', ')})`,
+  FunctionCall: ({ arguments }) => `(${compileAndJoin(arguments)})`,
   StringLiteral: ({ value }) => JSON.stringify(value),
-  MapLiteral: ({ properties }) => `{ ${_.map(properties, compileNode).join(', ')} }`,
+  MapLiteral: ({ properties }) => `{ ${compileAndJoin(properties)} }`,
   Property: ({ key, value }) => `${key}: ${compileNode(value)}`,
   Def: ({ symbol }) => `let ${symbol}`
 };

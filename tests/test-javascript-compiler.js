@@ -8,7 +8,14 @@ const esformatter = require('esformatter');
 
 const assertSingleStatement = (input, expectedCode) => {
   const result = compiler.compile(input);
-  const expected = esformatter.format(expectedCode + ';');
+  let expected;
+  try {
+    expected = esformatter.format(expectedCode + ';');
+  }
+  catch (error) {
+    console.error('Invalid Example JavaScript:', expectedCode);
+    throw error;
+  }
   expect(result).to.deep.equal(expected);
 };
 

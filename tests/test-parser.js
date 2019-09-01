@@ -13,7 +13,7 @@ const assertSingleStatement = (input, expectedStmt) => {
 
 describe('Willet Parser', () => {
   for (const [exampleSetName, exampleSet] of _.toPairs(examples)) {
-    describe('exampleSetName', () => {
+    describe(exampleSetName, () => {
       for (const { name, willet, ast } of exampleSet) {
         it(`should parse ${name}`, async () => {
           assertSingleStatement(willet, ast);

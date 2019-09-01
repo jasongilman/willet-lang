@@ -7,9 +7,18 @@ const func = () => ({
   statements: []
 });
 
-const assignment = (symbol, value) => ({
-  type: 'Assignment', symbol, value
-});
+const symbolAssignment = (symbol) => ({ type: 'SymbolAssignment', symbol });
+
+const assignment = (target, value) => {
+  if (_.isString(target)) {
+    target = symbolAssignment(target)
+  }
+  return {
+    type: 'Assignment', target, value
+  };
+};
+
+const mapDestructuring = (...targets) => ({ type: 'MapDestructuring', targets });
 
 const def = (symbol) => ({ type: "Def", symbol });
 
@@ -56,13 +65,22 @@ const assignmentExamples = makeExamples(
   [
     'a = () => {}',
     assignment('a', func()),
-    'a = () => {\n\n}'
+    '(a = () => {\n\n})'
+  ],
+  [
+    'Map destructuring',
+    '#{a} = #{a: "hello"}',
+    assignment(
+      mapDestructuring(symbolAssignment('a')),
+      map(property('a', string("hello")))
+    ),
+    '({a} = { a: "hello" })',
   ],
   [
     'Comment after assignment',
     'a = () => {} // ignored',
     assignment('a', func()),
-    'a = () => {\n\n}',
+    '(a = () => {\n\n})',
   ]
 );
 
@@ -83,7 +101,7 @@ const mapExamples = makeExamples(
       property('a', reference('null')),
       property('b', string('foo'))
     )),
-    'a = { a: null, b: "foo" }'
+    '(a = { a: null, b: "foo" })'
   ],
   [
     'Map within a map',
@@ -92,7 +110,7 @@ const mapExamples = makeExamples(
       property('a', map(property('b', string('foo')))),
       property('c', reference('d'))
     )),
-    'a = { a: { b: "foo" }, c: d }',
+    '(a = { a: { b: "foo" }, c: d })',
   ]
 );
 

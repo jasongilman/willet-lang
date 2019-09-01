@@ -36,10 +36,10 @@ StatementList "statements" =
 Statement = Def / Assignment / Expression
 
 Assignment "assignment"
-  = id:Symbol __ "=" __ v:Expression {
+  = id:AssignmentTarget __ "=" __ v:Expression {
 	return {
 		type: "Assignment",
-		symbol: id,
+		target: id,
 		value: v
 	};
 }
@@ -107,6 +107,25 @@ PropertyName
   / String
   /* TODO after adding numbers */
   /* / NumericLiteral */
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+/* Destructuring */
+MapDestructuring
+  = "#{" __ targets:DestructuringList __ "}" {
+     return { type: "MapDestructuring", targets: targets };
+   }
+
+DestructuringList
+  = head:AssignmentTarget tail:(__ AssignmentTarget)* {
+      return buildList(head, tail, 1);
+    }
+
+AssignmentTarget
+ = s:Symbol { return { type: 'SymbolAssignment', symbol: s}; }
+ / MapDestructuring
+  // TODO Add array destructuring
+  // / ArrayDestructuring
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /* Functions */
