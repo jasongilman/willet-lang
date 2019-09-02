@@ -27,6 +27,9 @@ const typeToConverter = {
   // The parentheses allow map destructuring to always work
   Assignment: ({ target, value }) => `(${compileNode(target)} = ${compileNode(value)})`,
 
+  InfixExpression: ({ left, operator, right }) =>
+    `(${compileNode(left)} ${operator} ${compileNode(right)})`,
+
   SymbolAssignment: ({ symbol }) => symbol,
   MapDestructuring: ({ targets }) => `{${compileAndJoin(targets)}}`,
   // TODO async and arguments

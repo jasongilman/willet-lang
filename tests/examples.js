@@ -68,6 +68,20 @@ const getProperty = (attrib) => ({ type: "GetProperty", attrib });
 
 const getPropertyDynamic = (attrib) => ({ type: "GetPropertyDynamic", attrib });
 
+const infix = (left, operator, right) => ({ type: 'InfixExpression', operator, left, right});
+const plus = (left, right) => infix(left, '+', right);
+const minus = (left, right) => infix(left, '-', right);
+const multiply = (left, right) => infix(left, '*', right);
+const divide = (left, right) => infix(left, '/', right);
+const modulus = (left, right) => infix(left, '%', right);
+
+const lessThan = (left, right) => infix(left, '<', right);
+const greaterThan = (left, right) => infix(left, '>', right);
+const lessThanOrEqual = (left, right) => infix(left, '<=', right);
+const greaterThanOrEqual = (left, right) => infix(left, '>=', right);
+const equal = (left, right) => infix(left, '==', right);
+const notEqual = (left, right) => infix(left, '!=', right);
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Examples are of format
 // name (optional)
@@ -360,6 +374,111 @@ const ifExamples = makeExamples(
   ],
 );
 
+const operatorExamples = makeExamples(
+  [
+    "1+2",
+    plus(number(1), number(2)),
+    "(1 + 2)"
+  ],
+  [
+    "1 + 2",
+    plus(number(1), number(2)),
+    "(1 + 2)"
+  ],
+  [
+    "1 - 2",
+    minus(number(1), number(2)),
+    "(1 - 2)"
+  ],
+  [
+    "1 * 2",
+    multiply(number(1), number(2)),
+    "(1 * 2)"
+  ],
+  [
+    "1 / 2",
+    divide(number(1), number(2)),
+    "(1 / 2)"
+  ],
+  [
+    "1 % 2",
+    modulus(number(1), number(2)),
+    "(1 % 2)"
+  ],
+
+  // Combining
+  [
+    "1 + 2 * 3",
+    plus(number(1), multiply(number(2), number(3))),
+    "(1 + (2 * 3))"
+  ],
+  [
+    "1 * 2 + 3",
+    plus(multiply(number(1), number(2)), number(3) ),
+    "((1 * 2) + 3)"
+  ],
+  // parentheses
+  [
+    "1 * (2 + 3)",
+    multiply(number(1), plus(number(2), number(3))),
+    "(1 * (2 + 3))"
+  ],
+  [
+    "(1 * (2 + 3))",
+    multiply(number(1), plus(number(2), number(3))),
+    "(1 * (2 + 3))"
+  ],
+  [
+    "(1 * 2) + 3",
+    plus(multiply(number(1), number(2)), number(3) ),
+    "((1 * 2) + 3)"
+  ],
+
+  // Comparison operators
+  [
+    "1<2",
+    lessThan(number(1), number(2)),
+    "(1 < 2)"
+  ],
+  [
+    "1 < 2",
+    lessThan(number(1), number(2)),
+    "(1 < 2)"
+  ],
+  [
+    "1 > 2",
+    greaterThan(number(1), number(2)),
+    "(1 > 2)"
+  ],
+  [
+    "1 <= 2",
+    lessThanOrEqual(number(1), number(2)),
+    "(1 <= 2)"
+  ],
+  [
+    "1 >= 2",
+    greaterThanOrEqual(number(1), number(2)),
+    "(1 >= 2)"
+  ],
+  [
+    "1 == 2",
+    equal(number(1), number(2)),
+    "(1 == 2)"
+  ],
+  [
+    "1 != 2",
+    notEqual(number(1), number(2)),
+    "(1 != 2)"
+  ],
+
+  [
+    "Precedence with comparison and math",
+    "1 + 4 < 2 + 3",
+    lessThan(plus(number(1), number(4)), plus(number(2), number(3))),
+    "((1 + 4) < (2 + 3))"
+  ],
+);
+
 const simpleLiteralExamples = makeExamples(
   [
     '"a string"',
@@ -448,5 +567,6 @@ module.exports = {
   valueSequenceExamples,
   functionCallExamples,
   tryCatchExamples,
-  simpleLiteralExamples
+  simpleLiteralExamples,
+  operatorExamples
 }

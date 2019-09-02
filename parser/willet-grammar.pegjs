@@ -21,6 +21,27 @@ Parts based on JavaScript Grammar here https://github.com/pegjs/pegjs/blob/maste
    function concat(v1, v2) {
      return Array.prototype.concat.apply(v1, v2);
    }
+
+  function leftInfixAssoc(rest, val) {
+    if (!rest.length) return val;
+    var last = rest.pop();
+    return {
+      type: "InfixExpression",
+      left:leftInfixAssoc(rest, last[0]),
+      operator:last[1],
+      right:val
+    };
+  }
+  function rightInfixAssoc(val, rest) {
+    if (!rest.length) return val;
+    var first = rest.shift();
+    return {
+      type: "InfixExpression",
+      left:val,
+      operator:first[0],
+      right:rightInfixAssoc(first[1], rest)
+    };
+  }
 }
 
 Program = __ stmts:StatementList? __ {
@@ -53,8 +74,6 @@ Def
   {
     return { type: "Def", symbol: s };
   }
-
-Expression = IfList / TryCatch / ValueSequence / ValueReference
 
 ValueSequence =
 	head:(
@@ -94,6 +113,45 @@ ValueReference
     };
   }
   / Literal
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+/* Operators */
+
+Expression = InfixExpression / NonInfixExpression
+
+NonInfixExpression
+  = IfList / TryCatch / ValueSequence / ValueReference
+  / "(" e:NonInfixExpression ")" { return e; }
+  / "(" e:InfixExpression ")" { return e; }
+
+InfixExpression = InfixLeftComparisonExpression
+
+InfixLeftComparisonExpression
+  = rest:(
+      InfixLeftExpression
+      (LessThanOrEqual / GreaterThanOrEqual / LessThan / GreaterThan / Equal / NotEqual)
+    )* v:InfixLeftExpression
+  { return leftInfixAssoc(rest, v); }
+
+InfixLeftExpression = rest:(InfixRightExpression (Plus / Minus))* v:InfixRightExpression
+     { return leftInfixAssoc(rest, v); }
+
+Plus = __ "+" __ { return "+"; }
+Minus = __ "-" __ { return "-"; }
+Multiply = __ "*" __ { return "*"; }
+Divide = __ "/" __ { return "/"; }
+Modulus = __ "%" __ { return "%"; }
+
+LessThan = __ "<" __ { return "<"; }
+GreaterThan = __ ">" __ { return ">"; }
+LessThanOrEqual = __ "<=" __ { return "<="; }
+GreaterThanOrEqual = __ ">=" __ { return ">="; }
+Equal = __ "==" __ { return "=="; }
+NotEqual = __ "!=" __ { return "!="; }
+
+
+InfixRightExpression = v:NonInfixExpression rest:((Multiply / Divide / Modulus) NonInfixExpression)*
+     { return rightInfixAssoc(v, rest); }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /* Branching and Conditionals */
@@ -170,8 +228,7 @@ PropertyAssignment
 PropertyName
   = Symbol
   / StringLiteral
-  /* TODO after adding numbers */
-  /* / NumericLiteral */
+  / NumberLiteral
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /* Destructuring */

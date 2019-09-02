@@ -68,6 +68,19 @@ finally({
 }))
 ```
 
+## Features I would like Willet to have
+
+- Keywords `:this_is_a_keyword :red :white :blue`
+  - May just be syntatic sugar for strings or may actually be a different type
+- Macros
+- Everything thing is an expression. Everything returns a value.
+  - Makes chaining easier and leads to more elegant code
+- Immutable types
+- Literal sets
+- Multi-methods
+- A rich core library for dealing with types.
+
+
 
 ## TODOs
 

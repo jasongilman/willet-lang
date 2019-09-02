@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "Willet Programming Language",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "node_modules/.bin/mocha --timeout 30000 -b tests/",
     "build": "bin/build.sh"
   },
   "repository": {

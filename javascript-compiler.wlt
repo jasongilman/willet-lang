@@ -14,7 +14,6 @@ compileStatements = (statements) => _(statements)
 compileAndJoin = (nodes join) => _.map(nodes compileNode).join(or(join ", "))
 
 compileBlockStatements = (statements) => {
-  // TODO math
   front = _.slice(statements 0 (statements.length - 1))
   tail = _.last(statements)
   `{${
