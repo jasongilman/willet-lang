@@ -20,6 +20,8 @@ const assignment = (target, value) => {
   };
 };
 
+const Null = { type: "Null" };
+
 const ifList = (...items) => ({ type: "IfList", items });
 
 const ifNode = (cond, block) => ({ type: "If", cond, block });
@@ -39,6 +41,8 @@ const property = (key, value) => ({ type: "Property", key, value });
 const reference = (symbol) => ({ type: "Reference", symbol });
 
 const string = (value) => ({ type: 'StringLiteral', value });
+
+const number = (value) => ({ type: 'NumberLiteral', value });
 
 const stringInterpolation = (...parts) => ({ type: 'StringInterpolation', parts });
 
@@ -126,13 +130,13 @@ const mapExamples = makeExamples(
   ],
   [
     '#{a:null}',
-    map(property('a', reference('null'))),
+    map(property('a', Null)),
     '{ a: null }'
   ],
   [
     'a = #{ a: null b: "foo" }',
     assignment('a', map(
-      property('a', reference('null')),
+      property('a', Null),
       property('b', string('foo'))
     )),
     '(a = { a: null, b: "foo" })'
@@ -356,6 +360,61 @@ const ifExamples = makeExamples(
   ],
 );
 
+const simpleLiteralExamples = makeExamples(
+  [
+    '"a string"',
+    string('a string'),
+    '"a string"'
+  ],
+  [
+    'null',
+    Null,
+    'null'
+  ],
+  // Integers
+  [
+    '5',
+    number(5),
+    '5'
+  ],
+  [
+    '12345',
+    number(12345),
+    '12345'
+  ],
+  [
+    '-5',
+    number(-5),
+    '-5'
+  ],
+  [
+    '+5',
+    number(5),
+    '5'
+  ],
+  // Floats
+  [
+    '5.0',
+    number(5),
+    '5'
+  ],
+  [
+    '5.123',
+    number(5.123),
+    '5.123'
+  ],
+  [
+    '-5.1',
+    number(-5.1),
+    '-5.1'
+  ],
+  [
+    '+5.1',
+    number(5.1),
+    '5.1'
+  ],
+);
+
 const miscExamples = makeExamples(
   [
     'def a',
@@ -388,5 +447,6 @@ module.exports = {
   ifExamples,
   valueSequenceExamples,
   functionCallExamples,
-  tryCatchExamples
+  tryCatchExamples,
+  simpleLiteralExamples
 }

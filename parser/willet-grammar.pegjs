@@ -93,7 +93,7 @@ ValueReference
       symbol: s
     };
   }
-  / StringLiteral / StringInterpolation / FunctionLiteral / MapLiteral
+  / Literal
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /* Branching and Conditionals */
@@ -250,10 +250,157 @@ Block
   = "{" __ "}" { return []; }
 	/ "{" __ s:StatementList __ "}" { return s; }
 
-Symbol "symbol" = s:[A-Za-z0-9_]+
-{
-	return s.join("");
-}
+Symbol
+  = !ReservedWord name:SymbolName { return name; }
+
+SymbolName "symbol"
+  = head:IdentifierStart tail:IdentifierPart* {
+      return head + tail.join("");
+    }
+
+IdentifierStart
+  = UnicodeLetter
+  / "$"
+  / "_"
+  / "\\" sequence:UnicodeEscapeSequence { return sequence; }
+
+IdentifierPart
+  = IdentifierStart
+  / UnicodeCombiningMark
+  / UnicodeDigit
+  / UnicodeConnectorPunctuation
+  / "\u200C"
+  / "\u200D"
+
+UnicodeEscapeSequence
+  = "u" digits:$(HexDigit HexDigit HexDigit HexDigit) {
+      return String.fromCharCode(parseInt(digits, 16));
+    }
+
+UnicodeLetter
+  = Lu
+  / Ll
+  / Lt
+  / Lm
+  / Lo
+  / Nl
+
+UnicodeCombiningMark
+  = Mn
+  / Mc
+
+UnicodeDigit
+  = Nd
+
+UnicodeConnectorPunctuation
+  = Pc
+
+ReservedWord
+  = JavaScriptKeyword
+  / NullLiteral
+  / BooleanLiteral
+
+JavaScriptKeyword
+  = BreakToken
+  / CaseToken
+  / CatchToken
+  / ContinueToken
+  / DebuggerToken
+  / DefaultToken
+  / DeleteToken
+  / DoToken
+  / ElseToken
+  / FinallyToken
+  / ForToken
+  / FunctionToken
+  / IfToken
+  / InstanceofToken
+  / InToken
+  / NewToken
+  / ReturnToken
+  / SwitchToken
+  / ThisToken
+  / ThrowToken
+  / TryToken
+  / TypeofToken
+  / VarToken
+  / VoidToken
+  / WhileToken
+  / WithToken
+  / ClassToken
+  / ConstToken
+  / EnumToken
+  / ExportToken
+  / ExtendsToken
+  / ImportToken
+  / SuperToken
+
+Literal
+  = NullLiteral
+  / BooleanLiteral
+  / NumberLiteral
+  / StringLiteral
+  / MapLiteral
+  / StringInterpolation
+  / FunctionLiteral
+  /* TODO array literal */
+  /* TODO regex support */
+  /* / RegularExpressionLiteral */
+
+NullLiteral
+  = "null" { return { type: "Null" }; }
+
+BooleanLiteral
+  = "true"  { return { type: "BooleanLiteral", value: true  }; }
+  / "false" { return { type: "BooleanLiteral", value: false }; }
+
+// The "!(IdentifierStart / DecimalDigit)" predicate is not part of the official
+// grammar, it comes from text in section 7.8.3.
+NumberLiteral "number"
+  = literal:HexIntegerLiteral !(IdentifierStart / DecimalDigit) {
+      return literal;
+    }
+  / literal:DecimalLiteral !(IdentifierStart / DecimalDigit) {
+      return literal;
+    }
+
+DecimalLiteral
+  = [+-]? DecimalIntegerLiteral "." DecimalDigit* ExponentPart? {
+      return { type: "NumberLiteral", value: parseFloat(text()) };
+    }
+  / "." DecimalDigit+ ExponentPart? {
+      return { type: "NumberLiteral", value: parseFloat(text()) };
+    }
+  / [+-]? DecimalIntegerLiteral ExponentPart? {
+      return { type: "NumberLiteral", value: parseFloat(text()) };
+    }
+
+DecimalIntegerLiteral
+  = "0"
+  / NonZeroDigit DecimalDigit*
+
+DecimalDigit
+  = [0-9]
+
+NonZeroDigit
+  = [1-9]
+
+ExponentPart
+  = ExponentIndicator SignedInteger
+
+ExponentIndicator
+  = "e"i
+
+SignedInteger
+  = [+-]? DecimalDigit+
+
+HexIntegerLiteral
+  = "0x"i digits:$HexDigit+ {
+      return { type: "NumberLiteral", value: parseInt(digits, 16) };
+     }
+
+HexDigit
+  = [0-9a-f]i
 
 StringLiteral "string"
   = quotation_mark chars:char* quotation_mark {
@@ -411,3 +558,44 @@ Pc = [\u005F\u203F-\u2040\u2054\uFE33-\uFE34\uFE4D-\uFE4F\uFF3F]
 
 // Separator, Space
 Zs = [\u0020\u00A0\u1680\u2000-\u200A\u202F\u205F\u3000]
+
+/* A bunch of JavaScript keywords */
+
+BreakToken      = "break"      !IdentifierPart
+CaseToken       = "case"       !IdentifierPart
+CatchToken      = "catch"      !IdentifierPart
+ClassToken      = "class"      !IdentifierPart
+ConstToken      = "const"      !IdentifierPart
+ContinueToken   = "continue"   !IdentifierPart
+DebuggerToken   = "debugger"   !IdentifierPart
+DefaultToken    = "default"    !IdentifierPart
+DeleteToken     = "delete"     !IdentifierPart
+DoToken         = "do"         !IdentifierPart
+ElseToken       = "else"       !IdentifierPart
+EnumToken       = "enum"       !IdentifierPart
+ExportToken     = "export"     !IdentifierPart
+ExtendsToken    = "extends"    !IdentifierPart
+FalseToken      = "false"      !IdentifierPart
+FinallyToken    = "finally"    !IdentifierPart
+ForToken        = "for"        !IdentifierPart
+FunctionToken   = "function"   !IdentifierPart
+GetToken        = "get"        !IdentifierPart
+IfToken         = "if"         !IdentifierPart
+ImportToken     = "import"     !IdentifierPart
+InstanceofToken = "instanceof" !IdentifierPart
+InToken         = "in"         !IdentifierPart
+NewToken        = "new"        !IdentifierPart
+NullToken       = "null"       !IdentifierPart
+ReturnToken     = "return"     !IdentifierPart
+SetToken        = "set"        !IdentifierPart
+SuperToken      = "super"      !IdentifierPart
+SwitchToken     = "switch"     !IdentifierPart
+ThisToken       = "this"       !IdentifierPart
+ThrowToken      = "throw"      !IdentifierPart
+TrueToken       = "true"       !IdentifierPart
+TryToken        = "try"        !IdentifierPart
+TypeofToken     = "typeof"     !IdentifierPart
+VarToken        = "var"        !IdentifierPart
+VoidToken       = "void"       !IdentifierPart
+WhileToken      = "while"      !IdentifierPart
+WithToken       = "with"       !IdentifierPart

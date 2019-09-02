@@ -39,7 +39,12 @@ const typeToConverter = {
   GetPropertyDynamic: ({ attrib }) => `[${compileNode(attrib)}]`,
   FunctionCall: ({ arguments }) => `(${compileAndJoin(arguments)})`,
 
+  Null: () => 'null',
+
   StringLiteral: ({ value }) => JSON.stringify(value),
+
+  NumberLiteral: ({ value }) => JSON.stringify(value),
+
   StringInterpolation: ({ parts }) => `\`${
     _.map(parts, (part) => {
       if (_.isString(part)) {
