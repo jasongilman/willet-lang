@@ -22,11 +22,11 @@ const assignment = (target, value) => {
 
 const ifList = (...items) => ({ type: "IfList", items });
 
-const ifNode = (cond, bodyStatements) => ({ type: "If", cond, bodyStatements });
+const ifNode = (cond, block) => ({ type: "If", cond, block });
 
-const elseIfNode = (cond, bodyStatements) => ({ type: "ElseIf", cond, bodyStatements });
+const elseIfNode = (cond, block) => ({ type: "ElseIf", cond, block });
 
-const elseNode = (bodyStatements) => ({ type: "Else", bodyStatements });
+const elseNode = (block) => ({ type: "Else", block });
 
 const mapDestructuring = (...targets) => ({ type: 'MapDestructuring', targets });
 
@@ -42,11 +42,19 @@ const string = (value) => ({ type: 'StringLiteral', value });
 
 const stringInterpolation = (...parts) => ({ type: 'StringInterpolation', parts });
 
+const tryCatch = (tryBlock, errorSymbol, catchBlock, finallyBlock = null) => ({
+  type: 'TryCatch',
+  tryBlock,
+  errorSymbol,
+  catchBlock,
+  finallyBlock
+});
+
 const functionCall = (...arguments) => ({ type: 'FunctionCall', arguments });
 
 const functionCallWithBody = (arguments, bodyStmts) => {
   const fn = functionCall(...arguments);
-  fn.bodyStatements = bodyStmts;
+  fn.block = bodyStmts;
   return fn;
 };
 
@@ -212,6 +220,61 @@ const functionCallExamples = makeExamples(
   ],
 );
 
+const tryCatchExamples = makeExamples(
+  [
+    'try catch',
+    `try {
+        f()
+      }
+      catch (err) {
+        err
+      }`,
+    tryCatch(
+      [valueSeq(reference('f'), functionCall())],
+      'err',
+      [reference('err')]
+    ),
+    `(() => {
+      try {
+        return f();
+      }
+      catch (err) {
+        return err;
+      }
+
+    })()`
+  ],
+  [
+    'try catch finally',
+    `try {
+        f()
+      }
+      catch (err) {
+        err
+      }
+      finally {
+        foo
+      }`,
+    tryCatch(
+      [valueSeq(reference('f'), functionCall())],
+      'err',
+      [reference('err')],
+      [reference('foo')]
+    ),
+    `(() => {
+      try {
+        return f();
+      }
+      catch (err) {
+        return err;
+      }
+      finally {
+        return foo;
+      }
+    })()`
+  ]
+);
+
 const ifExamples = makeExamples(
   [
     'if',
@@ -324,5 +387,6 @@ module.exports = {
   miscExamples,
   ifExamples,
   valueSequenceExamples,
-  functionCallExamples
+  functionCallExamples,
+  tryCatchExamples
 }

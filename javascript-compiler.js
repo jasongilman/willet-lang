@@ -13,7 +13,7 @@ const compileStatements = (statements) => _(statements)
 
 const compileAndJoin = (nodes, join = ', ') => _.map(nodes, compileNode).join(join);
 
-const compileBodyStatements = (statements) => {
+const compileBlockStatements = (statements) => {
   const front = _.slice(statements, 0, statements.length - 1);
   const tail = _.last(statements);
   return `{${
@@ -54,19 +54,33 @@ const typeToConverter = {
 
   Def: ({ symbol }) => `let ${symbol}`,
 
+  TryCatch: ({
+    tryBlock,
+    errorSymbol,
+    catchBlock,
+    finallyBlock }) => `(() => {
+      try ${compileBlockStatements(tryBlock)}
+      catch(${errorSymbol}) ${compileBlockStatements(catchBlock)}
+      ${
+        finallyBlock ?
+        `finally ${compileBlockStatements(finallyBlock)}`
+        : ''
+      }
+    })()`,
+
   IfList: ({ items }) => `(() => {${
       _.map(items, compileNode).join('')
     }
       return null;
     })()`,
 
-  If: ({ cond, bodyStatements }) => `if (${compileNode(cond)}) ${
-    compileBodyStatements(bodyStatements)}`,
+  If: ({ cond, block }) => `if (${compileNode(cond)}) ${
+    compileBlockStatements(block)}`,
 
-  ElseIf: ({ cond, bodyStatements }) => `else if (${compileNode(cond)}) ${
-    compileBodyStatements(bodyStatements)}`,
+  ElseIf: ({ cond, block }) => `else if (${compileNode(cond)}) ${
+    compileBlockStatements(block)}`,
 
-  Else: ({ bodyStatements }) => `else ${compileBodyStatements(bodyStatements)}`
+  Else: ({ block }) => `else ${compileBlockStatements(block)}`
 
 };
 

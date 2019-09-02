@@ -54,7 +54,7 @@ Def
     return { type: "Def", symbol: s };
   }
 
-Expression = IfList / ValueSequence / ValueReference
+Expression = IfList / TryCatch / ValueSequence / ValueReference
 
 ValueSequence =
 	head:(
@@ -113,7 +113,7 @@ If = "if" __ "(" __ e:Expression __ ")" __ b:Block {
   return {
     type: "If",
     cond: e,
-    bodyStatements: b
+    block: b
   };
 }
 
@@ -121,17 +121,32 @@ ElseIf = "else" __ "if" __ "(" __ e:Expression __ ")" __ b:Block {
   return {
     type: "ElseIf",
     cond: e,
-    bodyStatements: b
+    block: b
   };
 }
 
 Else = "else" __ b:Block {
   return {
     type: "Else",
-    bodyStatements: b
+    block: b
   };
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////
+/* Try catch */
+
+TryCatch
+  = "try" __ tryB:Block __ "catch" __ "(" __  s:Symbol __ ")" __ catchB:Block __ fB:Finally? {
+    return {
+      type: "TryCatch",
+      tryBlock: tryB,
+      errorSymbol: s,
+      catchBlock: catchB,
+      finallyBlock: fB
+    };
+  }
+
+Finally = "finally" __ b:Block { return b; }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /* Maps */
@@ -185,16 +200,16 @@ FunctionCall "function call" =
 	{
 		var fn = {
 			type: "FunctionCall",
-			arguments: a,
+			arguments: a || [],
 		};
     if (b) {
-      fn.bodyStatements = b;
+      fn.block = b;
     }
     return fn;
 	}
 
-ArgumentList "arguments" =
-	e:Expression __ a:ArgumentList
+ArgumentList "arguments"
+  = e:Expression __ a:ArgumentList
 	{
 		a.unshift(e);
 		return a;
@@ -217,12 +232,12 @@ FunctionLiteral "function"
 	}
 
 ArgumentDecl "arguments" =
-	id:Symbol __ a:ArgumentDecl
+	id:AssignmentTarget __ a:ArgumentDecl
 	{
 		a.unshift(id);
 		return a;
 	}
-	/ id:Symbol
+	/ id:AssignmentTarget
 	{
 		return [id];
 	}
@@ -249,19 +264,20 @@ StringLiteral "string"
   }
 
 StringInterpolation
-  = backtick head:StringInterpolationPart tail:StringInterpolationPart* backtick {
+  = backtick head:StringInterpolationPart? tail:StringInterpolationPart* backtick {
     return {
       type: "StringInterpolation",
-      parts: [head].concat(tail)
+      parts: [head].concat(tail).filter((v) => v)
     };
   }
 
 StringInterpolationPart
-  =  "${" expr:Expression? "}" { return expr; }
+  =  "${" __ expr:Expression? __ "}" { return expr; }
   / $(!"${" chars:char)+
 
 char
   = $(!backtick unescaped)
+  / "\n"
   / escape
     sequence:(
         backtick

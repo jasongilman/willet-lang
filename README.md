@@ -53,6 +53,21 @@ fn() {}? (Optional code block passed to macro)
 
 ```
 
+Making Try catch, if, and functions more s-expression like
+
+The blocks effectively become arguments
+```
+try({
+
+}
+catch(err {
+
+})
+finally({
+
+}))
+```
+
 
 ## TODOs
 

@@ -1,84 +1,127 @@
-// FUTURE add lodash style functions to core willet library
+// TODO should get rid of this dependency. (Will do this when rewriting into Willet)
 _ = require("lodash")
 parser = require("./dist/willet-parser")
+esformatter = require("esformatter")
 
 def compileNode
 
 compileStatements = (statements) => _(statements)
   .map(compileNode)
-  // TODO string common function that joins all strings
   .map((s) => string(s ";"))
   .values()
-  .join("\n");
+  .join("\n")
 
+compileAndJoin = (nodes join) => _.map(nodes compileNode).join(or(join ", "))
+
+compileBlockStatements = (statements) => {
+  // TODO math
+  front = _.slice(statements 0 (statements.length - 1))
+  tail = _.last(statements)
+  `{${
+    compileStatements(front)}
+    return ${compileNode(tail)} }`
+}
 
 typeToConverter = #{
-  Program: (#{ statements }) => compileStatements(statements),
-  Assignment: (#{ target value }) => `${compileNode(target)} = ${compileNode(value)}`,
+  Program: (#{ statements }) => compileStatements(statements)
+
+  // The parentheses allow map destructuring to always work
+  Assignment: (#{ target value }) => `(${compileNode(target)} = ${compileNode(value)})`
+
+  SymbolAssignment: (#{ symbol }) => symbol
+  MapDestructuring: (#{ targets }) => `{${compileAndJoin(targets)}}`
+  // FUTURE async and arguments
   Function: (#{ async arguments statements}) => `() => {
     ${compileStatements(statements)}
-  }`,
-  ValueSequence: (#{ values }) => _.map(values compileNode).join(""),
-  Reference: (#{ symbol }) => symbol,
-  GetProperty: (#{ attrib }) => `.${attrib}`,
+  }`
+  ValueSequence: (#{ values }) => compileAndJoin(values "")
+  Reference: (#{ symbol }) => symbol
+  GetProperty: (#{ attrib }) => `.${attrib}`
+  GetPropertyDynamic: (#{ attrib }) => `[${compileNode(attrib)}]`
+  FunctionCall: (#{ arguments }) => `(${compileAndJoin(arguments)})`
 
-  // TODO add "or" and "and" and "not" functions
-  FunctionCall: (#{ arguments }) => `(${_.map(or(arguments []) compileNode).join(", ")})`,
-  String: (#{ value }) => JSON.stringify(value)
-};
+  StringLiteral: (#{ value }) => JSON.stringify(value)
+  StringInterpolation: (#{ parts }) => string("\`"
+    _.map(parts (part) => {
+      if (_.isString(part)) {
+        part
+      }
+      else {
+        string("${" compileNode(part) "}")
+      }
+    }).join("")
+  "\`")
+
+  MapLiteral: (#{ properties }) => `{ ${compileAndJoin(properties)} }`
+  Property: (#{ key value }) => `${key}: ${compileNode(value)}`
+
+  Def: (#{ symbol }) => `let ${symbol}`
+
+  TryCatch: (#{ tryBlock errorSymbol catchBlock finallyBlock }) => `(() => {
+      try ${compileBlockStatements(tryBlock)}
+      catch(${errorSymbol}) ${compileBlockStatements(catchBlock)}
+      ${
+        if(finallyBlock) {
+          `finally ${compileBlockStatements(finallyBlock)}`
+        }
+        else { "" }
+      }
+    })()`
+
+  IfList: (#{ items }) => `(() => {${
+      _.map(items compileNode).join("")
+    }
+      return null;
+    })()`
+
+  If: (#{ cond block }) => `if (${compileNode(cond)}) ${
+    compileBlockStatements(block)}`
+
+  ElseIf: (#{ cond block }) => `else if (${compileNode(cond)}) ${
+    compileBlockStatements(block)}`
+
+  Else: (#{ block }) => `else ${compileBlockStatements(block)}`
+}
 
 
-compileNode = (node) => (
+compileNode = (node) => {
   compiler = typeToConverter[node.type]
 
-  if(compiler) {
-    // TODO try catch
+  if (compiler) {
     try {
-      // Implicit return
       compiler(node)
     }
     catch(error) {
       error.path.unshift(node.type)
-      // TODO throw
       throw(error)
     }
   }
-  else {
-    // TODO new
-    error = new(Error(`Unknown node type ${node.type}`))
-    error.path = [node.type]
-    throw(error)
-  }
-);
+  error = new(Error(`Unknown node type ${node.type}`))
+  // TODO assoc or set
+  error.path = [node.type]
+  throw(error)
+}
 
 compile = (program) => {
+  def compiledJs
   try {
-    // Implicit return
-    compileNode(parser.parse(program))
+    compiledJs = compileNode(parser.parse(program))
   }
   catch (error) {
     console.log(error)
     console.log("Path: " error.path)
+    // TODO add this to macros in standard library
+    throw(error)
+  }
+  try {
+    esformatter.format(compiledJs)
+  }
+  catch (error) {
+    console.error("Invalid JavaScript generated:" compiledJs)
     throw(error)
   }
 }
 
-module.exports = #{
-  // TODO maps with key the same as a value
+module.exports = {
   compile
 }
-
-// exampleCode = `
-// a = () => {
-//   console.log("hello world!")
-// }
-//
-// a()
-// `;
-//
-// parseTree = parser.parse(exampleCode)
-//
-// const code = compile(parseTree);
-// console.log(code);
-//
-// eval(code)
