@@ -2,7 +2,7 @@
 const _ = require('lodash');
 const chai = require('chai');
 const expect = chai.expect;
-const parser = require('../dist/willet-parser');
+const parser = require('../parser');
 const examples = require('./examples');
 
 const assertSingleStatement = (input, expectedStmt) => {

@@ -1,6 +1,6 @@
 // TODO should get rid of this dependency. (Will do this when rewriting into Willet)
 const _ = require('lodash');
-const parser = require('./dist/willet-parser');
+const parser = require('./parser');
 const esformatter = require('esformatter');
 
 let compileNode;
@@ -59,6 +59,7 @@ const typeToConverter = {
 
   MapLiteral: ({ properties }) => `{ ${compileAndJoin(properties)} }`,
   Property: ({ key, value }) => `${key}: ${compileNode(value)}`,
+  ArrayLiteral: ({ values }) => `[ ${compileAndJoin(values)} ]`,
 
   Def: ({ symbol }) => `let ${symbol}`,
 

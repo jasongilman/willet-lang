@@ -36,6 +36,8 @@ const def = (symbol) => ({ type: "Def", symbol });
 
 const map = (...properties) => ({ type: "MapLiteral", properties });
 
+const array = (...values) => ({ type: "ArrayLiteral", values });
+
 const property = (key, value) => ({ type: "Property", key, value });
 
 const reference = (symbol) => ({ type: "Reference", symbol });
@@ -163,6 +165,33 @@ const mapExamples = makeExamples(
       property('c', reference('d'))
     )),
     '(a = { a: { b: "foo" }, c: d })',
+  ]
+);
+
+const arrayExamples = makeExamples(
+  [
+    '[]',
+    array(),
+    '[]'
+  ],
+  [
+    '[null]',
+    array(Null),
+    '[ null ]'
+  ],
+  [
+    'a = [null "foo" ]',
+    assignment('a', array(
+      Null,
+      string('foo')
+    )),
+    '(a = [ null, "foo" ])'
+  ],
+  [
+    'Array within a array',
+    'a = [["foo"]d]',
+    assignment('a', array(array(string('foo')), reference('d'))),
+    '(a = [["foo"], d])',
   ]
 );
 
@@ -562,6 +591,7 @@ module.exports = {
   functionDeclarationExamples,
   assignmentExamples,
   mapExamples,
+  arrayExamples,
   miscExamples,
   ifExamples,
   valueSequenceExamples,
