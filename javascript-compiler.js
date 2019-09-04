@@ -14,6 +14,9 @@ const compileStatements = (statements) => _(statements)
 const compileAndJoin = (nodes, join = ', ') => _.map(nodes, compileNode).join(join);
 
 const compileBlockStatements = (statements) => {
+  if (_.isEmpty(statements)) {
+    return '{}';
+  }
   const front = _.slice(statements, 0, statements.length - 1);
   const tail = _.last(statements);
   return `{${
@@ -32,9 +35,10 @@ const typeToConverter = {
 
   SymbolAssignment: ({ symbol }) => symbol,
   MapDestructuring: ({ targets }) => `{${compileAndJoin(targets)}}`,
-  // TODO async and arguments
-  Function: ({ async, arguments, statements}) => `() => {
-    ${compileStatements(statements)}
+  ArrayDestructuring: ({ targets }) => `[${compileAndJoin(targets)}]`,
+  // TODO async
+  Function: ({ async, arguments, statements}) => `(${compileAndJoin(arguments)}) => ${
+    compileBlockStatements(statements)
   }`,
   ValueSequence: ({ values }) => compileAndJoin(values, ''),
   Reference: ({ symbol }) => symbol,

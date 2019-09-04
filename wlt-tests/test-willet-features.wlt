@@ -1,1 +1,0 @@
-wltTest = require('../test')

@@ -1,11 +1,11 @@
 const _ = require('lodash');
 
 
-const func = () => ({
+const func = (arguments = null, statements = []) => ({
   type: 'Function',
   async: false,
-  arguments: null,
-  statements: []
+  arguments,
+  statements
 });
 
 
@@ -31,6 +31,7 @@ const elseIfNode = (cond, block) => ({ type: "ElseIf", cond, block });
 const elseNode = (block) => ({ type: "Else", block });
 
 const mapDestructuring = (...targets) => ({ type: 'MapDestructuring', targets });
+const arrayDestructuring = (...targets) => ({ type: 'ArrayDestructuring', targets });
 
 const def = (symbol, value) => value ? { type: "Def", symbol, value } : { type: "Def", symbol };
 
@@ -129,6 +130,15 @@ const assignmentExamples = makeExamples(
       map(property('a', string("hello")))
     ),
     '({a} = { a: "hello" })',
+  ],
+  [
+    'Array destructuring',
+    '[a b] = foo()',
+    assignment(
+      arrayDestructuring(symbolAssignment('a'), symbolAssignment('b')),
+      valueSeq(reference('foo'), functionCall())
+    ),
+    '([a, b] = foo())',
   ],
   [
     'Comment after assignment',
@@ -573,6 +583,13 @@ const miscExamples = makeExamples(
     'def a = 7',
     def('a', number(7)),
     'let a = 7'
+  ],
+  [
+    'def a = (b c) => { }',
+    def('a', func([symbolAssignment('b'), symbolAssignment('c')])),
+    `let a = (b, c) => {
+
+    }`
   ],
   [
     'string interpolation',
