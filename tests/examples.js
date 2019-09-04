@@ -32,7 +32,7 @@ const elseNode = (block) => ({ type: "Else", block });
 
 const mapDestructuring = (...targets) => ({ type: 'MapDestructuring', targets });
 
-const def = (symbol) => ({ type: "Def", symbol });
+const def = (symbol, value) => value ? { type: "Def", symbol, value } : { type: "Def", symbol };
 
 const map = (...properties) => ({ type: "MapLiteral", properties });
 
@@ -568,6 +568,11 @@ const miscExamples = makeExamples(
     'def a',
     def('a'),
     'let a'
+  ],
+  [
+    'def a = 7',
+    def('a', number(7)),
+    'let a = 7'
   ],
   [
     'string interpolation',

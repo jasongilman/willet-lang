@@ -61,7 +61,8 @@ const typeToConverter = {
   Property: ({ key, value }) => `${key}: ${compileNode(value)}`,
   ArrayLiteral: ({ values }) => `[ ${compileAndJoin(values)} ]`,
 
-  Def: ({ symbol }) => `let ${symbol}`,
+  Def: ({ symbol, value}) =>
+    value ? `let ${symbol} = ${compileNode(value)}` : `let ${symbol}`,
 
   TryCatch: ({
     tryBlock,
