@@ -1,6 +1,8 @@
 # Willet
 The Willet Programming Language
 
+A work in progress.
+
 
 ## Ideas
 
@@ -68,7 +70,7 @@ finally({
 
 ## Setting Jupyter Notebook and Hydrogen
 
-Hacky initial description that allows seeing changes to willet lang immediately after making them
+Setting up [jp-willet](https://github.com/jasongilman/jp-willet).
 
 ```Bash
 # Install willet lang globally
