@@ -31,7 +31,7 @@
   },
   "dependencies": {
     "commander": "^3.0.1",
-    "esformatter": "^0.10.0",
+    "js-beautify": "^1.10.2",
     "lodash": "^4.17.15"
   }
 }

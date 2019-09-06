@@ -1,4 +1,3 @@
-const _ = require('lodash');
 const parser = require('./parser');
 const macroExpander = require('./lib/macro-expander');
 const jsCompiler = require('./lib/javascript-compiler');
@@ -12,8 +11,9 @@ const compile = (source) => {
 module.exports = {
   compile
 };
-//
-//
+
+
+// const _ = require('lodash');
 // code = `
 // word = "Jason"
 //
@@ -37,38 +37,15 @@ module.exports = {
 //   console.log("hello")
 // )`;
 //
-// code = 'word = "jason"'
-//
 // parsed = parser.parse(code)
 // console.log(JSON.stringify(parsed, null, 2));
 //
 // ast = macroExpander.expandMacros(_.cloneDeep(parsed));
 //
-// _.isEqual(parsed, ast)
-//
 // console.log(JSON.stringify(ast, null, 2));
 //
 //
 // console.log(jsCompiler.compile(ast));
-//
-//
-// jsCompiler.compile({
-//   "type": "MapLiteral",
-//   "properties": [
-//     {
-//       "type": "Property",
-//       "key": "type",
-//       "value": "StringLiteral"
-//     },
-//     {
-//       "type": "Property",
-//       "key": "value",
-//       "value": "hello"
-//     }
-//   ]
-// })
-//
 // s = compile(code)
 //
 //
-// compile('quote("hello")')

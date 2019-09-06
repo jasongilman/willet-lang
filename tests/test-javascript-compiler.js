@@ -4,13 +4,13 @@ const chai = require('chai');
 const expect = chai.expect;
 const compiler = require('../compiler');
 const examples = require('./examples');
-const esformatter = require('esformatter');
+const beautify = require('js-beautify').js;
 
 const assertSingleStatement = (input, expectedCode) => {
   const result = compiler.compile(input);
   let expected;
   try {
-    expected = esformatter.format(`${expectedCode};`);
+    expected = beautify(`${expectedCode};`);
   }
   catch (error) {
     console.error('Invalid Example JavaScript:', expectedCode);
