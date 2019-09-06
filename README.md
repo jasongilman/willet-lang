@@ -6,6 +6,8 @@ A work in progress.
 
 ## Ideas
 
+No forgotten promises: Check that any calls to functions that return a promise are awaited
+
 types:
 
 ```

@@ -3,7 +3,9 @@
   "version": "0.0.1",
   "description": "Willet Programming Language",
   "scripts": {
-    "test": "node_modules/.bin/mocha --timeout 30000 -b tests/",
+    "lint": "node_modules/.bin/eslint .",
+    "mocha": "node_modules/.bin/mocha --timeout 30000 -b tests/",
+    "test": "npm run lint && npm run mocha",
     "build": "bin/build.sh"
   },
   "repository": {
@@ -19,7 +21,13 @@
   "devDependencies": {
     "chai": "^4.2.0",
     "mocha": "^6.2.0",
-    "pegjs": "^0.10.0"
+    "pegjs": "^0.10.0",
+    "eslint": "^4.19.1",
+    "eslint-config-airbnb": "^16.1.0",
+    "eslint-plugin-import": "^2.13.0",
+    "eslint-plugin-jsdoc": "^3.7.1",
+    "eslint-plugin-jsx-a11y": "^6.0.3",
+    "eslint-plugin-react": "^7.10.0"
   },
   "dependencies": {
     "commander": "^3.0.1",

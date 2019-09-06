@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 const _ = require('lodash');
-const compiler = require('../javascript-compiler');
+const compiler = require('../compiler');
 const fs = require('fs');
 const path = require('path');
 const program = require('commander');
@@ -15,7 +15,7 @@ const readFilesFromDir = (dir) =>
   _(fs.readdirSync(dir))
     .map((f) => path.join(dir, f))
     .flatMap((f) => {
-      if (fs.lstatSync(f).isDirectory()){
+      if (fs.lstatSync(f).isDirectory()) {
         return readFilesFromDir(f);
       }
       return [f];
@@ -64,7 +64,7 @@ else {
   filesToCompile = [src];
 }
 
-for (var i = 0; i < filesToCompile.length; i++) {
+for (let i = 0; i < filesToCompile.length; i += 1) {
   const file = filesToCompile[i];
   const targetFile = path.join(target, path.relative(src, file).replace(/\.wlt$/, '.js'));
   console.log(`Compiling ${file} to ${targetFile}`);

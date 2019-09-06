@@ -1,89 +1,6 @@
+/* eslint-disable no-template-curly-in-string */
 const _ = require('lodash');
-
-
-const func = (arguments = null, statements = []) => ({
-  type: 'Function',
-  async: false,
-  arguments,
-  statements
-});
-
-
-const symbolAssignment = (symbol) => ({ type: 'SymbolAssignment', symbol });
-
-const assignment = (target, value) => {
-  if (_.isString(target)) {
-    target = symbolAssignment(target)
-  }
-  return {
-    type: 'Assignment', target, value
-  };
-};
-
-const Null = { type: "Null" };
-
-const ifList = (...items) => ({ type: "IfList", items });
-
-const ifNode = (cond, block) => ({ type: "If", cond, block });
-
-const elseIfNode = (cond, block) => ({ type: "ElseIf", cond, block });
-
-const elseNode = (block) => ({ type: "Else", block });
-
-const mapDestructuring = (...targets) => ({ type: 'MapDestructuring', targets });
-const arrayDestructuring = (...targets) => ({ type: 'ArrayDestructuring', targets });
-
-const def = (symbol, value) => value ? { type: "Def", symbol, value } : { type: "Def", symbol };
-
-const map = (...properties) => ({ type: "MapLiteral", properties });
-
-const array = (...values) => ({ type: "ArrayLiteral", values });
-
-const property = (key, value) => ({ type: "Property", key, value });
-
-const reference = (symbol) => ({ type: "Reference", symbol });
-
-const string = (value) => ({ type: 'StringLiteral', value });
-
-const number = (value) => ({ type: 'NumberLiteral', value });
-
-const stringInterpolation = (...parts) => ({ type: 'StringInterpolation', parts });
-
-const tryCatch = (tryBlock, errorSymbol, catchBlock, finallyBlock = null) => ({
-  type: 'TryCatch',
-  tryBlock,
-  errorSymbol,
-  catchBlock,
-  finallyBlock
-});
-
-const functionCall = (...arguments) => ({ type: 'FunctionCall', arguments });
-
-const functionCallWithBody = (arguments, bodyStmts) => {
-  const fn = functionCall(...arguments);
-  fn.block = bodyStmts;
-  return fn;
-};
-
-const valueSeq = (...values) => ({ type: 'ValueSequence', values });
-
-const getProperty = (attrib) => ({ type: "GetProperty", attrib });
-
-const getPropertyDynamic = (attrib) => ({ type: "GetPropertyDynamic", attrib });
-
-const infix = (left, operator, right) => ({ type: 'InfixExpression', operator, left, right});
-const plus = (left, right) => infix(left, '+', right);
-const minus = (left, right) => infix(left, '-', right);
-const multiply = (left, right) => infix(left, '*', right);
-const divide = (left, right) => infix(left, '/', right);
-const modulus = (left, right) => infix(left, '%', right);
-
-const lessThan = (left, right) => infix(left, '<', right);
-const greaterThan = (left, right) => infix(left, '>', right);
-const lessThanOrEqual = (left, right) => infix(left, '<=', right);
-const greaterThanOrEqual = (left, right) => infix(left, '>=', right);
-const equal = (left, right) => infix(left, '==', right);
-const notEqual = (left, right) => infix(left, '!=', right);
+const dsl = require('../lib/ast-helper').dsl;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Examples are of format
@@ -93,17 +10,20 @@ const notEqual = (left, right) => infix(left, '!=', right);
 // expected Javascript
 
 const makeExample = (parts) => {
-  const name = parts[0]
+  const name = parts[0];
   let willet;
   let ast;
   let js;
+  let _ignore;
   if (parts.length === 3) {
     [willet, ast, js] = parts;
   }
   else {
     [_ignore, willet, ast, js] = parts;
   }
-  return { name, willet, ast, js };
+  return {
+    name, willet, ast, js
+  };
 };
 
 const makeExamples = (...examples) => _.map(examples, makeExample);
@@ -111,128 +31,128 @@ const makeExamples = (...examples) => _.map(examples, makeExample);
 const functionDeclarationExamples = makeExamples(
   [
     '() => {}',
-    func(),
-    '() => {\n\n}'
+    dsl.func(),
+    '() => {\n}'
   ]
 );
 
 const assignmentExamples = makeExamples(
   [
     'a = () => {}',
-    assignment('a', func()),
-    '(a = () => {\n\n})'
+    dsl.assignment('a', dsl.func()),
+    '(a = () => {\n})'
   ],
   [
     'Map destructuring',
     '#{a} = #{a: "hello"}',
-    assignment(
-      mapDestructuring(symbolAssignment('a')),
-      map(property('a', string("hello")))
+    dsl.assignment(
+      dsl.mapDestructuring(dsl.symbolAssignment('a')),
+      dsl.map(dsl.property('a', dsl.string('hello')))
     ),
-    '({a} = { a: "hello" })',
+    '({a} = ({ a: "hello" }))'
   ],
   [
     'Array destructuring',
     '[a b] = foo()',
-    assignment(
-      arrayDestructuring(symbolAssignment('a'), symbolAssignment('b')),
-      valueSeq(reference('foo'), functionCall())
+    dsl.assignment(
+      dsl.arrayDestructuring(dsl.symbolAssignment('a'), dsl.symbolAssignment('b')),
+      dsl.valueSeq(dsl.reference('foo'), dsl.functionCall())
     ),
-    '([a, b] = foo())',
+    '([a, b] = foo())'
   ],
   [
     'Comment after assignment',
     'a = () => {} // ignored',
-    assignment('a', func()),
-    '(a = () => {\n\n})',
+    dsl.assignment('a', dsl.func()),
+    '(a = () => {\n})'
   ]
 );
 
 const mapExamples = makeExamples(
   [
     '#{}',
-    map(),
-    '{}'
+    dsl.map(),
+    '({})'
   ],
   [
     '#{a:null}',
-    map(property('a', Null)),
-    '{ a: null }'
+    dsl.map(dsl.property('a', dsl.Null)),
+    '({ a: null })'
   ],
   [
     'a = #{ a: null b: "foo" }',
-    assignment('a', map(
-      property('a', Null),
-      property('b', string('foo'))
+    dsl.assignment('a', dsl.map(
+      dsl.property('a', dsl.Null),
+      dsl.property('b', dsl.string('foo'))
     )),
-    '(a = { a: null, b: "foo" })'
+    '(a = ({ a: null, b: "foo" }))'
   ],
   [
     'Map within a map',
     'a = #{ a: #{ b: "foo" } c: d }',
-    assignment('a', map(
-      property('a', map(property('b', string('foo')))),
-      property('c', reference('d'))
+    dsl.assignment('a', dsl.map(
+      dsl.property('a', dsl.map(dsl.property('b', dsl.string('foo')))),
+      dsl.property('c', dsl.reference('d'))
     )),
-    '(a = { a: { b: "foo" }, c: d })',
+    '(a = ({ a: ({ b: "foo" }), c: d }))'
   ]
 );
 
 const arrayExamples = makeExamples(
   [
     '[]',
-    array(),
+    dsl.array(),
     '[]'
   ],
   [
     '[null]',
-    array(Null),
+    dsl.array(dsl.Null),
     '[ null ]'
   ],
   [
     'a = [null "foo" ]',
-    assignment('a', array(
-      Null,
-      string('foo')
+    dsl.assignment('a', dsl.array(
+      dsl.Null,
+      dsl.string('foo')
     )),
     '(a = [ null, "foo" ])'
   ],
   [
     'Array within a array',
     'a = [["foo"]d]',
-    assignment('a', array(array(string('foo')), reference('d'))),
-    '(a = [["foo"], d])',
+    dsl.assignment('a', dsl.array(dsl.array(dsl.string('foo')), dsl.reference('d'))),
+    '(a = [["foo"], d])'
   ]
 );
 
 const valueSequenceExamples = makeExamples(
   [
     'a',
-    reference('a'),
+    dsl.reference('a'),
     'a'
   ],
   [
     'a.b',
-    valueSeq(
-      reference('a'),
-      getProperty('b')
+    dsl.valueSeq(
+      dsl.reference('a'),
+      dsl.getProperty('b')
     ),
     'a.b'
   ],
   [
     'a[b]',
-    valueSeq(
-      reference('a'),
-      getPropertyDynamic(reference('b'))
+    dsl.valueSeq(
+      dsl.reference('a'),
+      dsl.getPropertyDynamic(dsl.reference('b'))
     ),
     'a[b]'
   ],
   [
     'a(b.c)[d]',
-    valueSeq(
-      reference('a'),
-      functionCall(valueSeq(reference('b'), getProperty('c'))),
-      getPropertyDynamic(reference('d'))
+    dsl.valueSeq(
+      dsl.reference('a'),
+      dsl.functionCall(dsl.valueSeq(dsl.reference('b'), dsl.getProperty('c'))),
+      dsl.getPropertyDynamic(dsl.reference('d'))
     ),
     'a(b.c)[d]'
   ],
@@ -242,20 +162,20 @@ const functionCallExamples = makeExamples(
   [
     'Basic',
     'a(b)',
-    valueSeq(
-      reference('a'),
-      functionCall(reference('b'))
+    dsl.valueSeq(
+      dsl.reference('a'),
+      dsl.functionCall(dsl.reference('b'))
     ),
     'a(b)'
   ],
   [
     'Multiple arguments',
     'a(b "foo")',
-    valueSeq(
-      reference('a'),
-      functionCall(
-        reference('b'),
-        string("foo")
+    dsl.valueSeq(
+      dsl.reference('a'),
+      dsl.functionCall(
+        dsl.reference('b'),
+        dsl.string('foo')
       )
     ),
     'a(b, "foo")'
@@ -265,11 +185,11 @@ const functionCallExamples = makeExamples(
   [
     'With body',
     'foo(b) { log("hello") }',
-    valueSeq(
-      reference('foo'),
-      functionCallWithBody(
-        [reference('b')],
-        [valueSeq(reference('log'), functionCall(string('hello')))]
+    dsl.valueSeq(
+      dsl.reference('foo'),
+      dsl.functionCallWithBody(
+        [dsl.reference('b')],
+        [dsl.valueSeq(dsl.reference('log'), dsl.functionCall(dsl.string('hello')))]
       )
     ),
     // Don't attempt to test javascript generation. We'll add macro stuff later
@@ -286,10 +206,10 @@ const tryCatchExamples = makeExamples(
       catch (err) {
         err
       }`,
-    tryCatch(
-      [valueSeq(reference('f'), functionCall())],
+    dsl.tryCatch(
+      [dsl.valueSeq(dsl.reference('f'), dsl.functionCall())],
       'err',
-      [reference('err')]
+      [dsl.reference('err')]
     ),
     `(() => {
       try {
@@ -312,11 +232,11 @@ const tryCatchExamples = makeExamples(
       finally {
         foo
       }`,
-    tryCatch(
-      [valueSeq(reference('f'), functionCall())],
+    dsl.tryCatch(
+      [dsl.valueSeq(dsl.reference('f'), dsl.functionCall())],
       'err',
-      [reference('err')],
-      [reference('foo')]
+      [dsl.reference('err')],
+      [dsl.reference('foo')]
     ),
     `(() => {
       try {
@@ -336,11 +256,11 @@ const ifExamples = makeExamples(
   [
     'if',
     'if("true") { "a" }',
-    ifList(
-      ifNode(
-        string("true"),
+    dsl.ifList(
+      dsl.ifNode(
+        dsl.string('true'),
         [
-          string("a")
+          dsl.string('a')
         ]
       )
     ),
@@ -354,13 +274,13 @@ const ifExamples = makeExamples(
   [
     'if multi-statement',
     'if("true") { "a" "b" "c"}',
-    ifList(
-      ifNode(
-        string("true"),
+    dsl.ifList(
+      dsl.ifNode(
+        dsl.string('true'),
         [
-          string("a"),
-          string("b"),
-          string("c"),
+          dsl.string('a'),
+          dsl.string('b'),
+          dsl.string('c')
         ]
       )
     ),
@@ -376,9 +296,9 @@ const ifExamples = makeExamples(
   [
     'if else',
     'if("true") { "a" } else { "b" }',
-    ifList(
-      ifNode(string("true"), [string("a")]),
-      elseNode([string("b")])
+    dsl.ifList(
+      dsl.ifNode(dsl.string('true'), [dsl.string('a')]),
+      dsl.elseNode([dsl.string('b')])
     ),
     `(() => {
       if("true") {
@@ -393,10 +313,10 @@ const ifExamples = makeExamples(
   [
     'if else-if else',
     'if("true") { "a" } else if("false") { "c" } else { "b" }',
-    ifList(
-      ifNode(string("true"), [string("a")]),
-      elseIfNode(string("false"), [string("c")]),
-      elseNode([string("b")])
+    dsl.ifList(
+      dsl.ifNode(dsl.string('true'), [dsl.string('a')]),
+      dsl.elseIfNode(dsl.string('false'), [dsl.string('c')]),
+      dsl.elseNode([dsl.string('b')])
     ),
     `(() => {
       if("true") {
@@ -415,160 +335,160 @@ const ifExamples = makeExamples(
 
 const operatorExamples = makeExamples(
   [
-    "1+2",
-    plus(number(1), number(2)),
-    "(1 + 2)"
+    '1+2',
+    dsl.plus(dsl.number(1), dsl.number(2)),
+    '(1 + 2)'
   ],
   [
-    "1 + 2",
-    plus(number(1), number(2)),
-    "(1 + 2)"
+    '1 + 2',
+    dsl.plus(dsl.number(1), dsl.number(2)),
+    '(1 + 2)'
   ],
   [
-    "1 - 2",
-    minus(number(1), number(2)),
-    "(1 - 2)"
+    '1 - 2',
+    dsl.minus(dsl.number(1), dsl.number(2)),
+    '(1 - 2)'
   ],
   [
-    "1 * 2",
-    multiply(number(1), number(2)),
-    "(1 * 2)"
+    '1 * 2',
+    dsl.multiply(dsl.number(1), dsl.number(2)),
+    '(1 * 2)'
   ],
   [
-    "1 / 2",
-    divide(number(1), number(2)),
-    "(1 / 2)"
+    '1 / 2',
+    dsl.divide(dsl.number(1), dsl.number(2)),
+    '(1 / 2)'
   ],
   [
-    "1 % 2",
-    modulus(number(1), number(2)),
-    "(1 % 2)"
+    '1 % 2',
+    dsl.modulus(dsl.number(1), dsl.number(2)),
+    '(1 % 2)'
   ],
 
   // Combining
   [
-    "1 + 2 * 3",
-    plus(number(1), multiply(number(2), number(3))),
-    "(1 + (2 * 3))"
+    '1 + 2 * 3',
+    dsl.plus(dsl.number(1), dsl.multiply(dsl.number(2), dsl.number(3))),
+    '(1 + (2 * 3))'
   ],
   [
-    "1 * 2 + 3",
-    plus(multiply(number(1), number(2)), number(3) ),
-    "((1 * 2) + 3)"
+    '1 * 2 + 3',
+    dsl.plus(dsl.multiply(dsl.number(1), dsl.number(2)), dsl.number(3)),
+    '((1 * 2) + 3)'
   ],
   // parentheses
   [
-    "1 * (2 + 3)",
-    multiply(number(1), plus(number(2), number(3))),
-    "(1 * (2 + 3))"
+    '1 * (2 + 3)',
+    dsl.multiply(dsl.number(1), dsl.plus(dsl.number(2), dsl.number(3))),
+    '(1 * (2 + 3))'
   ],
   [
-    "(1 * (2 + 3))",
-    multiply(number(1), plus(number(2), number(3))),
-    "(1 * (2 + 3))"
+    '(1 * (2 + 3))',
+    dsl.multiply(dsl.number(1), dsl.plus(dsl.number(2), dsl.number(3))),
+    '(1 * (2 + 3))'
   ],
   [
-    "(1 * 2) + 3",
-    plus(multiply(number(1), number(2)), number(3) ),
-    "((1 * 2) + 3)"
+    '(1 * 2) + 3',
+    dsl.plus(dsl.multiply(dsl.number(1), dsl.number(2)), dsl.number(3)),
+    '((1 * 2) + 3)'
   ],
 
   // Comparison operators
   [
-    "1<2",
-    lessThan(number(1), number(2)),
-    "(1 < 2)"
+    '1<2',
+    dsl.lessThan(dsl.number(1), dsl.number(2)),
+    '(1 < 2)'
   ],
   [
-    "1 < 2",
-    lessThan(number(1), number(2)),
-    "(1 < 2)"
+    '1 < 2',
+    dsl.lessThan(dsl.number(1), dsl.number(2)),
+    '(1 < 2)'
   ],
   [
-    "1 > 2",
-    greaterThan(number(1), number(2)),
-    "(1 > 2)"
+    '1 > 2',
+    dsl.greaterThan(dsl.number(1), dsl.number(2)),
+    '(1 > 2)'
   ],
   [
-    "1 <= 2",
-    lessThanOrEqual(number(1), number(2)),
-    "(1 <= 2)"
+    '1 <= 2',
+    dsl.lessThanOrEqual(dsl.number(1), dsl.number(2)),
+    '(1 <= 2)'
   ],
   [
-    "1 >= 2",
-    greaterThanOrEqual(number(1), number(2)),
-    "(1 >= 2)"
+    '1 >= 2',
+    dsl.greaterThanOrEqual(dsl.number(1), dsl.number(2)),
+    '(1 >= 2)'
   ],
   [
-    "1 == 2",
-    equal(number(1), number(2)),
-    "(1 == 2)"
+    '1 == 2',
+    dsl.equal(dsl.number(1), dsl.number(2)),
+    '(1 == 2)'
   ],
   [
-    "1 != 2",
-    notEqual(number(1), number(2)),
-    "(1 != 2)"
+    '1 != 2',
+    dsl.notEqual(dsl.number(1), dsl.number(2)),
+    '(1 != 2)'
   ],
 
   [
-    "Precedence with comparison and math",
-    "1 + 4 < 2 + 3",
-    lessThan(plus(number(1), number(4)), plus(number(2), number(3))),
-    "((1 + 4) < (2 + 3))"
+    'Precedence with comparison and math',
+    '1 + 4 < 2 + 3',
+    dsl.lessThan(dsl.plus(dsl.number(1), dsl.number(4)), dsl.plus(dsl.number(2), dsl.number(3))),
+    '((1 + 4) < (2 + 3))'
   ],
 );
 
 const simpleLiteralExamples = makeExamples(
   [
     '"a string"',
-    string('a string'),
+    dsl.string('a string'),
     '"a string"'
   ],
   [
     'null',
-    Null,
+    dsl.Null,
     'null'
   ],
   // Integers
   [
     '5',
-    number(5),
+    dsl.number(5),
     '5'
   ],
   [
     '12345',
-    number(12345),
+    dsl.number(12345),
     '12345'
   ],
   [
     '-5',
-    number(-5),
+    dsl.number(-5),
     '-5'
   ],
   [
     '+5',
-    number(5),
+    dsl.number(5),
     '5'
   ],
   // Floats
   [
     '5.0',
-    number(5),
+    dsl.number(5),
     '5'
   ],
   [
     '5.123',
-    number(5.123),
+    dsl.number(5.123),
     '5.123'
   ],
   [
     '-5.1',
-    number(-5.1),
+    dsl.number(-5.1),
     '-5.1'
   ],
   [
     '+5.1',
-    number(5.1),
+    dsl.number(5.1),
     '5.1'
   ],
 );
@@ -576,36 +496,55 @@ const simpleLiteralExamples = makeExamples(
 const miscExamples = makeExamples(
   [
     'def a',
-    def('a'),
+    dsl.def('a'),
     'let a'
   ],
   [
     'def a = 7',
-    def('a', number(7)),
+    dsl.def('a', dsl.number(7)),
     'let a = 7'
   ],
   [
     'def a = (b c) => { }',
-    def('a', func([symbolAssignment('b'), symbolAssignment('c')])),
-    `let a = (b, c) => {
-
-    }`
+    dsl.def('a', dsl.func([dsl.symbolAssignment('b'), dsl.symbolAssignment('c')])),
+    'let a = (b, c) => {\n}'
   ],
   [
     'string interpolation',
-    "`This is ${a} good $${money(b)} \\`not done`",
-    stringInterpolation(
-      "This is ",
-      reference('a'),
-      " good $",
-      valueSeq(
-        reference('money'),
-        functionCall(reference('b'))
+    '`This is ${a} good $${money(b)} \\`not done`',
+    dsl.stringInterpolation(
+      'This is ',
+      dsl.reference('a'),
+      ' good $',
+      dsl.valueSeq(
+        dsl.reference('money'),
+        dsl.functionCall(dsl.reference('b'))
       ),
-      " \\`not done"
+      ' \\`not done'
     ),
-    "`This is ${a} good $${money(b)} \\`not done`",
+    '`This is ${a} good $${money(b)} \\`not done`'
   ]
+);
+
+const quoteExamples = makeExamples(
+  [
+    'quote(null)',
+    dsl.quote(dsl.literal(null)),
+    '({ type: "Null" })'
+  ],
+  [
+    'quote(a)',
+    dsl.quote(dsl.reference('a')),
+    '({ type: "Reference", symbol: "a" })'
+  ],
+  [
+    'quote(a.b)',
+    dsl.quote(dsl.valueSeq(dsl.reference('a'), dsl.getProperty('b'))),
+    `({
+        type: "ValueSequence",
+        values: [({ type: "Reference", symbol: "a" }), ({ type: "GetProperty", attrib: "b" })]
+    })`
+  ],
 );
 
 
@@ -620,5 +559,6 @@ module.exports = {
   functionCallExamples,
   tryCatchExamples,
   simpleLiteralExamples,
-  operatorExamples
-}
+  operatorExamples,
+  quoteExamples
+};
