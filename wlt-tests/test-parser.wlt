@@ -30,11 +30,6 @@ describe("Willet Parser" () => {
 //   }
 // )
 //
-// v = helloer(word)
+// helloer(word)
 //
 // helloer("foo")
-//
-// v
-//
-//
-// console.log(JSON.stringify(myCode null 2))

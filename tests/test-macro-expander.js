@@ -4,6 +4,8 @@ const chai = require('chai');
 const expect = chai.expect;
 const parser = require('../parser');
 const macroExpander = require('../lib/macro-expander');
+const beautify = require('js-beautify').js;
+const compiler = require('../compiler');
 const examples = require('./examples');
 const { dsl } = require('../lib/ast-helper');
 
@@ -12,7 +14,10 @@ describe('expand macros when no macros used', () => {
     describe(exampleSetName, () => {
       for (const { name, ast } of exampleSet) {
         it(`should expand [${name}] without a change`, async () => {
-          const result = macroExpander.expandMacros(_.cloneDeep(ast));
+          const result = macroExpander.expandMacros(
+            macroExpander.createNewScope(),
+            _.cloneDeep(ast)
+          );
           expect(result).to.deep.equal(ast);
         });
       }
@@ -22,7 +27,7 @@ describe('expand macros when no macros used', () => {
 
 
 describe('expand a simple macro', () => {
-  const ast = parser.parse(`
+  const code = `
   word = "Jason"
 
   defmacro helloer = (name) => quote(
@@ -31,7 +36,9 @@ describe('expand a simple macro', () => {
     }
   )
 
-  helloer(word)`);
+  helloer(word)
+  helloer("literal")`;
+
 
   const expected = dsl.program(
     dsl.assignment(dsl.symbolAssignment('word'), dsl.string('Jason')),
@@ -47,12 +54,46 @@ describe('expand a simple macro', () => {
           )
         )
       ])
+    ),
+    dsl.ifList(
+      dsl.ifNode(dsl.boolean(true), [
+        dsl.valueSeq(
+          dsl.reference('console'),
+          dsl.getProperty('log'),
+          dsl.functionCall(
+            dsl.string('hello'),
+            dsl.string('literal')
+          )
+        )
+      ])
     )
   );
 
+  const expectedCode = `
+    (word = "Jason");
+    null;
+    (() => {
+        if (true) {
+            return console.log("hello", word);
+        }
+        return null;
+    })();
+    (() => {
+        if (true) {
+            return console.log("hello", "literal");
+        }
+        return null;
+    })();
+  `;
+
   it('should expand the macro', async () => {
-    const result = macroExpander.expandMacros(ast);
+    const result = macroExpander.expandMacros(macroExpander.createNewScope(), parser.parse(code));
     expect(result).to.deep.equal(expected);
+  });
+
+  it('should generate correct javascript', async () => {
+    const compiled = compiler.compile(code);
+    expect(compiled).to.equal(beautify(expectedCode));
   });
 
   // TODO add other macro tests

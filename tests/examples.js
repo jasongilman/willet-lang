@@ -547,7 +547,6 @@ const quoteExamples = makeExamples(
   ],
 );
 
-
 module.exports = {
   functionDeclarationExamples,
   assignmentExamples,
