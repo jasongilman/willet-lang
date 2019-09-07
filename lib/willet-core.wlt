@@ -1,0 +1,3 @@
+defmacro for = (...args) => {
+
+};

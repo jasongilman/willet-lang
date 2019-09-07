@@ -11,15 +11,15 @@ def assertSingleStatement = (input expectedStmt) => {
 }
 
 describe("Willet Parser" () => {
-  // for([exampleSetName exampleSet] _.toPairs(examples)) {
-  // //   describe(exampleSetName () => {
-  // //     for({ name willet ast } exampleSet) {
-  // //       it(`should parse ${name}` () => {
-  // //         assertSingleStatement(willet ast)
-  // //       })
-  // //     }
-  // //   })
-  // }
+  for([exampleSetName exampleSet] _.toPairs(examples)) {
+  //   describe(exampleSetName () => {
+  //     for({ name willet ast } exampleSet) {
+  //       it(`should parse ${name}` () => {
+  //         assertSingleStatement(willet ast)
+  //       })
+  //     }
+  //   })
+  }
 })
 
 // word = "Jason"

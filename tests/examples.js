@@ -547,6 +547,40 @@ const quoteExamples = makeExamples(
   ],
 );
 
+const spreadExamples = makeExamples(
+  [
+    'Calling a function',
+    'a(foo ...some thing ...more)',
+    dsl.valueSeq(
+      dsl.reference('a'),
+      dsl.functionCall(
+        dsl.reference('foo'),
+        dsl.spread(dsl.reference('some')),
+        dsl.reference('thing'),
+        dsl.spread(dsl.reference('more'))
+      )
+    ),
+    'a(foo, ...some, thing, ...more)'
+  ],
+  [
+    'Array literal',
+    '[foo ...some thing ...more]',
+    dsl.array(
+      dsl.reference('foo'),
+      dsl.spread(dsl.reference('some')),
+      dsl.reference('thing'),
+      dsl.spread(dsl.reference('more'))
+    ),
+    '[foo, ...some, thing, ...more]'
+  ],
+  [
+    'Function declaration',
+    '(foo ...more) => {}',
+    dsl.func([dsl.symbolAssignment('foo'), dsl.restAssignment('more')]),
+    '(foo, ...more) => {}'
+  ],
+);
+
 module.exports = {
   functionDeclarationExamples,
   assignmentExamples,
@@ -559,5 +593,6 @@ module.exports = {
   tryCatchExamples,
   simpleLiteralExamples,
   operatorExamples,
-  quoteExamples
+  quoteExamples,
+  spreadExamples
 };
