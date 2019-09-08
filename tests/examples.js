@@ -496,18 +496,24 @@ const simpleLiteralExamples = makeExamples(
 const miscExamples = makeExamples(
   [
     'def a',
-    dsl.def('a'),
+    dsl.def(dsl.symbolAssignment('a')),
     'let a'
   ],
   [
     'def a = 7',
-    dsl.def('a', dsl.number(7)),
+    dsl.def(dsl.symbolAssignment('a'), dsl.number(7)),
     'let a = 7'
   ],
   [
     'def a = (b c) => { }',
-    dsl.def('a', dsl.func([dsl.symbolAssignment('b'), dsl.symbolAssignment('c')])),
+    dsl.def(dsl.symbolAssignment('a'),
+      dsl.func([dsl.symbolAssignment('b'), dsl.symbolAssignment('c')])),
     'let a = (b, c) => {\n}'
+  ],
+  [
+    'def #{a} = foo',
+    dsl.def(dsl.mapDestructuring(dsl.symbolAssignment('a')), dsl.reference('foo')),
+    'let { a } = foo'
   ],
   [
     'string interpolation',

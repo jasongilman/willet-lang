@@ -14,10 +14,7 @@ describe('expand macros when no macros used', () => {
     describe(exampleSetName, () => {
       for (const { name, ast } of exampleSet) {
         it(`should expand [${name}] without a change`, async () => {
-          const result = macroExpander.expandMacros(
-            macroExpander.createNewScope(),
-            _.cloneDeep(ast)
-          );
+          const result = macroExpander.expandMacros(_.cloneDeep(ast));
           expect(result).to.deep.equal(ast);
         });
       }
@@ -42,7 +39,22 @@ describe('expand a simple macro', () => {
 
   const expected = dsl.program(
     dsl.assignment(dsl.symbolAssignment('word'), dsl.string('Jason')),
-    dsl.Null,
+    dsl.macro('helloer', dsl.func([dsl.symbolAssignment('name')], [
+      dsl.quote(
+        dsl.ifList(
+          dsl.ifNode(dsl.boolean(true), [
+            dsl.valueSeq(
+              dsl.reference('console'),
+              dsl.getProperty('log'),
+              dsl.functionCall(
+                dsl.string('hello'),
+                dsl.unquote(dsl.reference('name'))
+              )
+            )
+          ])
+        )
+      )
+    ])),
     dsl.ifList(
       dsl.ifNode(dsl.boolean(true), [
         dsl.valueSeq(
@@ -71,7 +83,34 @@ describe('expand a simple macro', () => {
 
   const expectedCode = `
     (word = "Jason");
-    null;
+    let helloer = (name) => {
+        return ({
+            type: "IfList",
+            items: [({
+                type: "If",
+                cond: ({
+                    type: "BooleanLiteral",
+                    value: true
+                }),
+                block: [({
+                    type: "ValueSequence",
+                    values: [({
+                        type: "Reference",
+                        symbol: "console"
+                    }), ({
+                        type: "GetProperty",
+                        attrib: "log"
+                    }), ({
+                        type: "FunctionCall",
+                        args: [({
+                            type: "StringLiteral",
+                            value: "hello"
+                        }), name]
+                    })]
+                })]
+            })]
+        });
+    };
     (() => {
         if (true) {
             return console.log("hello", word);
@@ -87,7 +126,7 @@ describe('expand a simple macro', () => {
   `;
 
   it('should expand the macro', async () => {
-    const result = macroExpander.expandMacros(macroExpander.createNewScope(), parser.parse(code));
+    const result = macroExpander.expandMacros(parser.parse(code));
     expect(result).to.deep.equal(expected);
   });
 

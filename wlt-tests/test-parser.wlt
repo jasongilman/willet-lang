@@ -22,14 +22,14 @@ describe("Willet Parser" () => {
   }
 })
 
-// word = "Jason"
-//
-// defmacro helloer = (name) => quote(
-//   if (true) {
-//     console.log("hello" unquote(name))
-//   }
-// )
-//
-// helloer(word)
-//
-// helloer("foo")
+word = "Jason"
+
+defmacro helloer = (name) => quote(
+  if (true) {
+    console.log("hello" unquote(name))
+  }
+)
+
+helloer(word)
+
+helloer("foo")
