@@ -2,12 +2,13 @@
 const _ = require('lodash');
 const chai = require('chai');
 const expect = chai.expect;
-const compiler = require('../compiler');
+const parser = require('../parser');
+const compiler = require('../lib/javascript-compiler');
 const examples = require('./examples');
 const beautify = require('js-beautify').js;
 
 const assertSingleStatement = (input, expectedCode) => {
-  const result = compiler.compile(input);
+  const result = compiler.compile(parser.parse(input));
   let expected;
   try {
     expected = beautify(`${expectedCode};`);
