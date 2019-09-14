@@ -43,6 +43,11 @@ const assignmentExamples = makeExamples(
     '(a = () => {\n})'
   ],
   [
+    'a.b = () => {}',
+    dsl.assignment(dsl.valueSeq(dsl.reference('a'), dsl.getProperty('b')), dsl.func()),
+    '(a.b = () => {\n})'
+  ],
+  [
     'Map destructuring',
     '#{a} = #{a: "hello"}',
     dsl.assignment(
@@ -78,6 +83,11 @@ const mapExamples = makeExamples(
     '#{a:null}',
     dsl.map(dsl.property('a', dsl.Null)),
     '({ a: null })'
+  ],
+  [
+    '#{b}',
+    dsl.map(dsl.property('b', dsl.reference('b'))),
+    '({ b: b })'
   ],
   [
     'a = #{ a: null b: "foo" }',
@@ -497,7 +507,7 @@ const miscExamples = makeExamples(
   [
     'def a',
     dsl.def(dsl.symbolAssignment('a')),
-    'let a'
+    'let a = null'
   ],
   [
     'def a = 7',

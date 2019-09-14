@@ -65,6 +65,10 @@ finally({
 
 ## TODOs
 
+* AST validation
+  - def can not be the last thing in a block (breaks automatic return)
+  - def shadowing is not allowed. It can cause confusing behavior
+    - And it will break our redef behavior which allows redefining a var
 * Add to npm
 * Travis CI
 * Update README

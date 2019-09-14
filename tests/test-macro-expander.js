@@ -241,6 +241,67 @@ describe('expand a macro referencing other vars', () => {
   });
 });
 
+describe('expand a macro referencing other vars through require', () => {
+  const code = `
+  def quoterMod = require("./example_source/quoter")
+  word = "Jason"
+  defmacro helloer = (name) => quoterMod.quoter(name)
+  helloer(word)`;
+
+  const expected = dsl.program(
+    dsl.def(
+      dsl.symbolAssignment('quoterMod'),
+      dsl.valueSeq(dsl.reference('require'),
+        dsl.functionCall(dsl.string('./example_source/quoter')))
+    ),
+    dsl.assignment(dsl.symbolAssignment('word'), dsl.string('Jason')),
+    dsl.macro('helloer', dsl.func([dsl.symbolAssignment('name')], [
+      dsl.valueSeq(
+        dsl.reference('quoterMod'),
+        dsl.getProperty('quoter'),
+        dsl.functionCall(dsl.reference('name'))
+      )
+    ])),
+    dsl.ifList(
+      dsl.ifNode(dsl.boolean(true), [
+        dsl.valueSeq(
+          dsl.reference('console'),
+          dsl.getProperty('log'),
+          dsl.functionCall(
+            dsl.string('hello'),
+            dsl.reference('word')
+          )
+        )
+      ])
+    )
+  );
+
+  const expectedCode = `
+    let quoterMod = require("./example_source/quoter");
+    (word = "Jason");
+    let helloer = (name) => {
+        return quoterMod.quoter(name);
+    };
+    (() => {
+        if (true) {
+            return console.log("hello", word);
+        }
+        return null;
+    })();
+  `;
+
+  it('should expand the macro', async () => {
+    const result = macroExpander.expandMacros(parser.parse(code),
+      macroExpander.createContext(__dirname));
+    expect(result).to.deep.equal(expected);
+  });
+
+  it('should generate correct javascript', async () => {
+    const compiled = compiler.compile(code, compiler.createContext(__dirname));
+    expect(compiled).to.equal(beautify(expectedCode));
+  });
+});
+
 describe('expand a macro referencing other macro', () => {
   const code = `
   defmacro logger = (value) => quote(

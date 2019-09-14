@@ -1,50 +1,48 @@
 def _ = require("lodash")
 def #{ dsl } = require("./ast-helper")
 
+// TODO core methods to add
+// macroexpand
+// to_js (or something like that) - returns compiled javascript of code.
+
 def chunk = _.chunk
+def first = _.first
 def last = _.last
 def slice = _.slice
 def drop = _.drop
+def dropLast = _.dropRight
 def map = _.map
 def isEmpty = _.isEmpty
-
-// TODO make it so that def can be run multiple times in a row without getting the "identifer has
-// already been declared error"
 
 def processPairs = (block [pair ...rest]) => {
   def [ref collection] = pair
   if (isEmpty(rest)) {
     def fn = dsl.func(
-      [dsl.symbolAssignment(ref.symbol)],
+      [dsl.symbolAssignment(ref.symbol)]
       block
     )
-    quote(map(unquote(collection), unquote(fn)))
+    quote(map(unquote(collection) unquote(fn)))
+  }
+  else {
+    def fn = dsl.func(
+      [dsl.symbolAssignment(ref.symbol)]
+      [processPairs(block rest)]
+    )
+    quote(map(unquote(collection) unquote(fn)))
   }
 }
 
+// TODO improve illegal keyword errors so that it will happen _after_ parsing
 
-// b = quote(
-// 5 + jason
-// )
-// s = processPairs(
-//   [b]
-//   [[quote(jason) quote(items)]]
-// )
-
-// console.log(JSON.stringify(s, null, 2))
-
-defmacro for = (...args) => {
+// TODO support when, let etc
+defmacro fore = (...args) => {
   def block = last(args)
-  def pairs = chunk(drop(args), 2)
+  def pairs = chunk(dropLast(args), 2)
   processPairs(block, pairs)
-};
-
-
-for( i [ 1 2 3]) {
-  i
 }
 
-
-macroExports = {
-  for
-};
+// result = fore(
+//   i [ 1 2 3]
+//   t [ 1 2 3 4]) {
+//   [i t]
+// }

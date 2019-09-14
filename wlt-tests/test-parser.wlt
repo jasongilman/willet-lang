@@ -39,7 +39,7 @@ defmacro logger = (value) => quote(
   console.log("This is my value" unquote(value))
 )
 
-defmacro beforeAndAfter = (block) => {
+defmacro beforeAndAfter = (block) => quote(){
   logger("before")
   unquote(block)
   logger("after")
@@ -50,5 +50,6 @@ def x
 beforeAndAfter() {
   x = 5
 }
+x
 
 e
