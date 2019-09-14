@@ -10,4 +10,10 @@ if [ $? != 0 ]; then
   exit 1
 fi
 
+bin/compile.js lib dist
+if [ $? != 0 ]; then
+  printf "Failed to compile willet source"
+  exit 1
+fi
+
 echo "Complete"

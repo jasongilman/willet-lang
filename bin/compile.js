@@ -64,11 +64,19 @@ else {
   filesToCompile = [src];
 }
 
+const generatedHeader = '// Generated from Willet source\n';
+
 for (let i = 0; i < filesToCompile.length; i += 1) {
   const file = filesToCompile[i];
   const targetFile = path.join(target, path.relative(src, file).replace(/\.wlt$/, '.js'));
   console.log(`Compiling ${file} to ${targetFile}`);
   const contents = fs.readFileSync(file).toString();
-  const jsContents = compiler.compile(contents);
-  fs.writeFileSync(targetFile, jsContents);
+  try {
+    const jsContents = compiler.compile(contents);
+    fs.writeFileSync(targetFile, `${generatedHeader}${jsContents}`);
+  }
+  catch (e) {
+    console.log(e);
+    throw e;
+  }
 }

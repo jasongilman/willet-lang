@@ -83,7 +83,8 @@ describe('expand a simple macro', () => {
 
   const expectedCode = `
     (word = "Jason");
-    let helloer = (name) => {
+    let helloer = (() => {
+      const fn = (name) => {
         return ({
             type: "IfList",
             items: [({
@@ -111,6 +112,9 @@ describe('expand a simple macro', () => {
             })]
         });
     };
+    fn._wlt_macro = true;
+    return fn;
+  })();
     (() => {
         if (true) {
             return console.log("hello", word);
@@ -219,9 +223,13 @@ describe('expand a macro referencing other vars', () => {
             })]
         });
     };
-    let helloer = (name) => {
+    let helloer = (() => {
+      const fn = (name) => {
         return quoter(name);
-    };
+      };
+      fn._wlt_macro = true;
+      return fn;
+    })();
     (() => {
         if (true) {
             return console.log("hello", word);
@@ -279,9 +287,13 @@ describe('expand a macro referencing other vars through require', () => {
   const expectedCode = `
     let quoterMod = require("./example_source/quoter");
     (word = "Jason");
-    let helloer = (name) => {
+    let helloer = (() => {
+      const fn = (name) => {
         return quoterMod.quoter(name);
-    };
+      };
+      fn._wlt_macro = true;
+      return fn;
+    })();
     (() => {
         if (true) {
             return console.log("hello", word);
@@ -320,68 +332,98 @@ describe('expand a macro referencing other macro', () => {
   }`;
 
   const expectedCode = `
-    let logger = (value) => {
-          return ({
-              type: "ValueSequence",
-              values: [({
-                  type: "Reference",
-                  symbol: "console"
-              }), ({
-                  type: "GetProperty",
-                  attrib: "log"
-              }), ({
-                  type: "FunctionCall",
-                  args: [({
-                      type: "StringLiteral",
-                      value: "Alert:"
-                  }), value]
-              })]
-          });
-      };
-      let beforeAndAfter = (block) => {
-          return [].concat(...[({
-              type: "ValueSequence",
-              values: [({
-                  type: "Reference",
-                  symbol: "console"
-              }), ({
-                  type: "GetProperty",
-                  attrib: "log"
-              }), ({
-                  type: "FunctionCall",
-                  args: [({
-                      type: "StringLiteral",
-                      value: "Alert:"
-                  }), ({
-                      type: "StringLiteral",
-                      value: "before"
-                  })]
-              })]
-          }), block, ({
-              type: "ValueSequence",
-              values: [({
-                  type: "Reference",
-                  symbol: "console"
-              }), ({
-                  type: "GetProperty",
-                  attrib: "log"
-              }), ({
-                  type: "FunctionCall",
-                  args: [({
-                      type: "StringLiteral",
-                      value: "Alert:"
-                  }), ({
-                      type: "StringLiteral",
-                      value: "after"
-                  })]
-              })]
-          })]);
-      };
+    let logger = (() => {
+      const fn = (value) => {
+            return ({
+                type: "ValueSequence",
+                values: [({
+                    type: "Reference",
+                    symbol: "console"
+                }), ({
+                    type: "GetProperty",
+                    attrib: "log"
+                }), ({
+                    type: "FunctionCall",
+                    args: [({
+                        type: "StringLiteral",
+                        value: "Alert:"
+                    }), value]
+                })]
+            });
+        };
+        fn._wlt_macro = true;
+        return fn;
+      })();
+      let beforeAndAfter = (() => {
+        const fn = (block) => {
+            return [].concat(...[({
+                type: "ValueSequence",
+                values: [({
+                    type: "Reference",
+                    symbol: "console"
+                }), ({
+                    type: "GetProperty",
+                    attrib: "log"
+                }), ({
+                    type: "FunctionCall",
+                    args: [({
+                        type: "StringLiteral",
+                        value: "Alert:"
+                    }), ({
+                        type: "StringLiteral",
+                        value: "before"
+                    })]
+                })]
+            }), block, ({
+                type: "ValueSequence",
+                values: [({
+                    type: "Reference",
+                    symbol: "console"
+                }), ({
+                    type: "GetProperty",
+                    attrib: "log"
+                }), ({
+                    type: "FunctionCall",
+                    args: [({
+                        type: "StringLiteral",
+                        value: "Alert:"
+                    }), ({
+                        type: "StringLiteral",
+                        value: "after"
+                    })]
+                })]
+            })]);
+        };
+        fn._wlt_macro = true;
+        return fn;
+    })();
     let x = 5;
     console.log("Alert:", "before");
     (x = (x + 1));
     console.log("Alert:", "after");
   `;
+
+  it('should generate correct javascript', async () => {
+    const compiled = compiler.compile(code);
+    expect(compiled).to.equal(beautify(expectedCode));
+  });
+});
+
+describe('expand a macro defined in core', () => {
+  const code = `
+  // should not expand
+  map([1 2 3] identity)
+
+  // should expand
+  fore(i [1 2]) {
+    i + 1
+  }`;
+
+  const expectedCode = `
+    map([1, 2, 3], identity);
+    map([1, 2], (i) => {
+      return (i + 1);
+    });`;
 
   it('should generate correct javascript', async () => {
     const compiled = compiler.compile(code);

@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const parser = require('./parser');
 const macroExpander = require('./lib/macro-expander');
 const jsCompiler = require('./lib/javascript-compiler');
@@ -9,70 +10,53 @@ const createContext = (dirname) => ({
   macroContext: macroExpander.createContext(dirname)
 });
 
+// Creates a string that will show a parse error in context
+const formatSourceErrorContext = (source, location) => {
+  const sourceLines = source.split('\n');
+  const errorLineStart = location.start.line;
+  const errorLineEnd = location.end.line;
+  const startLine = Math.max(0, errorLineStart - 4);
+  const endLine = Math.min(sourceLines.length - 1, errorLineEnd + 3);
+
+  return _.map(sourceLines.slice(startLine, endLine), (line, index) => {
+    const lineNum = index + startLine + 1;
+    // Use a marker to show which line has the error
+    const marker = lineNum >= errorLineStart && lineNum <= errorLineEnd ? '>' : ' ';
+
+    return `${marker} ${lineNum.toString().padStart(4)}: ${line}`;
+  }).join('\n');
+};
+
 const compile = (source, context = createContext()) => {
-  // let start = Date.now();
+  try {
+    // let start = Date.now();
 
-  let ast = parser.parse(source, { cache: true });
-  // console.log('Parsed time', Date.now() - start);
+    let ast = parser.parse(source, { cache: true });
+    // console.log('Parsed time', Date.now() - start);
 
-  // start = Date.now();
-  ast = macroExpander.expandMacros(ast, context.macroContext);
-  // console.log('Expand Macro time', Date.now() - start);
+    // start = Date.now();
+    ast = macroExpander.expandMacros(ast, context.macroContext);
+    // console.log('Expand Macro time', Date.now() - start);
 
-  // start = Date.now();
-  const jsCode = jsCompiler.compile(ast);
-  // console.log('Compile time', Date.now() - start);
+    // start = Date.now();
+    const jsCode = jsCompiler.compile(ast);
+    // console.log('Compile time', Date.now() - start);
 
-  return jsCode;
+    return jsCode;
+  }
+  catch (err) {
+    if (err.name === 'SyntaxError') {
+      console.log('\n\n');
+      console.log('Syntax Error', err.message);
+      console.log('\n');
+      console.log(formatSourceErrorContext(source, err.location));
+      console.log('\n\n');
+    }
+    throw err;
+  }
 };
 
 module.exports = {
   createContext,
   compile
 };
-//
-// code = `
-// def _ = require("lodash")
-// def #{ dsl } = require("./ast-helper")
-//
-// def chunk = _.chunk
-// def last = _.last
-// def slice = _.slice
-// def drop = _.drop
-// def map = _.map
-// def isEmpty = _.isEmpty
-//
-// // TODO make it so that def can be run multiple times in a row without getting the "identifer has
-// // already been declared error"
-//
-// def processPairs = (block [pair ...rest]) => {
-//   def [ref collection] = pair
-//   if (isEmpty(rest)) {
-//     def fn = dsl.func(
-//       [dsl.symbolAssignment(ref.symbol)],
-//       block
-//     )
-//     quote(map(unquote(collection), unquote(fn)))
-//   }
-// }
-//
-// defmacro furl = (...args) => {
-//   def block = last(args)
-//   def pairs = chunk(drop(args), 2)
-//   processPairs(block, pairs)
-// }`;
-//
-// context = macroExpander.createContext()
-// parsed = parser.parse(code)
-// expanded = macroExpander.expandMacros(parsed, context)
-//
-// code2 = `furl( i [ 1 2 3]) {
-//   i
-// }`
-//
-// parsed = parser.parse(code2)
-// expanded = macroExpander.expandMacros(parsed, context)
-//
-// console.log(JSON.stringify(expanded, null, 2));
-//
-// jsCompiler.compile(expanded)

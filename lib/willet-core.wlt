@@ -1,10 +1,12 @@
 def _ = require("lodash")
-def #{ dsl } = require("./ast-helper")
+// Path to ast-helper works from lib or from compiled dist
+def #{ dsl } = require("../lib/ast-helper")
 
 // TODO core methods to add
 // macroexpand
 // to_js (or something like that) - returns compiled javascript of code.
 
+def identity = _.identity
 def chunk = _.chunk
 def first = _.first
 def last = _.last
@@ -41,8 +43,14 @@ defmacro fore = (...args) => {
   processPairs(block, pairs)
 }
 
-// result = fore(
-//   i [ 1 2 3]
-//   t [ 1 2 3 4]) {
-//   [i t]
-// }
+module.exports = #{
+  chunk,
+  first,
+  last,
+  slice,
+  drop,
+  dropLast,
+  map,
+  isEmpty,
+  fore
+}
