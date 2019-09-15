@@ -30,6 +30,7 @@
     "eslint-plugin-react": "^7.10.0"
   },
   "dependencies": {
+    "chevrotain": "^6.3.1",
     "commander": "^3.0.1",
     "js-beautify": "^1.10.2",
     "lodash": "^4.17.15"
