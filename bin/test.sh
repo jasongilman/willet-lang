@@ -10,3 +10,5 @@ if [ $? != 0 ]; then
   printf "Failed to compile tests"
   exit 1
 fi
+
+node_modules/.bin/mocha --timeout 0 -b -w tests/

@@ -27,20 +27,26 @@ const formatSourceErrorContext = (source, location) => {
   }).join('\n');
 };
 
+const trace = (event) => {
+  console.log(JSON.stringify(event, null, 2));
+};
+
 const compile = (source, context = createContext()) => {
   try {
-    // let start = Date.now();
+    let start = Date.now();
 
-    let ast = parser.parse(source, { cache: true });
-    // console.log('Parsed time', Date.now() - start);
+    console.log('Starting parsing');
+    let ast = parser.parse(source, { cache: true, tracer: { trace } });
+    // let ast = parser.parse(source, { cache: true });
+    console.log('Parsed time', Date.now() - start);
 
-    // start = Date.now();
+    start = Date.now();
     ast = macroExpander.expandMacros(ast, context.macroContext);
-    // console.log('Expand Macro time', Date.now() - start);
+    console.log('Expand Macro time', Date.now() - start);
 
-    // start = Date.now();
+    start = Date.now();
     const jsCode = jsCompiler.compile(ast);
-    // console.log('Compile time', Date.now() - start);
+    console.log('Compile time', Date.now() - start);
 
     return jsCode;
   }
@@ -48,9 +54,11 @@ const compile = (source, context = createContext()) => {
     if (err.name === 'SyntaxError') {
       console.log('\n\n');
       console.log('Syntax Error', err.message);
-      console.log('\n');
-      console.log(formatSourceErrorContext(source, err.location));
-      console.log('\n\n');
+      if (err.location) {
+        console.log('\n');
+        console.log(formatSourceErrorContext(source, err.location));
+        console.log('\n\n');
+      }
     }
     throw err;
   }

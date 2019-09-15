@@ -1,3 +1,5 @@
+#{_willet: #{skipCore: true}}
+
 def _ = require("lodash")
 // Path to ast-helper works from lib or from compiled dist
 def #{ dsl } = require("../lib/ast-helper")

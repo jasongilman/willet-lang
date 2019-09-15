@@ -12,44 +12,12 @@ def assertSingleStatement = (input expectedStmt) => {
 
 describe("Willet Parser" () => {
   for([exampleSetName exampleSet] _.toPairs(examples)) {
-  //   describe(exampleSetName () => {
-  //     for({ name willet ast } exampleSet) {
-  //       it(`should parse ${name}` () => {
-  //         assertSingleStatement(willet ast)
-  //       })
-  //     }
-  //   })
+    describe(exampleSetName () => {
+      for(#{ name willet ast } exampleSet) {
+        it(`should parse ${name}` () => {
+          assertSingleStatement(willet ast)
+        })
+      }
+    })
   }
 })
-
-word = "Jason"
-
-defmacro helloer = (name) => quote(
-  if (true) {
-    console.log("hello" unquote(name))
-  }
-)
-
-helloer(word)
-
-helloer("foo")
-
-
-defmacro logger = (value) => quote(
-  console.log("This is my value" unquote(value))
-)
-
-defmacro beforeAndAfter = (block) => quote(){
-  logger("before")
-  unquote(block)
-  logger("after")
-}
-
-def x
-
-beforeAndAfter() {
-  x = 5
-}
-x
-
-e
