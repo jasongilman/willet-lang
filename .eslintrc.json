@@ -59,10 +59,7 @@
     "no-restricted-syntax": "off",
     "no-await-in-loop": "off",
     "no-loop-func": "off",
-    "comma-dangle": [
-      "warn",
-      "never"
-    ],
+    "comma-dangle": "off",
     "camelcase": "off",
     "strict": "off",
     "guard-for-in": "off",
