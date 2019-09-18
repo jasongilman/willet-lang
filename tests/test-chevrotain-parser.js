@@ -17,6 +17,7 @@ const examples = [
   '``',
   '`$`',
   '`hello${b}after`',
+  '1 < "5" + 8',
 ];
 
 
