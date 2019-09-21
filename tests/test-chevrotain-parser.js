@@ -18,6 +18,7 @@ const examples = [
   '`$`',
   '`hello${b}after`',
   '1 < "5" + 8',
+  '(a, b) => a + b'
 ];
 
 
