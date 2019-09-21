@@ -18,7 +18,10 @@ const examples = [
   '`$`',
   '`hello${b}after`',
   '1 < "5" + 8',
-  '(a, b) => a + b'
+  '(a, b) => a + b',
+  'let a = 5',
+  'let [a b] = 5',
+  'let #{a b} = 5'
 ];
 
 
