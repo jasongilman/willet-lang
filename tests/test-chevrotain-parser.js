@@ -21,7 +21,8 @@ const examples = [
   '(a, b) => a + b',
   'let a = 5',
   'let [a b] = 5',
-  'let #{a b} = 5'
+  'let #{a b} = 5',
+  'def a = 5',
 ];
 
 
