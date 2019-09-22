@@ -38,8 +38,8 @@ describe('expand a simple macro', () => {
 
 
   const expected = dsl.program(
-    dsl.assignment(dsl.symbolAssignment('word'), dsl.string('Jason')),
-    dsl.macro('helloer', dsl.func([dsl.symbolAssignment('name')], [
+    dsl.assignment(dsl.reference('word'), dsl.string('Jason')),
+    dsl.macro('helloer', dsl.func([dsl.reference('name')], [
       dsl.quoteWithExpression(
         dsl.ifList(
           dsl.ifNode(dsl.boolean(true), [
@@ -156,8 +156,8 @@ describe('expand a macro referencing other vars', () => {
 
 
   const expected = dsl.program(
-    dsl.assignment(dsl.symbolAssignment('word'), dsl.string('Jason')),
-    dsl.def(dsl.symbolAssignment('quoter'), dsl.func([dsl.symbolAssignment('value')], [
+    dsl.assignment(dsl.reference('word'), dsl.string('Jason')),
+    dsl.def(dsl.reference('quoter'), dsl.func([dsl.reference('value')], [
       dsl.quoteWithExpression(
         dsl.ifList(
           dsl.ifNode(dsl.boolean(true), [
@@ -173,7 +173,7 @@ describe('expand a macro referencing other vars', () => {
         )
       )
     ])),
-    dsl.macro('helloer', dsl.func([dsl.symbolAssignment('name')], [
+    dsl.macro('helloer', dsl.func([dsl.reference('name')], [
       dsl.valueSeq(
         dsl.reference('quoter'),
         dsl.functionCall(dsl.reference('name'))
@@ -258,12 +258,12 @@ describe('expand a macro referencing other vars through require', () => {
 
   const expected = dsl.program(
     dsl.def(
-      dsl.symbolAssignment('quoterMod'),
+      dsl.reference('quoterMod'),
       dsl.valueSeq(dsl.reference('require'),
         dsl.functionCall(dsl.string('./example_source/quoter')))
     ),
-    dsl.assignment(dsl.symbolAssignment('word'), dsl.string('Jason')),
-    dsl.macro('helloer', dsl.func([dsl.symbolAssignment('name')], [
+    dsl.assignment(dsl.reference('word'), dsl.string('Jason')),
+    dsl.macro('helloer', dsl.func([dsl.reference('name')], [
       dsl.valueSeq(
         dsl.reference('quoterMod'),
         dsl.getProperty('quoter'),

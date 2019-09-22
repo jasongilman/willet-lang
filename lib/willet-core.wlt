@@ -22,14 +22,14 @@ def processPairs = (block [pair ...rest]) => {
   def [ref collection] = pair
   if (isEmpty(rest)) {
     def fn = dsl.func(
-      [dsl.symbolAssignment(ref.symbol)]
+      [dsl.reference(ref.symbol)]
       block
     )
     quote(map(unquote(collection) unquote(fn)))
   }
   else {
     def fn = dsl.func(
-      [dsl.symbolAssignment(ref.symbol)]
+      [dsl.reference(ref.symbol)]
       [processPairs(block rest)]
     )
     quote(map(unquote(collection) unquote(fn)))

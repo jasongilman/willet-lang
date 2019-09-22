@@ -38,36 +38,43 @@ const functionDeclarationExamples = makeExamples(
 
 const assignmentExamples = makeExamples(
   [
-    'a = () => {}',
+    'let a = () => {}',
     dsl.assignment('a', dsl.func()),
     '(a = () => {\n})'
   ],
   [
-    'a.b = () => {}',
+    'let a.b = () => {}',
     dsl.assignment(dsl.valueSeq(dsl.reference('a'), dsl.getProperty('b')), dsl.func()),
     '(a.b = () => {\n})'
   ],
   [
     'Map destructuring',
-    '#{a} = #{a: "hello"}',
+    'let #{a} = #{a: "hello"}',
     dsl.assignment(
-      dsl.mapDestructuring(dsl.symbolAssignment('a')),
+      dsl.mapDestructuring(dsl.reference('a')),
       dsl.map(dsl.property('a', dsl.string('hello')))
     ),
     '({a} = ({ a: "hello" }))'
   ],
   [
     'Array destructuring',
-    '[a b] = foo()',
+    'let [a b] = foo()',
     dsl.assignment(
-      dsl.arrayDestructuring(dsl.symbolAssignment('a'), dsl.symbolAssignment('b')),
+      dsl.arrayDestructuring(dsl.reference('a'), dsl.reference('b')),
       dsl.valueSeq(dsl.reference('foo'), dsl.functionCall())
     ),
     '([a, b] = foo())'
   ],
   [
     'Comment after assignment',
-    'a = () => {} // ignored',
+    'let a = () => {} // ignored',
+    dsl.assignment('a', dsl.func()),
+    '(a = () => {\n})'
+  ],
+  [
+    'Multiline comment',
+    `let a = () => {} /* ignored
+      / ignored */`,
     dsl.assignment('a', dsl.func()),
     '(a = () => {\n})'
   ]
@@ -90,7 +97,7 @@ const mapExamples = makeExamples(
     '({ b: b })'
   ],
   [
-    'a = #{ a: null b: "foo" }',
+    'let a = #{ a: null b: "foo" }',
     dsl.assignment('a', dsl.map(
       dsl.property('a', dsl.Null),
       dsl.property('b', dsl.string('foo'))
@@ -99,7 +106,7 @@ const mapExamples = makeExamples(
   ],
   [
     'Map within a map',
-    'a = #{ a: #{ b: "foo" } c: d }',
+    'let a = #{ a: #{ b: "foo" } c: d }',
     dsl.assignment('a', dsl.map(
       dsl.property('a', dsl.map(dsl.property('b', dsl.string('foo')))),
       dsl.property('c', dsl.reference('d'))
@@ -120,7 +127,7 @@ const arrayExamples = makeExamples(
     '[ null ]'
   ],
   [
-    'a = [null "foo" ]',
+    'let a = [null "foo" ]',
     dsl.assignment('a', dsl.array(
       dsl.Null,
       dsl.string('foo')
@@ -129,7 +136,7 @@ const arrayExamples = makeExamples(
   ],
   [
     'Array within a array',
-    'a = [["foo"]d]',
+    'let a = [["foo"]d]',
     dsl.assignment('a', dsl.array(dsl.array(dsl.string('foo')), dsl.reference('d'))),
     '(a = [["foo"], d])'
   ]
@@ -345,7 +352,7 @@ const ifExamples = makeExamples(
 
 const operatorExamples = makeExamples(
   [
-    '1+2',
+    '1 + 2',
     dsl.plus(dsl.number(1), dsl.number(2)),
     '(1 + 2)'
   ],
@@ -506,23 +513,23 @@ const simpleLiteralExamples = makeExamples(
 const miscExamples = makeExamples(
   [
     'def a',
-    dsl.def(dsl.symbolAssignment('a')),
+    dsl.def(dsl.reference('a')),
     'let a = null'
   ],
   [
     'def a = 7',
-    dsl.def(dsl.symbolAssignment('a'), dsl.number(7)),
+    dsl.def(dsl.reference('a'), dsl.number(7)),
     'let a = 7'
   ],
   [
     'def a = (b c) => { }',
-    dsl.def(dsl.symbolAssignment('a'),
-      dsl.func([dsl.symbolAssignment('b'), dsl.symbolAssignment('c')])),
+    dsl.def(dsl.reference('a'),
+      dsl.func([dsl.reference('b'), dsl.reference('c')])),
     'let a = (b, c) => {\n}'
   ],
   [
     'def #{a} = foo',
-    dsl.def(dsl.mapDestructuring(dsl.symbolAssignment('a')), dsl.reference('foo')),
+    dsl.def(dsl.mapDestructuring(dsl.reference('a')), dsl.reference('foo')),
     'let { a } = foo'
   ],
   [
@@ -592,7 +599,7 @@ const spreadExamples = makeExamples(
   [
     'Function declaration',
     '(foo ...more) => {}',
-    dsl.func([dsl.symbolAssignment('foo'), dsl.restAssignment('more')]),
+    dsl.func([dsl.reference('foo'), dsl.restAssignment('more')]),
     '(foo, ...more) => {}'
   ],
 );
