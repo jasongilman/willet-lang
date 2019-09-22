@@ -1,2 +1,1 @@
-// module.exports = require('./dist/parser');
-module.exports = require('./lib/chevrotain_parser');
+module.exports = require('./lib/chevrotain-parser');

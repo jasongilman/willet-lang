@@ -45,7 +45,7 @@ defmacro fore = (...args) => {
   processPairs(block, pairs)
 }
 
-module.exports = #{
+let module.exports = #{
   chunk,
   first,
   last,

@@ -25,7 +25,7 @@ describe('expand macros when no macros used', () => {
 
 describe('expand a simple macro', () => {
   const code = `
-  word = "Jason"
+  def word = "Jason"
 
   defmacro helloer = (name) => quote(
     if (true) {
@@ -38,7 +38,7 @@ describe('expand a simple macro', () => {
 
 
   const expected = dsl.program(
-    dsl.assignment(dsl.reference('word'), dsl.string('Jason')),
+    dsl.def(dsl.reference('word'), dsl.string('Jason')),
     dsl.macro('helloer', dsl.func([dsl.reference('name')], [
       dsl.quoteWithExpression(
         dsl.ifList(
@@ -82,7 +82,7 @@ describe('expand a simple macro', () => {
   );
 
   const expectedCode = `
-    (word = "Jason");
+    let word = "Jason";
     let helloer = (() => {
       const fn = (name) => {
         return ({
@@ -142,7 +142,7 @@ describe('expand a simple macro', () => {
 
 describe('expand a macro referencing other vars', () => {
   const code = `
-  word = "Jason"
+  def word = "Jason"
 
   def quoter = (value) => quote(
     if (true) {
@@ -156,7 +156,7 @@ describe('expand a macro referencing other vars', () => {
 
 
   const expected = dsl.program(
-    dsl.assignment(dsl.reference('word'), dsl.string('Jason')),
+    dsl.def(dsl.reference('word'), dsl.string('Jason')),
     dsl.def(dsl.reference('quoter'), dsl.func([dsl.reference('value')], [
       dsl.quoteWithExpression(
         dsl.ifList(
@@ -194,7 +194,7 @@ describe('expand a macro referencing other vars', () => {
   );
 
   const expectedCode = `
-    (word = "Jason");
+    let word = "Jason";
     let quoter = (value) => {
         return ({
             type: "IfList",
@@ -252,7 +252,7 @@ describe('expand a macro referencing other vars', () => {
 describe('expand a macro referencing other vars through require', () => {
   const code = `
   def quoterMod = require("./example_source/quoter")
-  word = "Jason"
+  def word = "Jason"
   defmacro helloer = (name) => quoterMod.quoter(name)
   helloer(word)`;
 
@@ -262,7 +262,7 @@ describe('expand a macro referencing other vars through require', () => {
       dsl.valueSeq(dsl.reference('require'),
         dsl.functionCall(dsl.string('./example_source/quoter')))
     ),
-    dsl.assignment(dsl.reference('word'), dsl.string('Jason')),
+    dsl.def(dsl.reference('word'), dsl.string('Jason')),
     dsl.macro('helloer', dsl.func([dsl.reference('name')], [
       dsl.valueSeq(
         dsl.reference('quoterMod'),
@@ -286,7 +286,7 @@ describe('expand a macro referencing other vars through require', () => {
 
   const expectedCode = `
     let quoterMod = require("./example_source/quoter");
-    (word = "Jason");
+    let word = "Jason";
     let helloer = (() => {
       const fn = (name) => {
         return quoterMod.quoter(name);
@@ -328,7 +328,7 @@ describe('expand a macro referencing other macro', () => {
 
   def x = 5
   beforeAndAfter() {
-    x = x + 1
+    let x = x + 1
   }`;
 
   const expectedCode = `

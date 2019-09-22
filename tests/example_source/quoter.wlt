@@ -3,4 +3,4 @@ def quoter = (value) => quote(
     console.log("hello" unquote(value))
   }
 )
-module.exports = #{ quoter }
+let module.exports = #{ quoter }
