@@ -23,6 +23,12 @@ const examples = [
   'let [a b] = 5',
   'let #{a b} = 5',
   'def a = 5',
+  `
+  if (a == true) {
+    foo
+  }
+  `,
+  'foo.bar[5](foo)'
 ];
 
 
