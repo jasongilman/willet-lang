@@ -545,17 +545,17 @@ const miscExamples = makeExamples(
 const quoteExamples = makeExamples(
   [
     'quote(null)',
-    dsl.quote(dsl.literal(null)),
+    dsl.quoteWithExpression(dsl.literal(null)),
     '({ type: "Null" })'
   ],
   [
     'quote(a)',
-    dsl.quote(dsl.reference('a')),
+    dsl.quoteWithExpression(dsl.reference('a')),
     '({ type: "Reference", symbol: "a" })'
   ],
   [
     'quote(a.b)',
-    dsl.quote(dsl.valueSeq(dsl.reference('a'), dsl.getProperty('b'))),
+    dsl.quoteWithExpression(dsl.valueSeq(dsl.reference('a'), dsl.getProperty('b'))),
     `({
         type: "ValueSequence",
         values: [({ type: "Reference", symbol: "a" }), ({ type: "GetProperty", attrib: "b" })]

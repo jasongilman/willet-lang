@@ -40,7 +40,7 @@ describe('expand a simple macro', () => {
   const expected = dsl.program(
     dsl.assignment(dsl.symbolAssignment('word'), dsl.string('Jason')),
     dsl.macro('helloer', dsl.func([dsl.symbolAssignment('name')], [
-      dsl.quote(
+      dsl.quoteWithExpression(
         dsl.ifList(
           dsl.ifNode(dsl.boolean(true), [
             dsl.valueSeq(
@@ -158,7 +158,7 @@ describe('expand a macro referencing other vars', () => {
   const expected = dsl.program(
     dsl.assignment(dsl.symbolAssignment('word'), dsl.string('Jason')),
     dsl.def(dsl.symbolAssignment('quoter'), dsl.func([dsl.symbolAssignment('value')], [
-      dsl.quote(
+      dsl.quoteWithExpression(
         dsl.ifList(
           dsl.ifNode(dsl.boolean(true), [
             dsl.valueSeq(
