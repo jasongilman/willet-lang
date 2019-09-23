@@ -27,7 +27,7 @@ describe('expand a simple macro', () => {
   const code = `
   def word = "Jason"
 
-  defmacro helloer = (name) => quote(
+  defmacro helloer = fn (name) quote(
     if (true) {
       console.log("hello" unquote(name))
     }
@@ -144,13 +144,13 @@ describe('expand a macro referencing other vars', () => {
   const code = `
   def word = "Jason"
 
-  def quoter = (value) => quote(
+  def quoter = fn (value) quote(
     if (true) {
       console.log("hello" unquote(value))
     }
   )
 
-  defmacro helloer = (name) => quoter(name)
+  defmacro helloer = fn (name) quoter(name)
 
   helloer(word)`;
 
@@ -253,7 +253,7 @@ describe('expand a macro referencing other vars through require', () => {
   const code = `
   def quoterMod = require("./example_source/quoter")
   def word = "Jason"
-  defmacro helloer = (name) => quoterMod.quoter(name)
+  defmacro helloer = fn (name) quoterMod.quoter(name)
   helloer(word)`;
 
   const expected = dsl.program(
@@ -316,11 +316,11 @@ describe('expand a macro referencing other vars through require', () => {
 
 describe('expand a macro referencing other macro', () => {
   const code = `
-  defmacro logger = (value) => quote(
+  defmacro logger = fn (value) quote(
     console.log("Alert:" unquote(value))
   )
 
-  defmacro beforeAndAfter = (block) => quote(){
+  defmacro beforeAndAfter = fn (block) quote(){
     logger("before")
     unquote(block)
     logger("after")
@@ -412,10 +412,10 @@ describe('expand a macro referencing other macro', () => {
 describe('expand a macro defined in core', () => {
   const code = `
   // should not expand
-  map([1 2 3] identity)
+  map(#[1 2 3] identity)
 
   // should expand
-  fore(i [1 2]) {
+  fore(i #[1 2]) {
     i + 1
   }`;
 

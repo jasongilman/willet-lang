@@ -1,4 +1,4 @@
-def quoter = (value) => quote(
+def quoter = fn (value) quote(
   if (true) {
     console.log("hello" unquote(value))
   }

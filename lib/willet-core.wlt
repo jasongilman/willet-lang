@@ -18,28 +18,30 @@ def dropLast = _.dropRight
 def map = _.map
 def isEmpty = _.isEmpty
 
-def processPairs = (block [pair ...rest]) => {
-  def [ref collection] = pair
+// TODO add defn macro
+def processPairs = fn (block #[pair ...rest]) {
+  def #[ref collection] = pair
   if (isEmpty(rest)) {
-    def fn = dsl.func(
-      [dsl.reference(ref.symbol)]
+    def fun = dsl.func(
+      #[dsl.reference(ref.symbol)]
       block
     )
-    quote(map(unquote(collection) unquote(fn)))
+    quote(map(unquote(collection) unquote(fun)))
   }
   else {
-    def fn = dsl.func(
-      [dsl.reference(ref.symbol)]
-      [processPairs(block rest)]
+    def fun = dsl.func(
+      #[dsl.reference(ref.symbol)]
+      #[processPairs(block rest)]
     )
-    quote(map(unquote(collection) unquote(fn)))
+    quote(map(unquote(collection) unquote(fun)))
   }
 }
 
 // TODO improve illegal keyword errors so that it will happen _after_ parsing
 
 // TODO support when, let etc
-defmacro fore = (...args) => {
+// TODO defmacro shouldn't require the '=' here.
+defmacro fore = fn (...args) {
   def block = last(args)
   def pairs = chunk(dropLast(args), 2)
   processPairs(block, pairs)
