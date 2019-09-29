@@ -534,9 +534,9 @@ const miscExamples = makeExamples(
   ],
   [
     'string interpolation',
-    '`This is ${a} good $${money(b)} \\`not done`',
+    '`This {is} ${a} good $${money(b)} \\`not done`',
     dsl.stringInterpolation(
-      'This is ',
+      'This {is} ',
       dsl.reference('a'),
       ' good $',
       dsl.valueSeq(
