@@ -545,7 +545,7 @@ const miscExamples = makeExamples(
       ),
       ' \\`not done'
     ),
-    '`This is ${a} good $${money(b)} \\`not done`'
+    '`This {is} ${a} good $${money(b)} \\`not done`'
   ]
 );
 

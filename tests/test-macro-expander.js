@@ -421,16 +421,18 @@ describe('expand a macro defined in core', () => {
     i + 1
   }`;
 
-  const expectedCode = `
-    ${macroExpander.willetCoreRequire};
-    ${macroExpander.willetCoreImport};
+  it('should generate correct javascript', async () => {
+    const contextWithCore = compiler.createContext();
+    const compiled = compiler.compile(contextWithCore, code);
+
+    const expectedCode = `
+    ${contextWithCore.core.coreRequire};
+    ${contextWithCore.core.coreImport};
     map([1, 2, 3], identity);
     map([1, 2], (i) => {
       return (i + 1);
     });`;
 
-  it('should generate correct javascript', async () => {
-    const compiled = compiler.compile(compiler.createContext(), code);
     expect(compiled).to.equal(beautify(expectedCode));
   });
 });
