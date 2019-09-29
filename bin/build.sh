@@ -4,7 +4,7 @@ echo "Building Willet"
 
 mkdir -p dist
 
-bin/compile.js lib dist
+bin/compile.js --skipcore lib/willet-core.wlt dist/
 if [ $? != 0 ]; then
   printf "Failed to compile willet source"
   exit 1

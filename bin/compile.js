@@ -24,12 +24,16 @@ const readFilesFromDir = (dir) =>
 
 let src;
 let target;
+let skipCore = false;
+
 program
   .version('0.0.1')
   .arguments('<source> <targetDir>')
-  .action((source, targetDir) => {
+  .option('-c, --skipcore', 'Skip including Willet Core')
+  .action((source, targetDir, cmdObj) => {
     src = source;
     target = targetDir;
+    skipCore = cmdObj.skipcore;
   });
 
 program.parse(process.argv);
@@ -62,6 +66,7 @@ if (fs.lstatSync(src).isDirectory()) {
 }
 else {
   filesToCompile = [src];
+  src = path.dirname(src);
 }
 
 const generatedHeader = '// Generated from Willet source\n';
@@ -72,7 +77,9 @@ for (let i = 0; i < filesToCompile.length; i += 1) {
   console.log(`Compiling ${file} to ${targetFile}`);
   const contents = fs.readFileSync(file).toString();
   try {
-    const jsContents = compiler.compile(contents);
+    const context = compiler.createContext(process.cwd());
+    context.skipCore = skipCore;
+    const jsContents = compiler.compile(context, contents);
     fs.writeFileSync(targetFile, `${generatedHeader}${jsContents}`);
   }
   catch (e) {

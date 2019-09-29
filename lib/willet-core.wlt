@@ -1,8 +1,7 @@
-#{_willet: #{skipCore: true}}
-
 def _ = require("lodash")
 // Path to ast-helper works from lib or from compiled dist
-def #{ dsl } = require("../lib/ast-helper")
+def astHelper = require("../lib/ast-helper")
+def #{ dsl } = astHelper
 
 // TODO core methods to add
 // macroexpand
@@ -18,19 +17,31 @@ def dropLast = _.dropRight
 def map = _.map
 def isEmpty = _.isEmpty
 
-// TODO add defn macro
+def fixTarget = fn (target) {
+  def visitor = fn (context node) {
+    if (node.type == "MapLiteral") {
+      let node = dsl.mapDestructuring(...node.properties)
+    }
+    else if (node.type == "ArrayLiteral") {
+      let node = dsl.arrayDestructuring(...node.values)
+    }
+    node
+  }
+  astHelper.postwalk(#{} visitor target)
+}
+
 def processPairs = fn (block #[pair ...rest]) {
-  def #[ref collection] = pair
+  def #[target collection] = pair
   if (isEmpty(rest)) {
     def fun = dsl.func(
-      #[dsl.reference(ref.symbol)]
+      #[fixTarget(target)]
       block
     )
     quote(map(unquote(collection) unquote(fun)))
   }
   else {
     def fun = dsl.func(
-      #[dsl.reference(ref.symbol)]
+      #[fixTarget(target)]
       #[processPairs(block rest)]
     )
     quote(map(unquote(collection) unquote(fun)))

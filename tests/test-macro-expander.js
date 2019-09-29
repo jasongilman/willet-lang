@@ -9,12 +9,15 @@ const compiler = require('../compiler');
 const examples = require('./examples');
 const { dsl } = require('../lib/ast-helper');
 
+const context = compiler.createContext(__dirname);
+context.skipCore = true;
+
 describe('expand macros when no macros used', () => {
   for (const [exampleSetName, exampleSet] of _.toPairs(examples)) {
     describe(exampleSetName, () => {
       for (const { name, ast } of exampleSet) {
         it(`should expand [${name}] without a change`, async () => {
-          const result = macroExpander.expandMacros(_.cloneDeep(ast));
+          const result = macroExpander.expandMacros(context, _.cloneDeep(ast));
           expect(result).to.deep.equal(ast);
         });
       }
@@ -130,12 +133,12 @@ describe('expand a simple macro', () => {
   `;
 
   it('should expand the macro', async () => {
-    const result = macroExpander.expandMacros(parser.parse(code));
+    const result = macroExpander.expandMacros(context, parser.parse(code));
     expect(result).to.deep.equal(expected);
   });
 
   it('should generate correct javascript', async () => {
-    const compiled = compiler.compile(code);
+    const compiled = compiler.compile(context, code);
     expect(compiled).to.equal(beautify(expectedCode));
   });
 });
@@ -239,12 +242,12 @@ describe('expand a macro referencing other vars', () => {
   `;
 
   it('should expand the macro', async () => {
-    const result = macroExpander.expandMacros(parser.parse(code));
+    const result = macroExpander.expandMacros(context, parser.parse(code));
     expect(result).to.deep.equal(expected);
   });
 
   it('should generate correct javascript', async () => {
-    const compiled = compiler.compile(code);
+    const compiled = compiler.compile(context, code);
     expect(compiled).to.equal(beautify(expectedCode));
   });
 });
@@ -303,13 +306,12 @@ describe('expand a macro referencing other vars through require', () => {
   `;
 
   it('should expand the macro', async () => {
-    const result = macroExpander.expandMacros(parser.parse(code),
-      macroExpander.createContext(__dirname));
+    const result = macroExpander.expandMacros(context, parser.parse(code));
     expect(result).to.deep.equal(expected);
   });
 
   it('should generate correct javascript', async () => {
-    const compiled = compiler.compile(code, compiler.createContext(__dirname));
+    const compiled = compiler.compile(context, code);
     expect(compiled).to.equal(beautify(expectedCode));
   });
 });
@@ -404,7 +406,7 @@ describe('expand a macro referencing other macro', () => {
   `;
 
   it('should generate correct javascript', async () => {
-    const compiled = compiler.compile(code);
+    const compiled = compiler.compile(context, code);
     expect(compiled).to.equal(beautify(expectedCode));
   });
 });
@@ -420,13 +422,15 @@ describe('expand a macro defined in core', () => {
   }`;
 
   const expectedCode = `
+    ${macroExpander.willetCoreRequire};
+    ${macroExpander.willetCoreImport};
     map([1, 2, 3], identity);
     map([1, 2], (i) => {
       return (i + 1);
     });`;
 
   it('should generate correct javascript', async () => {
-    const compiled = compiler.compile(code);
+    const compiled = compiler.compile(compiler.createContext(), code);
     expect(compiled).to.equal(beautify(expectedCode));
   });
 });
