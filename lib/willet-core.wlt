@@ -16,33 +16,66 @@ def drop = _.drop
 def dropLast = _.dropRight
 def map = _.map
 def isEmpty = _.isEmpty
+def keys = _.keys
+def toPairs = _.toPairs
+
+def ifFormToDsl = #{
+  if: fn(#{ args:[cond] block }) { dsl.ifNode(cond block) }
+  elseif: fn(#{ args:[cond] block }) { dsl.elseIfNode(cond block) }
+  else: fn(#{ block }) { dsl.elseNode(block) }
+}
+
+defmacro if = #{
+  terms: [
+    #{
+      term: "if$wlt"
+      acceptsArgs: true
+      acceptsBlock: true
+    }
+    #{
+      term: "elseif"
+      acceptsArgs: true
+      acceptsBlock: true
+      optional: true
+    }
+    #{
+      term: "else$wlt"
+      acceptsBlock: true
+      optional: true
+    }
+  ]
+  handler: fn (parts) {
+    dsl.ifList(...map(toPairs(parts), fn([key value]) {
+      ifFormToDsl.[key](value)
+    }))
+  }
+}
 
 def fixTarget = fn (target) {
   def visitor = fn (context node) {
     if (node.type == "MapLiteral") {
-      let node = dsl.mapDestructuring(...node.properties)
+      dsl.mapDestructuring(...node.properties)
     }
-    else if (node.type == "ArrayLiteral") {
-      let node = dsl.arrayDestructuring(...node.values)
+    elseif (node.type == "ArrayLiteral") {
+      dsl.arrayDestructuring(...node.values)
     }
-    node
   }
   astHelper.postwalk(#{} visitor target)
 }
 
-def processPairs = fn (block #[pair ...rest]) {
-  def #[target collection] = pair
+def processPairs = fn (block [pair ...rest]) {
+  def [target collection] = pair
   if (isEmpty(rest)) {
     def fun = dsl.func(
-      #[fixTarget(target)]
+      [fixTarget(target)]
       block
     )
     quote(map(unquote(collection) unquote(fun)))
   }
   else {
     def fun = dsl.func(
-      #[fixTarget(target)]
-      #[processPairs(block rest)]
+      [fixTarget(target)]
+      [processPairs(block rest)]
     )
     quote(map(unquote(collection) unquote(fun)))
   }
@@ -67,5 +100,7 @@ let module.exports = #{
   dropLast,
   map,
   isEmpty,
+  keys,
+  toPairs,
   fore
 }

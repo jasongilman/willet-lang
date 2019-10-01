@@ -58,7 +58,7 @@ const assignmentExamples = makeExamples(
   ],
   [
     'Array destructuring',
-    'let #[a b] = foo()',
+    'let [a b] = foo()',
     dsl.assignment(
       dsl.arrayDestructuring(dsl.reference('a'), dsl.reference('b')),
       dsl.valueSeq(dsl.reference('foo'), dsl.functionCall())
@@ -117,17 +117,17 @@ const mapExamples = makeExamples(
 
 const arrayExamples = makeExamples(
   [
-    '#[]',
+    '[]',
     dsl.array(),
     '[]'
   ],
   [
-    '#[null]',
+    '[null]',
     dsl.array(dsl.Null),
     '[ null ]'
   ],
   [
-    'let a = #[null "foo" ]',
+    'let a = [null "foo" ]',
     dsl.assignment('a', dsl.array(
       dsl.Null,
       dsl.string('foo')
@@ -136,7 +136,7 @@ const arrayExamples = makeExamples(
   ],
   [
     'Array within a array',
-    'let a = #[#["foo"]d]',
+    'let a = [["foo"]d]',
     dsl.assignment('a', dsl.array(dsl.array(dsl.string('foo')), dsl.reference('d'))),
     '(a = [["foo"], d])'
   ]
@@ -157,7 +157,7 @@ const valueSequenceExamples = makeExamples(
     'a.b'
   ],
   [
-    'a[b]',
+    'a.[b]',
     dsl.valueSeq(
       dsl.reference('a'),
       dsl.getPropertyDynamic(dsl.reference('b'))
@@ -165,7 +165,7 @@ const valueSequenceExamples = makeExamples(
     'a[b]'
   ],
   [
-    'a(b.c)[d]',
+    'a(b.c).[d]',
     dsl.valueSeq(
       dsl.reference('a'),
       dsl.functionCall(dsl.valueSeq(dsl.reference('b'), dsl.getProperty('c'))),
@@ -214,6 +214,17 @@ const functionCallExamples = makeExamples(
   ],
 );
 
+const initialTryCatch = (tryBlock, errorSymbol, catchBlock, finallyBlock = null) => _.concat(
+  [
+    dsl.valueSeq(dsl.reference('try'), dsl.functionCallWithBody(null, tryBlock)),
+    dsl.valueSeq(dsl.reference('catch'), dsl.functionCallWithBody(
+      dsl.reference(errorSymbol), catchBlock
+    )),
+  ],
+  finallyBlock ? dsl.valueSeq(dsl.reference('finally'),
+    dsl.functionCallWithBody(null, finallyBlock)) : null
+);
+
 const tryCatchExamples = makeExamples(
   [
     'try catch',
@@ -223,7 +234,7 @@ const tryCatchExamples = makeExamples(
       catch (err) {
         err
       }`,
-    dsl.tryCatch(
+    initialTryCatch(
       [dsl.valueSeq(dsl.reference('f'), dsl.functionCall())],
       'err',
       [dsl.reference('err')]
@@ -249,7 +260,7 @@ const tryCatchExamples = makeExamples(
       finally {
         foo
       }`,
-    dsl.tryCatch(
+    initialTryCatch(
       [dsl.valueSeq(dsl.reference('f'), dsl.functionCall())],
       'err',
       [dsl.reference('err')],
@@ -269,18 +280,30 @@ const tryCatchExamples = makeExamples(
   ]
 );
 
+const initialIf = (condition, statements) =>
+  dsl.valueSeq(dsl.reference('if'),
+    dsl.functionCallWithBody([condition], dsl.block(...statements)));
+
+const initialElse = (statements) =>
+  dsl.valueSeq(dsl.reference('else'),
+    dsl.functionCallWithBody(null, dsl.block(...statements)));
+
+const initialElseIf = (condition, statements) =>
+  dsl.valueSeq(dsl.reference('elseif'),
+    dsl.functionCallWithBody([condition], dsl.block(...statements)));
+
 const ifExamples = makeExamples(
   [
     'if',
     'if("true") { "a" }',
-    dsl.ifList(
-      dsl.ifNode(
+    [
+      initialIf(
         dsl.string('true'),
         [
           dsl.string('a')
         ]
       )
-    ),
+    ],
     `(() => {
       if("true") {
         return "a";
@@ -291,8 +314,8 @@ const ifExamples = makeExamples(
   [
     'if multi-statement',
     'if("true") { "a" "b" "c"}',
-    dsl.ifList(
-      dsl.ifNode(
+    [
+      initialIf(
         dsl.string('true'),
         [
           dsl.string('a'),
@@ -300,7 +323,7 @@ const ifExamples = makeExamples(
           dsl.string('c')
         ]
       )
-    ),
+    ],
     `(() => {
       if("true") {
         "a";
@@ -313,10 +336,10 @@ const ifExamples = makeExamples(
   [
     'if else',
     'if("true") { "a" } else { "b" }',
-    dsl.ifList(
-      dsl.ifNode(dsl.string('true'), [dsl.string('a')]),
-      dsl.elseNode([dsl.string('b')])
-    ),
+    [
+      initialIf(dsl.string('true'), [dsl.string('a')]),
+      initialElse([dsl.string('b')])
+    ],
     `(() => {
       if("true") {
         return "a";
@@ -329,12 +352,12 @@ const ifExamples = makeExamples(
   ],
   [
     'if else-if else',
-    'if("true") { "a" } else if("false") { "c" } else { "b" }',
-    dsl.ifList(
-      dsl.ifNode(dsl.string('true'), [dsl.string('a')]),
-      dsl.elseIfNode(dsl.string('false'), [dsl.string('c')]),
-      dsl.elseNode([dsl.string('b')])
-    ),
+    'if("true") { "a" } elseif("false") { "c" } else { "b" }',
+    [
+      initialIf(dsl.string('true'), [dsl.string('a')]),
+      initialElseIf(dsl.string('false'), [dsl.string('c')]),
+      initialElse([dsl.string('b')])
+    ],
     `(() => {
       if("true") {
         return "a";
@@ -587,7 +610,7 @@ const spreadExamples = makeExamples(
   ],
   [
     'Array literal',
-    '#[foo ...some thing ...more]',
+    '[foo ...some thing ...more]',
     dsl.array(
       dsl.reference('foo'),
       dsl.spread(dsl.reference('some')),

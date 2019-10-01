@@ -1,11 +1,12 @@
 /* eslint-disable no-template-curly-in-string */
-const chai = require('chai');
-const expect = chai.expect;
 const parser = require('../lib/chevrotain-parser');
 
 const examples = [
+  'foo (1)',
+  'foo {1}',
+  '[{1} {2}]'
   // 'foo(i #[1])',
-  '1 * (2 + 3)',
+  // '1 * (2 + 3)',
   // '"foo bar"',
   // 'true',
   // 'false',
@@ -30,7 +31,7 @@ const examples = [
   //   foo
   // }
   // `,
-  // 'foo.bar[5](foo)'
+  // 'foo.bar.[5](foo)'
 ];
 
 
