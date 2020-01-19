@@ -3,12 +3,25 @@ const _ = require('lodash');
 const chai = require('chai');
 const expect = chai.expect;
 const compiler = require('../compiler');
+const macroExpander = require('../lib/macro-expander');
 const examples = require('./examples');
 const beautify = require('js-beautify').js;
+
+const removeCore = (code) => {
+  code = _.last(code.split(macroExpander.CORE_END));
+  code = code.replace(/\n;\n/g, '');
+  code = code.replace(/^\s*;/, '');
+  code = code.trim();
+  return beautify(code);
+};
 
 const assertSingleStatement = (input, expectedCode) => {
   console.log('==================================================================================');
   const result = compiler.compile(compiler.createContext(), input);
+
+  // Exclude willet core for comparison
+  const withoutCore = removeCore(result);
+
   let expected;
   try {
     expected = beautify(`${expectedCode};`);
@@ -17,12 +30,10 @@ const assertSingleStatement = (input, expectedCode) => {
     console.error('Invalid Example JavaScript:', expectedCode);
     throw error;
   }
-  expect(result).to.deep.equal(expected);
+  expect(withoutCore).to.deep.equal(expected);
 };
 
-// TODO skipping this for now because the compiled javascript includes the core which changes
-// what's expected. We need it for the if examples though.
-describe.skip('Willet JavaScript Compiler', () => {
+describe('Willet JavaScript Compiler', () => {
   for (const [exampleSetName, exampleSet] of _.toPairs(examples)) {
     describe(exampleSetName, () => {
       for (const { name, willet, js } of exampleSet) {

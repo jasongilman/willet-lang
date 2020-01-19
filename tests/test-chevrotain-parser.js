@@ -4,7 +4,7 @@ const parser = require('../lib/chevrotain-parser');
 const examples = [
   'foo (1)',
   'foo {1}',
-  '[{1} {2}]'
+  // '[{1} {2}]'
   // 'foo(i #[1])',
   // '1 * (2 + 3)',
   // '"foo bar"',

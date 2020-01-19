@@ -33,11 +33,41 @@ const functionDeclarationExamples = makeExamples(
     'fn () {}',
     dsl.func(),
     '() => {\n}'
+  ],
+  [
+    'Definition and invocation',
+    '(fn () { 1 })()',
+    dsl.valueSeq(
+      dsl.func([], dsl.block(dsl.number(1))),
+      dsl.functionCall()
+    ),
+    '(() => { return 1; })()'
+  ],
+  [
+    'Block by itself - Nothing',
+    '{}',
+    dsl.soloBlock(),
+    'null'
+  ],
+  [
+    'Block by itself - simple value',
+    '{1}',
+    dsl.soloBlock(dsl.number(1)),
+    '(() => { return 1; })()'
+  ],
+  [
+    'Block by itself - multiple lines',
+    `{
+      let v = 1
+      v + 1
+      }`,
+    dsl.soloBlock(
+      dsl.assignment('v', dsl.number(1)),
+      dsl.plus(dsl.reference('v'), dsl.number(1))
+    ),
+    '(() => { (v = 1); return (v + 1); })()'
   ]
 );
-
-// TODO parentheses wrapped expressions followed by invoke like (fn () { 1 })()
-// TODO blocks by themselves are invoked and evaluate to their value.
 
 const assignmentExamples = makeExamples(
   [
@@ -229,7 +259,7 @@ const functionCallExamples = makeExamples(
     ),
     // Don't attempt to test javascript generation. We'll add macro stuff later
     null
-  ],
+  ]
 );
 
 const initialTryCatch = (tryBlock, errorSymbol, catchBlock, finallyBlock = null) => _.concat(
@@ -523,9 +553,10 @@ const simpleLiteralExamples = makeExamples(
     '12345'
   ],
   [
-    '-5',
-    dsl.number(-5),
-    '-5'
+    // Let is used here because beautify doesn't work well on a negative by itself.
+    'let v = -5',
+    dsl.assignment('v', dsl.number(-5)),
+    '(v = -5)'
   ],
   [
     '+5',
@@ -544,9 +575,9 @@ const simpleLiteralExamples = makeExamples(
     '5.123'
   ],
   [
-    '-5.1',
-    dsl.number(-5.1),
-    '-5.1'
+    'let v = -5.1',
+    dsl.assignment('v', dsl.number(-5.1)),
+    '(v = -5.1)'
   ],
   [
     '+5.1',
