@@ -523,12 +523,12 @@ const operatorExamples = makeExamples(
   [
     '1 == 2',
     dsl.equal(dsl.number(1), dsl.number(2)),
-    '(1 == 2)'
+    '(1 === 2)'
   ],
   [
     '1 != 2',
     dsl.notEqual(dsl.number(1), dsl.number(2)),
-    '(1 != 2)'
+    '(1 !== 2)'
   ],
 
   [
@@ -551,6 +551,11 @@ const operatorExamples = makeExamples(
     '!foo',
     dsl.not(dsl.reference('foo')),
     '(!foo)'
+  ],
+  [
+    '!!foo',
+    dsl.not(dsl.not(dsl.reference('foo'))),
+    '(!(!foo))'
   ],
   [
     '!(foo || bar)',
