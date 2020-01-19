@@ -43,9 +43,11 @@ const assignmentExamples = makeExamples(
     '(a = () => {\n})'
   ],
   [
-    'let a.b = fn () {}',
+    `let a = {}
+     let a.b = fn () {}`,
     dsl.assignment(dsl.valueSeq(dsl.reference('a'), dsl.getProperty('b')), dsl.func()),
-    '(a.b = () => {\n})'
+    `(a = {});
+      (a.b = () => {\n})`
   ],
   [
     'Map destructuring',
@@ -54,16 +56,20 @@ const assignmentExamples = makeExamples(
       dsl.mapDestructuring(dsl.reference('a')),
       dsl.map(dsl.property('a', dsl.string('hello')))
     ),
-    '({a} = ({ a: "hello" }))'
+    '({a: a} = { a: "hello" })'
   ],
   [
     'Array destructuring',
-    'let [a b] = foo()',
+    ` let foo = fn () {[1,2]}
+    let [a b] = foo()`,
     dsl.assignment(
       dsl.arrayDestructuring(dsl.reference('a'), dsl.reference('b')),
       dsl.valueSeq(dsl.reference('foo'), dsl.functionCall())
     ),
-    '([a, b] = foo())'
+    `(foo = () => {
+          return [1, 2];
+      });
+      ([a, b] = foo())`
   ],
   [
     'Comment after assignment',
@@ -84,17 +90,17 @@ const mapExamples = makeExamples(
   [
     '#{}',
     dsl.map(),
-    '({})'
+    '{}'
   ],
   [
     '#{a:null}',
     dsl.map(dsl.property('a', dsl.Null)),
-    '({ a: null })'
+    '{ a: null }'
   ],
   [
     '#{b}',
     dsl.map(dsl.property('b', dsl.reference('b'))),
-    '({ b: b })'
+    '{ b: b }'
   ],
   [
     'let a = #{ a: null b: "foo" }',
@@ -102,16 +108,16 @@ const mapExamples = makeExamples(
       dsl.property('a', dsl.Null),
       dsl.property('b', dsl.string('foo'))
     )),
-    '(a = ({ a: null, b: "foo" }))'
+    '(a = { a: null, b: "foo" })'
   ],
   [
     'Map within a map',
-    'let a = #{ a: #{ b: "foo" } c: d }',
+    'let a = #{ a: #{ b: "foo" } c: 5 }',
     dsl.assignment('a', dsl.map(
       dsl.property('a', dsl.map(dsl.property('b', dsl.string('foo')))),
-      dsl.property('c', dsl.reference('d'))
+      dsl.property('c', dsl.number(5))
     )),
-    '(a = ({ a: ({ b: "foo" }), c: d }))'
+    '(a = { a: { b: "foo" }, c: 5 })'
   ]
 );
 
@@ -136,9 +142,9 @@ const arrayExamples = makeExamples(
   ],
   [
     'Array within a array',
-    'let a = [["foo"]d]',
-    dsl.assignment('a', dsl.array(dsl.array(dsl.string('foo')), dsl.reference('d'))),
-    '(a = [["foo"], d])'
+    'let a = [["foo"] 5]',
+    dsl.assignment('a', dsl.array(dsl.array(dsl.string('foo')), dsl.number(5))),
+    '(a = [["foo"], 5])'
   ]
 );
 
@@ -216,13 +222,13 @@ const functionCallExamples = makeExamples(
 
 const initialTryCatch = (tryBlock, errorSymbol, catchBlock, finallyBlock = null) => _.concat(
   [
-    dsl.valueSeq(dsl.reference('try'), dsl.functionCallWithBody(null, tryBlock)),
+    dsl.valueSeq(dsl.reference('try'), dsl.functionCallWithBody([], tryBlock)),
     dsl.valueSeq(dsl.reference('catch'), dsl.functionCallWithBody(
-      dsl.reference(errorSymbol), catchBlock
+      [dsl.reference(errorSymbol)], catchBlock
     )),
   ],
   finallyBlock ? dsl.valueSeq(dsl.reference('finally'),
-    dsl.functionCallWithBody(null, finallyBlock)) : null
+    dsl.functionCallWithBody([], finallyBlock)) : null
 );
 
 const tryCatchExamples = makeExamples(
@@ -286,7 +292,7 @@ const initialIf = (condition, statements) =>
 
 const initialElse = (statements) =>
   dsl.valueSeq(dsl.reference('else'),
-    dsl.functionCallWithBody(null, dsl.block(...statements)));
+    dsl.functionCallWithBody([], dsl.block(...statements)));
 
 const initialElseIf = (condition, statements) =>
   dsl.valueSeq(dsl.reference('elseif'),
@@ -551,9 +557,9 @@ const miscExamples = makeExamples(
     'let a = (b, c) => {\n}'
   ],
   [
-    'def #{a} = foo',
+    'def #{a} = #{ a: 5 }',
     dsl.def(dsl.mapDestructuring(dsl.reference('a')), dsl.reference('foo')),
-    'let { a } = foo'
+    'let { a: a } = { a: 5 }'
   ],
   [
     'string interpolation',
@@ -576,20 +582,20 @@ const quoteExamples = makeExamples(
   [
     'quote(null)',
     dsl.quoteWithExpression(dsl.literal(null)),
-    '({ type: "Null" })'
+    '{ type: "Null" }'
   ],
   [
     'quote(a)',
     dsl.quoteWithExpression(dsl.reference('a')),
-    '({ type: "Reference", symbol: "a" })'
+    '{ type: "Reference", symbol: "a" }'
   ],
   [
     'quote(a.b)',
     dsl.quoteWithExpression(dsl.valueSeq(dsl.reference('a'), dsl.getProperty('b'))),
-    `({
+    `{
         type: "ValueSequence",
-        values: [({ type: "Reference", symbol: "a" }), ({ type: "GetProperty", attrib: "b" })]
-    })`
+        values: [{ type: "Reference", symbol: "a" }, { type: "GetProperty", attrib: "b" }]
+    }`
   ],
 );
 

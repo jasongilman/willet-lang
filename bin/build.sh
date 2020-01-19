@@ -2,11 +2,20 @@
 
 echo "Building Willet"
 
-mkdir -p dist
+CUR_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+ROOT_DIR="$CUR_DIR/.."
 
-bin/compile.js --skipcore lib/willet-core.wlt dist/
+mkdir -p $ROOT_DIR/dist
+
+$ROOT_DIR/bin/compile.js --skipcore $ROOT_DIR/lib/willet-core.wlt $ROOT_DIR/dist/
 if [ $? != 0 ]; then
   printf "Failed to compile willet source"
+  exit 1
+fi
+
+$ROOT_DIR/bin/compile.js $ROOT_DIR/wlt-tests $ROOT_DIR/dist-tests
+if [ $? != 0 ]; then
+  printf "Failed to compile willet tests code"
   exit 1
 fi
 

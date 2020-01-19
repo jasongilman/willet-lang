@@ -33,7 +33,7 @@ program
   .action((source, targetDir, cmdObj) => {
     src = source;
     target = targetDir;
-    skipCore = cmdObj.skipcore;
+    skipCore = !!cmdObj.skipcore;
   });
 
 program.parse(process.argv);

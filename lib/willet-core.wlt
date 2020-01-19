@@ -51,6 +51,42 @@ defmacro if = #{
   }
 }
 
+defmacro try = #{
+  terms: [
+    #{
+      term: "try$wlt"
+      acceptsArgs: false
+      acceptsBlock: true
+    }
+    #{
+      term: "catch$wlt"
+      acceptsArgs: true
+      acceptsBlock: true
+      optional: true
+    }
+    #{
+      term: "finally$wlt"
+      acceptsArgs: false
+      acceptsBlock: true
+      optional: true
+    }
+  ]
+  handler: fn (parts) {
+    def catch = parts.catch
+    def errorSymbol
+    def catchBlock
+    if (catch) {
+      let errorSymbol = catch.args.[0].symbol
+      let catchBlock = catch.block
+    }
+    def finallyBlock
+    if (parts.finally) {
+      let finallyBlock = parts.finally.block
+    }
+    dsl.tryCatch(parts.try.block, errorSymbol, catchBlock, finallyBlock)
+  }
+}
+
 def fixTarget = fn (target) {
   def visitor = fn (context node) {
     if (node.type == "MapLiteral") {
@@ -58,6 +94,9 @@ def fixTarget = fn (target) {
     }
     elseif (node.type == "ArrayLiteral") {
       dsl.arrayDestructuring(...node.values)
+    }
+    else {
+      node
     }
   }
   astHelper.postwalk(#{} visitor target)
@@ -102,5 +141,7 @@ let module.exports = #{
   isEmpty,
   keys,
   toPairs,
+  if,
+  try,
   fore
 }

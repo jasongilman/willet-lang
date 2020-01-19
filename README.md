@@ -98,10 +98,10 @@ Before Willet Grammar is available in atom set syntax to Java of some willet cod
 { "willet": "Java" }
 ```
 
-## Automatically Compiling Grammar on Save
+## Automatically Compiling Willet Core on Save
 
 Requires entr to be installed
 
 ```
-ls lib/grammar.pegjs | entr bin/build.sh
+ls lib/willet-core.wlt | entr bin/build.sh
 ```
