@@ -13,8 +13,14 @@ const createContext = (dirname = '.') => ({
 const compile = (context, source) => {
   let ast = parser.parse(source);
   ast = keywordReplacer.replaceJsKeywords(ast);
+  console.log('-----------------------------------');
+  console.log(`ast: ${JSON.stringify(ast, null, 2)}`);
   ast = macroExpander.expandMacros(context, ast);
-  return jsCompiler.compile(ast);
+  const compiled = jsCompiler.compile(ast);
+
+  console.log(compiled);
+
+  return compiled;
 };
 
 module.exports = {

@@ -19,6 +19,23 @@ def isEmpty = _.isEmpty
 def keys = _.keys
 def toPairs = _.toPairs
 
+// defmacro afn = fn (args, block) {
+//   quote(
+//     (fn() {
+//       let aFun = fn (...args) { unquote(block) }
+//       let aFun.async = true
+//       aFun
+//     } ()
+//   )
+// }
+//
+//
+// let v = afn(a, b) {
+//   console.log(a)
+// }
+//
+// v(1, 2)
+
 def ifFormToDsl = #{
   if: fn(#{ args:[cond] block }) { dsl.ifNode(cond block) }
   elseif: fn(#{ args:[cond] block }) { dsl.elseIfNode(cond block) }
@@ -87,35 +104,14 @@ defmacro try = #{
   }
 }
 
-def fixTarget = fn (target) {
-  def visitor = fn (context node) {
-    if (node.type == "MapLiteral") {
-      dsl.mapDestructuring(...node.properties)
-    }
-    elseif (node.type == "ArrayLiteral") {
-      dsl.arrayDestructuring(...node.values)
-    }
-    else {
-      node
-    }
-  }
-  astHelper.postwalk(#{} visitor target)
-}
-
 def processPairs = fn (block [pair ...rest]) {
   def [target collection] = pair
   if (isEmpty(rest)) {
-    def fun = dsl.func(
-      [fixTarget(target)]
-      block
-    )
+    def fun = dsl.func([target] block)
     quote(map(unquote(collection) unquote(fun)))
   }
   else {
-    def fun = dsl.func(
-      [fixTarget(target)]
-      [processPairs(block rest)]
-    )
+    def fun = dsl.func([target] [processPairs(block rest)])
     quote(map(unquote(collection) unquote(fun)))
   }
 }

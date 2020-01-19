@@ -36,6 +36,9 @@ const functionDeclarationExamples = makeExamples(
   ]
 );
 
+// TODO parentheses wrapped expressions followed by invoke like (fn () { 1 })()
+// TODO blocks by themselves are invoked and evaluate to their value.
+
 const assignmentExamples = makeExamples(
   [
     'let a = fn () {}',
@@ -43,9 +46,12 @@ const assignmentExamples = makeExamples(
     '(a = () => {\n})'
   ],
   [
-    `let a = {}
+    `let a = #{}
      let a.b = fn () {}`,
-    dsl.assignment(dsl.valueSeq(dsl.reference('a'), dsl.getProperty('b')), dsl.func()),
+    [
+      dsl.assignment(dsl.reference('a'), dsl.map()),
+      dsl.assignment(dsl.valueSeq(dsl.reference('a'), dsl.getProperty('b')), dsl.func())
+    ],
     `(a = {});
       (a.b = () => {\n})`
   ],
@@ -53,19 +59,25 @@ const assignmentExamples = makeExamples(
     'Map destructuring',
     'let #{a} = #{a: "hello"}',
     dsl.assignment(
-      dsl.mapDestructuring(dsl.reference('a')),
+      dsl.map(dsl.property('a', dsl.reference('a'))),
       dsl.map(dsl.property('a', dsl.string('hello')))
     ),
     '({a: a} = { a: "hello" })'
   ],
   [
     'Array destructuring',
-    ` let foo = fn () {[1,2]}
+    `let foo = fn () {[1,2]}
     let [a b] = foo()`,
-    dsl.assignment(
-      dsl.arrayDestructuring(dsl.reference('a'), dsl.reference('b')),
-      dsl.valueSeq(dsl.reference('foo'), dsl.functionCall())
-    ),
+    [
+      dsl.assignment(
+        dsl.reference('foo'),
+        dsl.func([], dsl.block(dsl.array(dsl.number(1), dsl.number(2))))
+      ),
+      dsl.assignment(
+        dsl.array(dsl.reference('a'), dsl.reference('b')),
+        dsl.valueSeq(dsl.reference('foo'), dsl.functionCall())
+      ),
+    ],
     `(foo = () => {
           return [1, 2];
       });
@@ -212,7 +224,7 @@ const functionCallExamples = makeExamples(
       dsl.reference('foo'),
       dsl.functionCallWithBody(
         [dsl.reference('b')],
-        [dsl.valueSeq(dsl.reference('log'), dsl.functionCall(dsl.string('hello')))]
+        dsl.block(dsl.valueSeq(dsl.reference('log'), dsl.functionCall(dsl.string('hello'))))
       )
     ),
     // Don't attempt to test javascript generation. We'll add macro stuff later
@@ -222,13 +234,17 @@ const functionCallExamples = makeExamples(
 
 const initialTryCatch = (tryBlock, errorSymbol, catchBlock, finallyBlock = null) => _.concat(
   [
-    dsl.valueSeq(dsl.reference('try'), dsl.functionCallWithBody([], tryBlock)),
+    dsl.valueSeq(dsl.reference('try'), dsl.functionCallWithBody([], dsl.block(...tryBlock))),
     dsl.valueSeq(dsl.reference('catch'), dsl.functionCallWithBody(
-      [dsl.reference(errorSymbol)], catchBlock
+      [dsl.reference(errorSymbol)], dsl.block(...catchBlock)
     )),
   ],
-  finallyBlock ? dsl.valueSeq(dsl.reference('finally'),
-    dsl.functionCallWithBody([], finallyBlock)) : null
+  finallyBlock ? [
+    dsl.valueSeq(
+      dsl.reference('finally'),
+      dsl.functionCallWithBody([], dsl.block(...finallyBlock))
+    )
+  ] : []
 );
 
 const tryCatchExamples = makeExamples(
@@ -558,7 +574,10 @@ const miscExamples = makeExamples(
   ],
   [
     'def #{a} = #{ a: 5 }',
-    dsl.def(dsl.mapDestructuring(dsl.reference('a')), dsl.reference('foo')),
+    dsl.def(
+      dsl.map(dsl.property('a', dsl.reference('a'))),
+      dsl.map(dsl.property('a', dsl.number(5))),
+    ),
     'let { a: a } = { a: 5 }'
   ],
   [

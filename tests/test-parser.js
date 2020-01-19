@@ -5,9 +5,12 @@ const expect = chai.expect;
 const parser = require('../parser');
 const examples = require('./examples');
 
-const assertSingleStatement = (input, expectedStmt) => {
+const assertSingleStatement = (input, expectedStmts) => {
+  if (!_.isArray(expectedStmts)) {
+    expectedStmts = [expectedStmts];
+  }
   const result = parser.parse(input);
-  const expected = { type: 'Program', statements: [expectedStmt] };
+  const expected = { type: 'Program', statements: expectedStmts };
   expect(result).to.deep.equal(expected);
 };
 
