@@ -19,22 +19,11 @@ def isEmpty = _.isEmpty
 def keys = _.keys
 def toPairs = _.toPairs
 
-// defmacro afn = fn (args, block) {
-//   quote(
-//     (fn() {
-//       let aFun = fn (...args) { unquote(block) }
-//       let aFun.async = true
-//       aFun
-//     } ()
-//   )
-// }
-//
-//
-// let v = afn(a, b) {
-//   console.log(a)
-// }
-//
-// v(1, 2)
+// Creates an async function. Eventually I'd like to consider a better way to do this.
+// "afn" isn't very guessable.
+defmacro afn = fn (block ...args) {
+  dsl.func(args, block, true)
+}
 
 def ifFormToDsl = #{
   if: fn(#{ args:[cond] block }) { dsl.ifNode(cond block) }
@@ -120,9 +109,8 @@ def processPairs = fn (block [pair ...rest]) {
 
 // TODO support when, let etc
 // TODO defmacro shouldn't require the '=' here.
-defmacro fore = fn (...args) {
-  def block = last(args)
-  def pairs = chunk(dropLast(args), 2)
+defmacro fore = fn (block ...args) {
+  def pairs = chunk(args, 2)
   processPairs(block, pairs)
 }
 
@@ -137,6 +125,7 @@ let module.exports = #{
   isEmpty,
   keys,
   toPairs,
+  afn,
   if,
   try,
   fore

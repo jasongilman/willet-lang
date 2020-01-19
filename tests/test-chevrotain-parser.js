@@ -39,7 +39,7 @@ describe('Parse all examples', () => {
   for (const example of examples) {
     it(`should parse ${example}`, async () => {
       const result = parser.parse(example);
-      console.log('-----------------------------------');
+      console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
       console.log(example, JSON.stringify(result, null, 2));
     });
   }

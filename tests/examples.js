@@ -35,6 +35,15 @@ const functionDeclarationExamples = makeExamples(
     '() => {\n}'
   ],
   [
+    'Async function definition using macro',
+    'afn() {}',
+    dsl.valueSeq(
+      dsl.reference('afn'),
+      dsl.functionCallWithBody()
+    ),
+    'async () => {\n}'
+  ],
+  [
     'Definition and invocation',
     '(fn () { 1 })()',
     dsl.valueSeq(
@@ -528,6 +537,26 @@ const operatorExamples = makeExamples(
     dsl.lessThan(dsl.plus(dsl.number(1), dsl.number(4)), dsl.plus(dsl.number(2), dsl.number(3))),
     '((1 + 4) < (2 + 3))'
   ],
+  [
+    'foo && bar',
+    dsl.and(dsl.reference('foo'), dsl.reference('bar')),
+    '(foo && bar)'
+  ],
+  [
+    'foo || bar',
+    dsl.or(dsl.reference('foo'), dsl.reference('bar')),
+    '(foo || bar)'
+  ],
+  [
+    '!foo',
+    dsl.not(dsl.reference('foo')),
+    '(!foo)'
+  ],
+  [
+    '!(foo || bar)',
+    dsl.not(dsl.or(dsl.reference('foo'), dsl.reference('bar'))),
+    '(!(foo || bar))'
+  ],
 );
 
 const simpleLiteralExamples = makeExamples(
@@ -628,6 +657,15 @@ const miscExamples = makeExamples(
   ]
 );
 
+// TODO keywords as functions
+// new
+// throw
+// await
+// typeof
+
+// Infix && ||
+
+
 const quoteExamples = makeExamples(
   [
     'quote(null)',
@@ -663,6 +701,22 @@ const spreadExamples = makeExamples(
       )
     ),
     'a(foo, ...some, thing, ...more)'
+  ],
+  [
+    'Spreading a result',
+    'a(...foo(1))',
+    dsl.valueSeq(
+      dsl.reference('a'),
+      dsl.functionCall(
+        dsl.spread(
+          dsl.valueSeq(
+            dsl.reference('foo'),
+            dsl.functionCall(dsl.number(1))
+          )
+        )
+      )
+    ),
+    'a(...foo(1))'
   ],
   [
     'Array literal',
