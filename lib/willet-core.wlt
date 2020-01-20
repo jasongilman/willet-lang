@@ -19,6 +19,12 @@ def isEmpty = _.isEmpty
 def keys = _.keys
 def toPairs = _.toPairs
 def indexOf = _.indexOf
+def isArray = _.isArray
+def isPlainObject = _.isPlainObject
+
+def isPromise = fn (p) {
+  instanceof(p Promise)
+}
 
 // Creates an async function. Eventually I'd like to consider a better way to do this.
 // "afn" isn't very guessable.
@@ -127,6 +133,9 @@ let module.exports = #{
   isEmpty,
   keys,
   toPairs,
+  isArray,
+  isPlainObject,
+  isPromise,
   afn,
   if,
   try,

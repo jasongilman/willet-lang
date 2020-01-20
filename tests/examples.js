@@ -754,6 +754,34 @@ const spreadExamples = makeExamples(
   ],
 );
 
+const specialJavaScriptOperators = makeExamples(
+  [
+    'typeof("foo")',
+    null,
+    'typeof("foo")'
+  ],
+  [
+    'let s = typeof("foo").trim()',
+    null,
+    '(s = typeof("foo").trim())'
+  ],
+  [
+    'new(Error("foo")).toString()',
+    null,
+    'new Error("foo").toString()'
+  ],
+  [
+    'instanceof(v Promise).toString()',
+    null,
+    '(v instanceof Promise).toString()'
+  ],
+  [
+    'throw(new(Error("foo")))',
+    null,
+    'throw(new Error("foo"))'
+  ],
+);
+
 module.exports = {
   functionDeclarationExamples,
   assignmentExamples,
@@ -767,5 +795,6 @@ module.exports = {
   simpleLiteralExamples,
   operatorExamples,
   quoteExamples,
-  spreadExamples
+  spreadExamples,
+  specialJavaScriptOperators
 };

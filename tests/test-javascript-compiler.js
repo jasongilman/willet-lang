@@ -15,16 +15,17 @@ const removeCore = (code) => {
   return beautify(code);
 };
 
+const removeEmptyLines = (code) => code.replace(/\n\s*\n+/g, '\n').trim();
+
 const assertSingleStatement = (input, expectedCode) => {
-  console.log('==================================================================================');
   const result = compiler.compile(compiler.createContext(), input);
 
   // Exclude willet core for comparison
-  const withoutCore = removeCore(result);
+  const withoutCore = removeEmptyLines(removeCore(result));
 
   let expected;
   try {
-    expected = beautify(`${expectedCode};`);
+    expected = removeEmptyLines(beautify(`${expectedCode};`));
   }
   catch (error) {
     console.error('Invalid Example JavaScript:', expectedCode);

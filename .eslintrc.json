@@ -49,6 +49,7 @@
       "error",
       { "argsIgnorePattern": "^_", "varsIgnorePattern": "^_ignore" }
     ],
+    "no-case-declarations": "off",
     "no-useless-escape": "off",
     "no-console": "off",
     "spaced-comment": "off",

@@ -18,9 +18,11 @@ describe('Willet Parser', () => {
   for (const [exampleSetName, exampleSet] of _.toPairs(examples)) {
     describe(exampleSetName, () => {
       for (const { name, willet, ast } of exampleSet) {
-        it(`should parse ${name}`, async () => {
-          assertSingleStatement(willet, ast);
-        });
+        if (ast) {
+          it(`should parse ${name}`, async () => {
+            assertSingleStatement(willet, ast);
+          });
+        }
       }
     });
   }

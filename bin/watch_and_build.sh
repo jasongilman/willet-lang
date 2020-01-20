@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-find . -name "*.wlt" | entr bin/build.sh
+{ find . -name "*.wlt" ; find lib -name "*.js" ; ls *.js ; } | entr bin/build.sh

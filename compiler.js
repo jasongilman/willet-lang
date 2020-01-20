@@ -14,7 +14,8 @@ const compile = (context, source) => {
   let ast = parser.parse(source);
   ast = keywordReplacer.replaceJsKeywords(ast);
   ast = macroExpander.expandMacros(context, ast);
-  return jsCompiler.compile(ast);
+  const compiled = jsCompiler.compile(ast);
+  return compiled;
 };
 
 module.exports = {
