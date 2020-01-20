@@ -35,6 +35,15 @@ const functionDeclarationExamples = makeExamples(
     '() => {\n}'
   ],
   [
+    'Arg default values',
+    'fn (a = 5 b=foo()) {}',
+    dsl.func([
+      dsl.funcArg(dsl.reference('a'), dsl.number(5)),
+      dsl.funcArg(dsl.reference('b'), dsl.valueSeq(dsl.reference('foo'), dsl.functionCall()))
+    ]),
+    '(a = 5, b = foo()) => {\n}'
+  ],
+  [
     'Async function definition using macro',
     'afn() {}',
     dsl.valueSeq(
@@ -634,7 +643,7 @@ const miscExamples = makeExamples(
   [
     'def a = fn (b c) { }',
     dsl.def(dsl.reference('a'),
-      dsl.func([dsl.reference('b'), dsl.reference('c')])),
+      dsl.func([dsl.funcArg(dsl.reference('b')), dsl.funcArg(dsl.reference('c'))])),
     'let a = (b, c) => {\n}'
   ],
   [
@@ -737,7 +746,10 @@ const spreadExamples = makeExamples(
   [
     'Function declaration',
     'fn (foo ...more) {}',
-    dsl.func([dsl.reference('foo'), dsl.restAssignment('more')]),
+    dsl.func([
+      dsl.funcArg(dsl.reference('foo')),
+      dsl.restAssignment(dsl.funcArg(dsl.reference('more')))
+    ]),
     '(foo, ...more) => {}'
   ],
 );
