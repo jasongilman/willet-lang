@@ -18,6 +18,7 @@ def map = _.map
 def isEmpty = _.isEmpty
 def keys = _.keys
 def toPairs = _.toPairs
+def indexOf = _.indexOf
 
 // Creates an async function. Eventually I'd like to consider a better way to do this.
 // "afn" isn't very guessable.
@@ -122,6 +123,7 @@ let module.exports = #{
   drop,
   dropLast,
   map,
+  indexOf,
   isEmpty,
   keys,
   toPairs,
