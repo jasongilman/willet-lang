@@ -64,6 +64,29 @@ defmacro if = #{
   }
 }
 
+defmacro cond = fn(block) {
+  def blockWrap = fn(v) {
+    if (v.type == "Block") {
+      v
+    }
+    else {
+      dsl.block(v)
+    }
+  }
+  def pairs = chunk(block.statements, 2)
+  dsl.ifList(...map(pairs, fn ([conditional result] index) {
+    if (index == 0) {
+      dsl.ifNode(conditional blockWrap(result))
+    }
+    elseif (conditional.type == "Reference" && conditional.symbol == "else$wlt") {
+      dsl.elseNode(blockWrap(result))
+    }
+    else {
+      dsl.elseIfNode(conditional blockWrap(result))
+    }
+  }))
+}
+
 defmacro try = #{
   terms: [
     #{
@@ -121,6 +144,7 @@ defmacro fore = fn (block ...args) {
   processPairs(block, pairs)
 }
 
+
 let module.exports = #{
   chunk,
   first,
@@ -139,5 +163,6 @@ let module.exports = #{
   afn,
   if,
   try,
-  fore
+  fore,
+  cond
 }

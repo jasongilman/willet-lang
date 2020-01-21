@@ -26,7 +26,7 @@ describe("Function invocation" fn () {
 
   it("should allow calling an complex async function" afn () {
     let v = isPromise(complexAsync(1));
-    expect(v).to.be.true()
+    expect(v).to.be.true
     expect(await(complexAsync(1))).to.be.equal(2)
     expect(await(complexAsync(-2))).to.be.equal(0)
   })

@@ -443,6 +443,79 @@ const ifExamples = makeExamples(
   ],
 );
 
+const condExamples = makeExamples(
+  [
+    `cond {
+      true 1
+    }`,
+    null,
+    `(() => {
+        if (true) {
+          return 1;
+        }
+        return null;
+    })()`
+  ],
+  [
+    `cond {
+      true 1
+      else 2
+     }`,
+    null,
+    `(() => {
+        if (true) {
+          return 1;
+        }
+        else {
+          return 2;
+        }
+        return null;
+    })()`
+  ],
+  [
+    `cond {
+      foo() 1
+      bar() + 3 > 2 2
+      else 3
+     }`,
+    null,
+    `(() => {
+        if (foo()) {
+          return 1;
+        }
+        else if (((bar() + 3) > 2)) {
+          return 2;
+        }
+        else {
+          return 3;
+        }
+        return null;
+    })()`
+  ],
+  // [
+  //   // TODO it's not parsing correctly. The bar part comes across as a function call.
+  //   // Fix it by making a block always the end of a value sequence
+  //   `cond {
+  //     (foo()) { 1 }
+  //     (bar() + 3 > 2) { 2 }
+  //     else 3
+  //    }`,
+  //   null,
+  //   `(() => {
+  //       if (foo()) {
+  //         return 1;
+  //       }
+  //       else if (((bar() + 3) > 2)) {
+  //         return 2;
+  //       }
+  //       else {
+  //         return 3;
+  //       }
+  //       return null;
+  //   })()`
+  // ]
+);
+
 const operatorExamples = makeExamples(
   [
     '1 + 2',
@@ -671,15 +744,6 @@ const miscExamples = makeExamples(
   ]
 );
 
-// TODO keywords as functions
-// new
-// throw
-// await
-// typeof
-
-// Infix && ||
-
-
 const quoteExamples = makeExamples(
   [
     'quote(null)',
@@ -778,7 +842,7 @@ const specialJavaScriptOperators = makeExamples(
   [
     'throw(new(Error("foo")))',
     null,
-    'throw(new Error("foo"))'
+    'throw new Error("foo")'
   ],
 );
 
@@ -789,6 +853,7 @@ module.exports = {
   arrayExamples,
   miscExamples,
   ifExamples,
+  condExamples,
   valueSequenceExamples,
   functionCallExamples,
   tryCatchExamples,

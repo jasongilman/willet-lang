@@ -14,5 +14,5 @@ if [ $? != 0 ]; then
 fi
 
 # TODO temporary only testing willet code.
-# node_modules/.bin/mocha --timeout 0 -b tests/ dist-tests/
-node_modules/.bin/mocha --timeout 0 -b dist-tests/
+node_modules/.bin/mocha --timeout 0 -b tests/ dist-tests/
+# node_modules/.bin/mocha --timeout 0 -b dist-tests/
