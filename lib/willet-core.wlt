@@ -67,7 +67,7 @@ defmacro if = #{
 defmacro cond = fn(block) {
   def blockWrap = fn(v) {
     if (v.type == "Block") {
-      v
+      dsl.block(...v.statements)
     }
     else {
       dsl.block(v)

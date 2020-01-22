@@ -492,28 +492,26 @@ const condExamples = makeExamples(
         return null;
     })()`
   ],
-  // [
-  //   // TODO it's not parsing correctly. The bar part comes across as a function call.
-  //   // Fix it by making a block always the end of a value sequence
-  //   `cond {
-  //     (foo()) { 1 }
-  //     (bar() + 3 > 2) { 2 }
-  //     else 3
-  //    }`,
-  //   null,
-  //   `(() => {
-  //       if (foo()) {
-  //         return 1;
-  //       }
-  //       else if (((bar() + 3) > 2)) {
-  //         return 2;
-  //       }
-  //       else {
-  //         return 3;
-  //       }
-  //       return null;
-  //   })()`
-  // ]
+  [
+    `cond {
+      foo(); { 1 }
+      bar() + 3 > 2; { 2 }
+      else 3
+     }`,
+    null,
+    `(() => {
+        if (foo()) {
+          return 1;
+        }
+        else if (((bar() + 3) > 2)) {
+          return 2;
+        }
+        else {
+          return 3;
+        }
+        return null;
+    })()`
+  ]
 );
 
 const operatorExamples = makeExamples(
