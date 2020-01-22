@@ -21,6 +21,7 @@ def toPairs = _.toPairs
 def indexOf = _.indexOf
 def isArray = _.isArray
 def isPlainObject = _.isPlainObject
+def isNil = _.isNil
 
 def isPromise = fn (p) {
   instanceof(p Promise)
@@ -159,6 +160,7 @@ let module.exports = #{
   toPairs,
   isArray,
   isPlainObject,
+  isNil,
   isPromise,
   afn,
   if,

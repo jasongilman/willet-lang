@@ -53,6 +53,12 @@ const functionDeclarationExamples = makeExamples(
     'async () => {\n}'
   ],
   [
+    'Chaining macro calls',
+    'afn() { }.()',
+    null,
+    '(async () => {\n})()'
+  ],
+  [
     'Definition and invocation',
     '(fn () { 1 })()',
     dsl.valueSeq(
@@ -238,6 +244,16 @@ const valueSequenceExamples = makeExamples(
       dsl.getPropertyDynamic(dsl.reference('d'))
     ),
     'a(b.c)[d]'
+  ],
+  [
+    'a().().d',
+    dsl.valueSeq(
+      dsl.reference('a'),
+      dsl.functionCall(),
+      dsl.functionCall(),
+      dsl.getProperty('d'),
+    ),
+    'a()().d'
   ],
 );
 
