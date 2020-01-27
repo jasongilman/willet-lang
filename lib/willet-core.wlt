@@ -15,13 +15,20 @@ def slice = _.slice
 def drop = _.drop
 def dropLast = _.dropRight
 def map = _.map
+def reduce = _.reduce
+def groupBy = _.groupBy
+def concat = _.concat
 def isEmpty = _.isEmpty
 def keys = _.keys
 def toPairs = _.toPairs
+def fromPairs = _.fromPairs
 def indexOf = _.indexOf
 def isArray = _.isArray
 def isPlainObject = _.isPlainObject
 def isNil = _.isNil
+def clone = _.clone
+def cloneDeep = _.cloneDeep
+def get = _.get
 
 def isPromise = fn (p) {
   instanceof(p Promise)
@@ -88,6 +95,25 @@ defmacro cond = fn(block) {
   }))
 }
 
+defmacro chain = fn(block ...args) {
+  def calls = block.statements
+  reduce(calls fn (result call) {
+    def newCall = cond {
+      call.type == "ValueSequence" && get(call "values[1].type") == "FunctionCall"
+      cloneDeep(call)
+      call.type == "Reference"
+      dsl.valueSeq(call dsl.functionCall())
+      else
+      // TODO add support for macro context argument that will allow better error reporting
+      throw(new(Error("Invalid arguments passed to chain")))
+    }
+    let result = cond { isArray(result) result else [result] }
+
+    let newCall.values.[1].args = concat(result newCall.values.[1].args)
+    newCall
+  } args)
+}
+
 defmacro try = #{
   terms: [
     #{
@@ -147,24 +173,36 @@ defmacro fore = fn (block ...args) {
 
 
 let module.exports = #{
-  chunk,
-  first,
-  last,
-  slice,
-  drop,
-  dropLast,
-  map,
-  indexOf,
-  isEmpty,
-  keys,
-  toPairs,
-  isArray,
-  isPlainObject,
-  isNil,
-  isPromise,
-  afn,
-  if,
-  try,
-  fore,
+  chunk
+  first
+  last
+  slice
+  drop
+  dropLast
+  map
+  reduce
+  groupBy
+  concat
+  indexOf
+  isEmpty
+  keys
+  toPairs
+  fromPairs
+  isArray
+  isPlainObject
+  isNil
+  clone
+  cloneDeep
+  get
+
+  // helpers
+  isPromise
+
+  // macros
+  afn
+  if
+  try
+  fore
   cond
+  chain
 }

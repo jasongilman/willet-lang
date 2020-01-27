@@ -530,6 +530,38 @@ const condExamples = makeExamples(
   ]
 );
 
+const chainExamples = makeExamples(
+  [
+    `chain(1) {
+      a(2)
+      b(3)
+      c(4)
+    }`,
+    null,
+    'c(b(a(1, 2), 3), 4)'
+  ],
+  [
+    'Chain multiple arguments',
+    `chain(1 a) {
+      a(2)
+      b(3)
+      c(4)
+    }`,
+    null,
+    'c(b(a(1, a, 2), 3), 4)'
+  ],
+  [
+    'Chain more complex',
+    `chain(1) {
+      a(2)
+      b(3).(5)
+      c
+    }`,
+    null,
+    'c(b(a(1, 2), 3)(5))'
+  ],
+);
+
 const operatorExamples = makeExamples(
   [
     '1 + 2',
@@ -868,6 +900,7 @@ module.exports = {
   miscExamples,
   ifExamples,
   condExamples,
+  chainExamples,
   valueSequenceExamples,
   functionCallExamples,
   tryCatchExamples,
