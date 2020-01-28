@@ -26,13 +26,13 @@
     "eslint-plugin-import": "^2.13.0",
     "eslint-plugin-jsdoc": "^3.7.1",
     "eslint-plugin-jsx-a11y": "^6.0.3",
-    "eslint-plugin-react": "^7.10.0"
-  },
-  "dependencies": {
+    "eslint-plugin-react": "^7.10.0",
     "chevrotain": "^6.3.1",
     "commander": "^3.0.1",
+    "js-beautify": "^1.10.2"
+  },
+  "dependencies": {
     "immutable": "^4.0.0-rc.12",
-    "js-beautify": "^1.10.2",
     "lodash": "^4.17.15"
   }
 }
