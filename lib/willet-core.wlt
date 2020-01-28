@@ -1,11 +1,15 @@
+// TODO can we remove lodash dependency?
 def _ = require("lodash")
+def Immutable = require("immutable")
 // Path to ast-helper works from lib or from compiled dist
 def astHelper = require("../lib/ast-helper")
 def #{ dsl } = astHelper
 
-// TODO core methods to add
+// FUTURE core methods to add
 // macroexpand
 // to_js (or something like that) - returns compiled javascript of code.
+
+// TODO switch all these to work with immutable data
 
 def identity = _.identity
 def chunk = _.chunk
