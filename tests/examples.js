@@ -677,17 +677,17 @@ const operatorExamples = makeExamples(
   ],
   [
     '!foo',
-    dsl.not(dsl.reference('foo')),
+    dsl.negate(dsl.reference('foo')),
     '(!foo)'
   ],
   [
     '!!foo',
-    dsl.not(dsl.not(dsl.reference('foo'))),
+    dsl.negate(dsl.negate(dsl.reference('foo'))),
     '(!(!foo))'
   ],
   [
     '!(foo || bar)',
-    dsl.not(dsl.or(dsl.reference('foo'), dsl.reference('bar'))),
+    dsl.negate(dsl.or(dsl.reference('foo'), dsl.reference('bar'))),
     '(!(foo || bar))'
   ],
 );

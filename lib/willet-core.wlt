@@ -5,45 +5,6 @@ def Immutable = require("immutable")
 def astHelper = require("../lib/ast-helper")
 def #{ dsl } = astHelper
 
-// FUTURE core methods to add
-// macroexpand
-// to_js (or something like that) - returns compiled javascript of code.
-
-// TODO switch all these to work with immutable data
-
-def identity = _.identity
-def chunk = _.chunk
-def first = _.first
-def last = _.last
-def slice = _.slice
-def drop = _.drop
-def dropLast = _.dropRight
-def map = _.map
-def reduce = _.reduce
-def groupBy = _.groupBy
-def concat = _.concat
-def isEmpty = _.isEmpty
-def keys = _.keys
-def toPairs = _.toPairs
-def fromPairs = _.fromPairs
-def indexOf = _.indexOf
-def isArray = _.isArray
-def isPlainObject = _.isPlainObject
-def isNil = _.isNil
-def clone = _.clone
-def cloneDeep = _.cloneDeep
-def get = _.get
-
-def isPromise = fn (p) {
-  instanceof(p Promise)
-}
-
-// Creates an async function. Eventually I'd like to consider a better way to do this.
-// "afn" isn't very guessable.
-defmacro afn = fn (block ...args) {
-  dsl.func(args, block, true)
-}
-
 def ifFormToDsl = #{
   if: fn(#{ args:[cond] block }) { dsl.ifNode(cond block) }
   elseif: fn(#{ args:[cond] block }) { dsl.elseIfNode(cond block) }
@@ -70,10 +31,160 @@ defmacro if = #{
     }
   ]
   handler: fn (parts) {
-    dsl.ifList(...map(toPairs(parts), fn([key value]) {
+    dsl.ifList(..._.map(_.toPairs(parts), fn([key value]) {
       ifFormToDsl.[key](value)
     }))
   }
+}
+
+// FUTURE core methods to add
+// macroexpand
+// to_js (or something like that) - returns compiled javascript of code.
+
+
+def falsey = fn (v) {
+  staticjs("v === false || v === null || v === undefined")
+}
+
+def truthy = fn (v) {
+  staticjs("v !== false && v !== null && v !== undefined")
+}
+
+def isNil = fn (v) {
+  staticjs("v === null || v === undefined")
+}
+
+def count = fn (v) {
+  if (v.length) {
+    v.length
+  }
+  elseif (v.count) {
+    v.count()
+  }
+  else {
+    throw(new(Error("Value is not countable")))
+  }
+}
+
+def isEmpty = fn (v) {
+  if (isNil(v)) {
+    true
+  }
+  else {
+    count(v) == 0
+  }
+}
+
+defmacro and = fn(block ...args) {
+  def andhelper = fn([form ...rest]) {
+    def elseResult = {
+      if (isEmpty(rest)) {
+        quote(true)
+      }
+      else {
+        andhelper(rest)
+      }
+    }
+
+    quote() {
+      def formR = unquote(form)
+      if (!formR) {
+        false
+      }
+      else {
+        unquote(elseResult)
+      }
+    }
+  }
+
+  andhelper(args)
+}
+
+defmacro or = fn(block ...args) {
+  def orhelper = fn([form ...rest]) {
+    def elseResult = {
+      if (isEmpty(rest)) {
+        quote(false)
+      }
+      else {
+        orhelper(rest)
+      }
+    }
+
+    quote() {
+      def formR = unquote(form)
+      if (formR) {
+        true
+      }
+      else {
+        unquote(elseResult)
+      }
+    }
+  }
+  orhelper(args)
+}
+
+def identity = fn (v) { v }
+
+def isImmutable = Immutable.isImmutable
+
+def toImmutable = fn (v) {
+  if (isImmutable(v)) {
+    v
+  }
+  else {
+    Immutable.fromJS(v)
+  }
+}
+
+def map = fn (coll f) {
+  toImmutable(coll).map(f)
+}
+
+def range = fn (start = 0 stop = Infinity step = 1) {
+  Immutable.Range(start stop step)
+}
+
+// TODO slice
+
+def partition = fn (coll n) {
+  let coll = toImmutable(coll)
+  map(range(0 count(coll) n) fn(index) {
+    coll.slice(index index + n)
+  })
+}
+
+
+// def chunk = _.chunk
+// def first = _.first
+// def last = _.last
+// def slice = _.slice
+// def drop = _.drop
+// def dropLast = _.dropRight
+// def map = _.map
+// def reduce = _.reduce
+// def groupBy = _.groupBy
+// def concat = _.concat
+// def isEmpty = _.isEmpty
+// def keys = _.keys
+// def toPairs = _.toPairs
+// def fromPairs = _.fromPairs
+// def indexOf = _.indexOf
+// def isArray = _.isArray
+// def isPlainObject = _.isPlainObject
+// def isNil = _.isNil
+// def clone = _.clone
+// def cloneDeep = _.cloneDeep
+// def get = _.get
+
+def isPromise = fn (p) {
+  instanceof(p Promise)
+}
+
+// Creates an async function. Eventually I'd like to consider a better way to do this.
+// "afn" isn't very guessable.
+defmacro afn = fn (block ...args) {
+  dsl.func(args, block, true)
 }
 
 defmacro cond = fn(block) {
@@ -85,8 +196,8 @@ defmacro cond = fn(block) {
       dsl.block(v)
     }
   }
-  def pairs = chunk(block.statements, 2)
-  dsl.ifList(...map(pairs, fn ([conditional result] index) {
+  def pairs = _.chunk(block.statements, 2)
+  dsl.ifList(..._.map(pairs, fn ([conditional result] index) {
     if (index == 0) {
       dsl.ifNode(conditional blockWrap(result))
     }
@@ -101,19 +212,19 @@ defmacro cond = fn(block) {
 
 defmacro chain = fn(block ...args) {
   def calls = block.statements
-  reduce(calls fn (result call) {
+  _.reduce(calls fn (result call) {
     def newCall = cond {
-      call.type == "ValueSequence" && get(call "values[1].type") == "FunctionCall"
-      cloneDeep(call)
+      call.type == "ValueSequence" && _.get(call "values[1].type") == "FunctionCall"
+      _.cloneDeep(call)
       call.type == "Reference"
       dsl.valueSeq(call dsl.functionCall())
       else
       // TODO add support for macro context argument that will allow better error reporting
       throw(new(Error("Invalid arguments passed to chain")))
     }
-    let result = cond { isArray(result) result else [result] }
+    let result = cond { _.isArray(result) result else [result] }
 
-    let newCall.values.[1].args = concat(result newCall.values.[1].args)
+    let newCall.values.[1].args = _.concat(result newCall.values.[1].args)
     newCall
   } args)
 }
@@ -156,13 +267,13 @@ defmacro try = #{
 
 def processPairs = fn (block [pair ...rest]) {
   def [target collection] = pair
-  if (isEmpty(rest)) {
+  if (_.isEmpty(rest)) {
     def fun = dsl.func([target] block)
-    quote(map(unquote(collection) unquote(fun)))
+    quote(_.map(unquote(collection) unquote(fun)))
   }
   else {
     def fun = dsl.func([target] [processPairs(block rest)])
-    quote(map(unquote(collection) unquote(fun)))
+    quote(_.map(unquote(collection) unquote(fun)))
   }
 }
 
@@ -171,37 +282,51 @@ def processPairs = fn (block [pair ...rest]) {
 // TODO support when, let etc
 // TODO defmacro shouldn't require the '=' here.
 defmacro fore = fn (block ...args) {
-  def pairs = chunk(args, 2)
+  def pairs = _.chunk(args, 2)
   processPairs(block, pairs)
 }
 
 
 let module.exports = #{
-  chunk
-  first
-  last
-  slice
-  drop
-  dropLast
-  map
-  reduce
-  groupBy
-  concat
-  indexOf
-  isEmpty
-  keys
-  toPairs
-  fromPairs
-  isArray
-  isPlainObject
-  isNil
-  clone
-  cloneDeep
-  get
+  // chunk
+  // first
+  // last
+  // slice
+  // drop
+  // dropLast
+  // map
+  // reduce
+  // groupBy
+  // concat
+  // indexOf
+  // isEmpty
+  // keys
+  // toPairs
+  // fromPairs
+  // isArray
+  // isPlainObject
+  // isNil
+  // clone
+  // cloneDeep
+  // get
 
   // helpers
-  isPromise
+  falsey
+  truthy
+  isNil
+  count
+  isEmpty
+  and
+  or
 
+  identity
+  isImmutable
+  toImmutable
+  map
+  range
+  partition
+
+  isPromise
   // macros
   afn
   if
