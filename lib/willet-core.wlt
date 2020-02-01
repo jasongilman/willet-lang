@@ -54,6 +54,10 @@ def isNil = fn (v) {
   staticjs("v === null || v === undefined")
 }
 
+def raise = fn (error) {
+  throw(new(Error(error)))
+}
+
 def count = fn (v) {
   if (v.length) {
     v.length
@@ -62,7 +66,7 @@ def count = fn (v) {
     v.count()
   }
   else {
-    throw(new(Error("Value is not countable")))
+    raise("Value is not countable")
   }
 }
 
@@ -76,6 +80,9 @@ def isEmpty = fn (v) {
 }
 
 defmacro and = fn(block ...args) {
+  if (block) {
+    raise("and macro does not take a block")
+  }
   def andhelper = fn([form ...rest]) {
     def elseResult = {
       if (isEmpty(rest)) {
@@ -101,6 +108,9 @@ defmacro and = fn(block ...args) {
 }
 
 defmacro or = fn(block ...args) {
+  if (block) {
+    raise("or macro does not take a block")
+  }
   def orhelper = fn([form ...rest]) {
     def elseResult = {
       if (isEmpty(rest)) {
@@ -141,41 +151,126 @@ def map = fn (coll f) {
   toImmutable(coll).map(f)
 }
 
+def reduce = fn (coll ...args) {
+  if (!coll.reduce) {
+    raise("Not a reduceable collection")
+  }
+  if (args.length > 1) {
+    def [f memo] = args
+    coll.reduce(f memo)
+  }
+  else {
+    def [f] = args
+    coll.reduce(f)
+  }
+}
+
 def range = fn (start = 0 stop = Infinity step = 1) {
   Immutable.Range(start stop step)
 }
 
-// TODO slice
+def slice = fn (coll begin end) {
+  let coll = toImmutable(coll)
+  coll.slice(begin end)
+}
 
 def partition = fn (coll n) {
   let coll = toImmutable(coll)
   map(range(0 count(coll) n) fn(index) {
-    coll.slice(index index + n)
+    slice(coll index index + n)
   })
 }
 
+def first = fn (coll) {
+  if (coll.first) {
+    coll.first()
+  }
+  else {
+    coll.[0]
+  }
+}
 
-// def chunk = _.chunk
-// def first = _.first
-// def last = _.last
-// def slice = _.slice
-// def drop = _.drop
-// def dropLast = _.dropRight
-// def map = _.map
-// def reduce = _.reduce
-// def groupBy = _.groupBy
-// def concat = _.concat
-// def isEmpty = _.isEmpty
-// def keys = _.keys
-// def toPairs = _.toPairs
-// def fromPairs = _.fromPairs
-// def indexOf = _.indexOf
-// def isArray = _.isArray
-// def isPlainObject = _.isPlainObject
-// def isNil = _.isNil
-// def clone = _.clone
-// def cloneDeep = _.cloneDeep
-// def get = _.get
+def last = fn (coll) {
+  if (coll.last) {
+    coll.last()
+  }
+  else {
+    coll.[count(coll) - 1]
+  }
+}
+
+def drop = fn (coll n = 1) {
+  slice(coll n)
+}
+
+def dropLast = fn (coll n = 1) {
+  slice(coll 0 count(coll) - n)
+}
+
+def groupBy = fn (coll f) {
+  let coll = toImmutable(coll)
+  coll.groupBy(f)
+}
+
+def concat = fn (...args) {
+  if (isEmpty(args)) {
+    Immutable.List([])
+  }
+  else {
+    def [coll ...iterables] = args
+    let coll = toImmutable(coll)
+    coll.concat(...iterables)
+  }
+}
+
+def keys = fn (coll) {
+  toImmutable(coll).keySeq()
+}
+
+def toSeq = fn (coll) {
+  let coll = toImmutable(coll)
+  if (Immutable.isKeyed(coll)) {
+    coll.entrySeq()
+  }
+  else {
+    coll.toSeq()
+  }
+}
+
+def fromPairs = fn (kvPairs) {
+  Immutable.Map(kvPairs)
+}
+
+def indexOf = fn (coll item) {
+  let coll = toImmutable(coll)
+  if (!coll.indexOf) {
+    raise("Not an indexed collection")
+  }
+  coll.indexOf(item)
+}
+
+def get = fn (coll key) {
+  toImmutable(coll).get(key)
+}
+
+def update = fn (coll key f) {
+  toImmutable(coll).update(key f)
+}
+
+def getIn = fn (coll path defaultVal = undefined) {
+  toImmutable(coll).getIn(path defaultVal)
+}
+
+def updateIn = fn (coll path f) {
+  toImmutable(coll).updateIn(path f)
+}
+
+// let v = toImmutable(#{a: 1 b: 2 c:3})
+// let v = toImmutable([1 2 3])
+
+// v.get(1)
+
+// merge
 
 def isPromise = fn (p) {
   instanceof(p Promise)
@@ -280,7 +375,7 @@ def processPairs = fn (block [pair ...rest]) {
 // TODO improve illegal keyword errors so that it will happen _after_ parsing
 
 // TODO support when, let etc
-// TODO defmacro shouldn't require the '=' here.
+// TODO defmacro shouldn't require the "=" here.
 defmacro fore = fn (block ...args) {
   def pairs = _.chunk(args, 2)
   processPairs(block, pairs)
@@ -288,43 +383,37 @@ defmacro fore = fn (block ...args) {
 
 
 let module.exports = #{
-  // chunk
-  // first
-  // last
-  // slice
-  // drop
-  // dropLast
-  // map
-  // reduce
-  // groupBy
-  // concat
-  // indexOf
-  // isEmpty
-  // keys
-  // toPairs
-  // fromPairs
-  // isArray
-  // isPlainObject
-  // isNil
-  // clone
-  // cloneDeep
-  // get
-
-  // helpers
   falsey
   truthy
   isNil
+  raise
   count
   isEmpty
   and
   or
-
   identity
   isImmutable
   toImmutable
   map
+  reduce
   range
+  slice
   partition
+  first
+  last
+  drop
+  dropLast
+  groupBy
+  concat
+  keys
+  toSeq
+  fromPairs
+  indexOf
+  get
+  update
+  getIn
+  updateIn
+
 
   isPromise
   // macros
