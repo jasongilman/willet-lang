@@ -1,5 +1,3 @@
-// TODO can we remove lodash dependency?
-def _ = require("lodash")
 def Immutable = require("immutable")
 // Path to ast-helper works from lib or from compiled dist
 def astHelper = require("../lib/ast-helper")
