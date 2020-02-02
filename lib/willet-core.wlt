@@ -5,10 +5,25 @@ def Immutable = require("immutable")
 def astHelper = require("../lib/ast-helper")
 def #{ dsl } = astHelper
 
+def isImmutable = Immutable.isImmutable
+
 def ifFormToDsl = #{
-  if: fn(#{ args:[cond] block }) { dsl.ifNode(cond block) }
-  elseif: fn(#{ args:[cond] block }) { dsl.elseIfNode(cond block) }
-  else: fn(#{ block }) { dsl.elseNode(block) }
+  if: fn(node) {
+    let node = Immutable.fromJS(node)
+    def cond = node.getIn(["args" 0])
+    def block = node.get("block")
+    dsl.ifNode(cond block)
+  }
+  elseif: fn(node) {
+    let node = Immutable.fromJS(node)
+    def cond = node.getIn(["args" 0])
+    def block = node.get("block")
+    dsl.elseIfNode(cond block)
+  }
+  else: fn(node) {
+    let node = Immutable.fromJS(node)
+    dsl.elseNode(node.get("block"))
+  }
 }
 
 defmacro if = #{
@@ -31,9 +46,18 @@ defmacro if = #{
     }
   ]
   handler: fn (parts) {
-    dsl.ifList(..._.map(_.toPairs(parts), fn([key value]) {
-      ifFormToDsl.[key](value)
+    dsl.ifList(...parts.entrySeq().map(fn([key value]) {
+      ifFormToDsl.get(key, fn () { `${key} NOTFOUND` }).(value)
     }))
+  }
+}
+
+def toImmutable = fn (v) {
+  if (isImmutable(v)) {
+    v
+  }
+  else {
+    Immutable.fromJS(v)
   }
 }
 
@@ -41,6 +65,9 @@ defmacro if = #{
 // macroexpand
 // to_js (or something like that) - returns compiled javascript of code.
 
+def raise = fn (error) {
+  throw(new(Error(error)))
+}
 
 def falsey = fn (v) {
   staticjs("v === false || v === null || v === undefined")
@@ -54,8 +81,27 @@ def isNil = fn (v) {
   staticjs("v === null || v === undefined")
 }
 
-def raise = fn (error) {
-  throw(new(Error(error)))
+// Allows creating a regular javascript object.
+defmacro jsObject = fn (block obj) {
+  if (block) {
+    raise("jsObject macro does not take a block")
+  }
+  if (obj.get("type") != "MapLiteral") {
+    raise("jsObject macro must contain a map literal")
+  }
+  obj.set("js" true)
+}
+
+// Allows creating a regular javascript array from a willet array.
+// Must be passed
+defmacro jsArray = fn (block list) {
+  if (block) {
+    raise("jsArray macro does not take a block")
+  }
+  if (list.get("type") != "ArrayLiteral") {
+    raise("jsArray macro must contain a array literal")
+  }
+  list.set("js" true)
 }
 
 def count = fn (v) {
@@ -136,18 +182,8 @@ defmacro or = fn(block ...args) {
 
 def identity = fn (v) { v }
 
-def isImmutable = Immutable.isImmutable
-
-def toImmutable = fn (v) {
-  if (isImmutable(v)) {
-    v
-  }
-  else {
-    Immutable.fromJS(v)
-  }
-}
-
 def map = fn (coll f) {
+  // TODO change this to check if it's keyed and call entrySeq
   toImmutable(coll).map(f)
 }
 
@@ -253,24 +289,25 @@ def get = fn (coll key) {
   toImmutable(coll).get(key)
 }
 
-def update = fn (coll key f) {
-  toImmutable(coll).update(key f)
-}
-
 def getIn = fn (coll path defaultVal = undefined) {
   toImmutable(coll).getIn(path defaultVal)
+}
+
+def set = fn (coll key) {
+  toImmutable(coll).set(key)
+}
+
+def setIn = fn (coll path defaultVal = undefined) {
+  toImmutable(coll).setIn(path defaultVal)
+}
+
+def update = fn (coll key f) {
+  toImmutable(coll).update(key f)
 }
 
 def updateIn = fn (coll path f) {
   toImmutable(coll).updateIn(path f)
 }
-
-// let v = toImmutable(#{a: 1 b: 2 c:3})
-// let v = toImmutable([1 2 3])
-
-// v.get(1)
-
-// merge
 
 def isPromise = fn (p) {
   instanceof(p Promise)
@@ -285,18 +322,18 @@ defmacro afn = fn (block ...args) {
 defmacro cond = fn(block) {
   def blockWrap = fn(v) {
     if (v.type == "Block") {
-      dsl.block(...v.statements)
+      dsl.block(...get(v "statements"))
     }
     else {
       dsl.block(v)
     }
   }
-  def pairs = _.chunk(block.statements, 2)
-  dsl.ifList(..._.map(pairs, fn ([conditional result] index) {
+  def pairs = partition(get(block "statements") 2)
+  dsl.ifList(...map(pairs, fn ([conditional result] index) {
     if (index == 0) {
       dsl.ifNode(conditional blockWrap(result))
     }
-    elseif (conditional.type == "Reference" && conditional.symbol == "else$wlt") {
+    elseif (get(conditional "type") == "Reference" && get(conditional "symbol") == "else$wlt") {
       dsl.elseNode(blockWrap(result))
     }
     else {
@@ -306,21 +343,22 @@ defmacro cond = fn(block) {
 }
 
 defmacro chain = fn(block ...args) {
-  def calls = block.statements
-  _.reduce(calls fn (result call) {
+  def calls = get(block "statements")
+  reduce(calls fn (result call) {
     def newCall = cond {
-      call.type == "ValueSequence" && _.get(call "values[1].type") == "FunctionCall"
-      _.cloneDeep(call)
-      call.type == "Reference"
+      get(call "type") == "ValueSequence" && getIn(call ["values" 1 "type"]) == "FunctionCall"
+      call
+
+      get(call "type") == "Reference"
       dsl.valueSeq(call dsl.functionCall())
+
       else
       // TODO add support for macro context argument that will allow better error reporting
-      throw(new(Error("Invalid arguments passed to chain")))
+      raise("Invalid arguments passed to chain")
     }
-    let result = cond { _.isArray(result) result else [result] }
+    let result = cond { Immutable.List.isList(result) result else [result] }
 
-    let newCall.values.[1].args = _.concat(result newCall.values.[1].args)
-    newCall
+    updateIn(newCall ["values" 1 "args"] fn(v) { concat(result v) })
   } args)
 }
 
@@ -345,48 +383,48 @@ defmacro try = #{
     }
   ]
   handler: fn (parts) {
-    def catch = parts.catch
+    def catch = get(parts "catch")
     def errorSymbol
     def catchBlock
     if (catch) {
-      let errorSymbol = catch.args.[0].symbol
-      let catchBlock = catch.block
+      let errorSymbol = getIn(catch ["args" 0 "symbol"])
+      let catchBlock = get(catch "block")
     }
     def finallyBlock
-    if (parts.finally) {
-      let finallyBlock = parts.finally.block
+    if (get(parts "finally")) {
+      let finallyBlock = getIn(parts ["finally" "block"])
     }
-    dsl.tryCatch(parts.try.block, errorSymbol, catchBlock, finallyBlock)
+    dsl.tryCatch(getIn(parts ["try" "block"]), errorSymbol, catchBlock, finallyBlock)
   }
 }
 
 def processPairs = fn (block [pair ...rest]) {
   def [target collection] = pair
-  if (_.isEmpty(rest)) {
+  if (isEmpty(rest)) {
     def fun = dsl.func([target] block)
-    quote(_.map(unquote(collection) unquote(fun)))
+    quote(map(unquote(collection) unquote(fun)))
   }
   else {
     def fun = dsl.func([target] [processPairs(block rest)])
-    quote(_.map(unquote(collection) unquote(fun)))
+    quote(map(unquote(collection) unquote(fun)))
   }
 }
 
-// TODO improve illegal keyword errors so that it will happen _after_ parsing
-
-// TODO support when, let etc
-// TODO defmacro shouldn't require the "=" here.
+// FUTURE support when, let etc
 defmacro fore = fn (block ...args) {
-  def pairs = _.chunk(args, 2)
-  processPairs(block, pairs)
+  def pairs = partition(args 2)
+  processPairs(block pairs)
 }
 
+// TODO equals (and should accept multiple arguments)
 
-let module.exports = #{
+let module.exports = jsObject(#{
   falsey
   truthy
   isNil
   raise
+  jsObject
+  jsArray
   count
   isEmpty
   and
@@ -423,4 +461,4 @@ let module.exports = #{
   fore
   cond
   chain
-}
+})
