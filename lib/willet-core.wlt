@@ -199,6 +199,11 @@ def reduce = fn (coll ...args) {
   }
 }
 
+def filter = fn(coll f) {
+  // TODO change this to check if it's keyed and call entrySeq
+  toImmutable(coll).filter(f)
+}
+
 def range = fn (start = 0 stop = Infinity step = 1) {
   Immutable.Range(start stop step)
 }
@@ -432,6 +437,7 @@ let module.exports = jsObject(#{
   toImmutable
   map
   reduce
+  filter
   range
   slice
   partition
