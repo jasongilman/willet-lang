@@ -1,24 +1,24 @@
-def chai = require("chai")
-def expect = chai.expect
-def parser = require("../parser")
-def examples = require("../tests/examples")
+const chai = require("chai")
+const expect = chai.expect
+const parser = require("../parser")
+const examples = require("../tests/examples")
 
-def assertSingleStatement = fn (input expectedStmts) {
+const assertSingleStatement = #(input expectedStmts) => {
   if (!isArray(expectedStmts)) {
-    let expectedStmts = [expectedStmts]
+    expectedStmts = [expectedStmts]
   }
-  def result = parser.parse(input)
-  def expected = #{ type: "Program" statements: expectedStmts }
+  const result = parser.parse(input)
+  const expected = #{ type: "Program" statements: expectedStmts }
   expect(result).to.deep.equal(expected)
 }
 
-describe("Willet Parser" fn () {
+describe("Willet Parser" #() => {
   fore([exampleSetName exampleSet] toPairs(examples)) {
-    describe(exampleSetName fn () {
+    describe(exampleSetName () => {
       fore(#{ name willet ast } exampleSet) {
        // TODO this if should be handled by fore
         if (ast) {
-          it(`should parse ${name}` fn () {
+          it(`should parse ${name}` () => {
             assertSingleStatement(willet ast)
           })
         }

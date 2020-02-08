@@ -19,4 +19,9 @@ if [ $? != 0 ]; then
   exit 1
 fi
 
+$ROOT_DIR/bin/generate_syntax_diagram.js
+if [ $? != 0 ]; then
+  printf "Failed to generate syntax diagram"
+fi
+
 echo "Complete"

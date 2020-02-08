@@ -52,6 +52,7 @@
     "no-case-declarations": "off",
     "no-useless-escape": "off",
     "no-console": "off",
+    "no-proto": "off",
     "spaced-comment": "off",
     "require-yield": "off",
     "prefer-template": "warn",

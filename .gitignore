@@ -1,6 +1,8 @@
 dist/
 dist-tests/
 scratch/
+.DS_Store
+old_tests/
 
 # Logs
 logs
