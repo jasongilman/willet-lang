@@ -11,7 +11,7 @@ comment */ "after"
 can be multiplelines.
 Can have ${ `Another interpolation ${5 + 7}.`}
 `
-
+@someAnnotation
 1
 2.3
 "4"
@@ -33,6 +33,7 @@ false
 
 1 * 2 + 3 - 4 / 5 % 6 && !#(7 || 8)
 
+@{ foo: "bar" }
 foo.bar.[0](){}
 
 foo()

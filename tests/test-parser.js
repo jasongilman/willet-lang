@@ -21,7 +21,7 @@ const expected = dsl.program(
     ),
     dsl.literal('\n')
   ),
-  dsl.literal(1),
+  dsl.withAnnotation(dsl.literal(1), dsl.singleAnnotation('someAnnotation')),
   dsl.literal(2.3),
   dsl.literal('4'),
   dsl.boolean(true),
@@ -71,11 +71,14 @@ const expected = dsl.program(
       )
     )
   ),
-  dsl.valueSeq(
-    dsl.reference('foo'),
-    dsl.getProperty('bar'),
-    dsl.getPropertyDynamic(dsl.number(0)),
-    dsl.functionCallWithBody()
+  dsl.withAnnotation(
+    dsl.valueSeq(
+      dsl.reference('foo'),
+      dsl.getProperty('bar'),
+      dsl.getPropertyDynamic(dsl.number(0)),
+      dsl.functionCallWithBody()
+    ),
+    dsl.annotationMap(dsl.property('foo', dsl.string('bar')))
   ),
   dsl.valueSeq(
     dsl.reference('foo'),
