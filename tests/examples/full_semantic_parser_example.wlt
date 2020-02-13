@@ -6,17 +6,17 @@ const logger = #(...parts) => {
 const multilineFunction = @async #(alpha beta cappa = 45 + 7) => {
   logger(alpha beta)
 
-  // if (cappa > 45) {
-  //   alpha
-  // }
-  // else if (cappa < 45) {
-  //   beta
-  // }
-  // else {
-  //   cappa
-  // }
+  if (cappa > 45) {
+    alpha
+  }
+  elseif (cappa < 45) {
+    beta
+  }
+  else {
+    cappa
+  }
 }
-//
+
 // const singleResponseFn = #(v) => v
 //
 // defmacro myMacro = #(blok argv) => {
