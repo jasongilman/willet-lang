@@ -49,6 +49,26 @@ const expected = dsl.program(
       )
     ),
     dsl.annotationMap(dsl.property('docs', dsl.string('Some kind of documentation')))
+  ),
+  dsl.def(
+    'const',
+    dsl.reference('singleResponseFn'),
+    dsl.func([dsl.funcArg(dsl.reference('v'))], dsl.block(dsl.reference('v')))
+  ),
+  dsl.def(
+    'defmacro',
+    dsl.reference('myMacro'),
+    dsl.func(
+      [dsl.funcArg(dsl.reference('blok')), dsl.funcArg(dsl.reference('argv'))],
+      dsl.block(dsl.array(dsl.reference('blok'), dsl.reference('argv')))
+    )
+  ),
+  dsl.def(
+    'let',
+    dsl.mapDestructuring(
+      dsl.property('foo', dsl.reference('bar')),
+      dsl.property('alpha', dsl.reference('alpha'))
+    )
   )
 );
 

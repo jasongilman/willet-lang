@@ -17,15 +17,15 @@ const multilineFunction = @async #(alpha beta cappa = 45 + 7) => {
   }
 }
 
-// const singleResponseFn = #(v) => v
-//
-// defmacro myMacro = #(blok argv) => {
-//   [blok argv]
-// }
-//
-// // map destructuring
-// let #{ foo: bar alpha } = null
-//
+const singleResponseFn = #(v) => v
+
+defmacro myMacro = #(blok argv) => {
+  [blok argv]
+}
+
+// map destructuring
+let #{ foo: bar alpha } = null
+
 // // array destructuring
 // let [ a b ...c] = null
 //
