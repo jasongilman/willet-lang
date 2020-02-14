@@ -68,8 +68,39 @@ const expected = dsl.program(
     dsl.mapDestructuring(
       dsl.property('foo', dsl.reference('bar')),
       dsl.property('alpha', dsl.reference('alpha'))
-    )
-  )
+    ),
+    dsl.Null
+  ),
+  dsl.def(
+    'let',
+    dsl.arrayDestructuring(
+      dsl.reference('a'),
+      dsl.reference('b'),
+      dsl.spread(dsl.reference('c'))
+    ),
+    dsl.Null
+  ),
+  dsl.def(
+    'let',
+    dsl.reference('myFun'),
+    dsl.func(
+      [
+        dsl.funcArg(dsl.mapDestructuring(
+          dsl.property('a', dsl.reference('a')),
+          dsl.property('b', dsl.reference('b'))
+        )),
+        dsl.funcArg(dsl.arrayDestructuring(
+          dsl.reference('c'),
+          dsl.reference('d')
+        ))
+      ],
+      dsl.block(dsl.Null)
+    ),
+  ),
+  dsl.quote(dsl.string('with args')),
+  dsl.quote(dsl.block(dsl.string('with block'))),
+  dsl.unquote(dsl.string('with args')),
+  dsl.unquote(dsl.block(dsl.string('with block'))),
 );
 
 describe('Semantic Parsing', () => {

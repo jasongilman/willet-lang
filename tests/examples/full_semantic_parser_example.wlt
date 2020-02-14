@@ -26,17 +26,17 @@ defmacro myMacro = #(blok argv) => {
 // map destructuring
 let #{ foo: bar alpha } = null
 
-// // array destructuring
-// let [ a b ...c] = null
-//
-// // function arg destructuring
-// let myFun = #(#{ a b } [c d]) => null
-//
-// quote("with args")
-// quote { "with block" }
-// unquote("with args")
-// unquote { "with block" }
-//
+// array destructuring
+let [ a b ...c] = null
+
+// function arg destructuring
+let myFun = #(#{ a b } [c d]) => null
+
+quote("with args")
+quote { "with block" }
+unquote("with args")
+unquote { "with block" }
+
 // try {
 //   foo()
 // }
