@@ -23,15 +23,15 @@ const raise = #(error) => {
 }
 
 const falsey = #(v) =>
-  staticjs("v === false || v === null || v === unconstined")
+  staticjs("v === false || v === null || v === undefined")
 
 
 const truthy = #(v) =>
-  staticjs("v !== false && v !== null && v !== unconstined")
+  staticjs("v !== false && v !== null && v !== undefined")
 
 
 const isNil = #(v) =>
-  staticjs("v === null || v === unconstined")
+  staticjs("v === null || v === undefined")
 
 
 // Allows creating a regular javascript object.
@@ -248,16 +248,16 @@ const get = #(coll key) =>
   toImmutable(coll).get(key)
 
 
-const getIn = #(coll path constaultVal = unconstined) =>
-  toImmutable(coll).getIn(path constaultVal)
+const getIn = #(coll path defaultVal = undefined) =>
+  toImmutable(coll).getIn(path defaultVal)
 
 
 const set = #(coll key) =>
   toImmutable(coll).set(key)
 
 
-const setIn = #(coll path constaultVal = unconstined) =>
-  toImmutable(coll).setIn(path constaultVal)
+const setIn = #(coll path defaultVal = undefined) =>
+  toImmutable(coll).setIn(path defaultVal)
 
 
 const update = #(coll key f) =>
