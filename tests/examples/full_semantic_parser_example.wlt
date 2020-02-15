@@ -37,21 +37,23 @@ quote { "with block" }
 unquote("with args")
 unquote { "with block" }
 
-// try {
-//   foo()
-// }
-// catch (err) {
-//   logger(err)
-// }
-// finally {
-//   bar()
-// }
-//
-// try {
-//   foo()
-// }
-// catch (err) {
-//   logger(err)
-// }
-//
-// after()
+try {
+  foo()
+}
+catch (err) {
+  logger(err)
+}
+finally {
+  bar()
+}
+
+middle
+
+try {
+  foo()
+}
+catch (err) {
+  logger(err)
+}
+
+after

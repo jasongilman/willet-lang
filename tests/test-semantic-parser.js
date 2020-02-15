@@ -101,6 +101,25 @@ const expected = dsl.program(
   dsl.quote(dsl.block(dsl.string('with block'))),
   dsl.unquote(dsl.string('with args')),
   dsl.unquote(dsl.block(dsl.string('with block'))),
+  dsl.tryCatch(
+    dsl.block(dsl.valueSeq(dsl.reference('foo'), dsl.functionCall())),
+    dsl.reference('err'),
+    dsl.block(dsl.valueSeq(
+      dsl.reference('logger'),
+      dsl.functionCall(dsl.reference('err'))
+    )),
+    dsl.block(dsl.valueSeq(dsl.reference('bar'), dsl.functionCall())),
+  ),
+  dsl.reference('middle'),
+  dsl.tryCatch(
+    dsl.block(dsl.valueSeq(dsl.reference('foo'), dsl.functionCall())),
+    dsl.reference('err'),
+    dsl.block(dsl.valueSeq(
+      dsl.reference('logger'),
+      dsl.functionCall(dsl.reference('err'))
+    ))
+  ),
+  dsl.reference('after')
 );
 
 describe('Semantic Parsing', () => {
