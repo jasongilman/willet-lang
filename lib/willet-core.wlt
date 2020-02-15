@@ -1,56 +1,11 @@
-def Immutable = require("immutable")
+const Immutable = require("immutable")
 // Path to ast-helper works from lib or from compiled dist
-def astHelper = require("../lib/ast-helper")
-def #{ dsl } = astHelper
+const astHelper = require("../lib/ast-helper")
+const #{ dsl } = astHelper
 
-def isImmutable = Immutable.isImmutable
+const isImmutable = Immutable.isImmutable
 
-def ifFormToDsl = #{
-  if: fn(node) {
-    let node = Immutable.fromJS(node)
-    def cond = node.getIn(["args" 0])
-    def block = node.get("block")
-    dsl.ifNode(cond block)
-  }
-  elseif: fn(node) {
-    let node = Immutable.fromJS(node)
-    def cond = node.getIn(["args" 0])
-    def block = node.get("block")
-    dsl.elseIfNode(cond block)
-  }
-  else: fn(node) {
-    let node = Immutable.fromJS(node)
-    dsl.elseNode(node.get("block"))
-  }
-}
-
-defmacro if = #{
-  terms: [
-    #{
-      term: "if$wlt"
-      acceptsArgs: true
-      acceptsBlock: true
-    }
-    #{
-      term: "elseif"
-      acceptsArgs: true
-      acceptsBlock: true
-      optional: true
-    }
-    #{
-      term: "else$wlt"
-      acceptsBlock: true
-      optional: true
-    }
-  ]
-  handler: fn (parts) {
-    dsl.ifList(...parts.entrySeq().map(fn([key value]) {
-      ifFormToDsl.get(key, fn () { `${key} NOTFOUND` }).(value)
-    }))
-  }
-}
-
-def toImmutable = fn (v) {
+const toImmutable = #(v) => {
   if (isImmutable(v)) {
     v
   }
@@ -63,24 +18,24 @@ def toImmutable = fn (v) {
 // macroexpand
 // to_js (or something like that) - returns compiled javascript of code.
 
-def raise = fn (error) {
+const raise = #(error) => {
   throw(new(Error(error)))
 }
 
-def falsey = fn (v) {
-  staticjs("v === false || v === null || v === undefined")
-}
+const falsey = #(v) =>
+  staticjs("v === false || v === null || v === unconstined")
 
-def truthy = fn (v) {
-  staticjs("v !== false && v !== null && v !== undefined")
-}
 
-def isNil = fn (v) {
-  staticjs("v === null || v === undefined")
-}
+const truthy = #(v) =>
+  staticjs("v !== false && v !== null && v !== unconstined")
+
+
+const isNil = #(v) =>
+  staticjs("v === null || v === unconstined")
+
 
 // Allows creating a regular javascript object.
-defmacro jsObject = fn (block obj) {
+defmacro jsObject = #(block obj) => {
   if (block) {
     raise("jsObject macro does not take a block")
   }
@@ -90,9 +45,9 @@ defmacro jsObject = fn (block obj) {
   obj.set("js" true)
 }
 
-// Allows creating a regular javascript array from a willet array.
+// Allows creating a regular javascript array from a wilarray.
 // Must be passed
-defmacro jsArray = fn (block list) {
+defmacro jsArray = #(block list) => {
   if (block) {
     raise("jsArray macro does not take a block")
   }
@@ -102,7 +57,7 @@ defmacro jsArray = fn (block list) {
   list.set("js" true)
 }
 
-def count = fn (v) {
+const count = #(v) => {
   if (v.length) {
     v.length
   }
@@ -114,7 +69,7 @@ def count = fn (v) {
   }
 }
 
-def isEmpty = fn (v) {
+const isEmpty = #(v) => {
   if (isNil(v)) {
     true
   }
@@ -123,12 +78,12 @@ def isEmpty = fn (v) {
   }
 }
 
-defmacro and = fn(block ...args) {
+defmacro and = #(block ...args) => {
   if (block) {
     raise("and macro does not take a block")
   }
-  def andhelper = fn([form ...rest]) {
-    def elseResult = {
+  const andhelper = #([form ...rest]) => {
+    const elseResult = {
       if (isEmpty(rest)) {
         quote(true)
       }
@@ -138,7 +93,7 @@ defmacro and = fn(block ...args) {
     }
 
     quote() {
-      def formR = unquote(form)
+      const formR = unquote(form)
       if (!formR) {
         false
       }
@@ -151,12 +106,12 @@ defmacro and = fn(block ...args) {
   andhelper(args)
 }
 
-defmacro or = fn(block ...args) {
+defmacro or = #(block ...args) => {
   if (block) {
     raise("or macro does not take a block")
   }
-  def orhelper = fn([form ...rest]) {
-    def elseResult = {
+  const orhelper = #([form ...rest]) => {
+    const elseResult = {
       if (isEmpty(rest)) {
         quote(false)
       }
@@ -166,7 +121,7 @@ defmacro or = fn(block ...args) {
     }
 
     quote() {
-      def formR = unquote(form)
+      const formR = unquote(form)
       if (formR) {
         true
       }
@@ -178,49 +133,49 @@ defmacro or = fn(block ...args) {
   orhelper(args)
 }
 
-def identity = fn (v) { v }
+const identity = #(v) => v
 
-def map = fn (coll f) {
+const map = #(coll f) =>
   // TODO change this to check if it's keyed and call entrySeq
   toImmutable(coll).map(f)
-}
 
-def reduce = fn (coll ...args) {
+
+const reduce = #(coll ...args) => {
   if (!coll.reduce) {
     raise("Not a reduceable collection")
   }
   if (args.length > 1) {
-    def [f memo] = args
+    const [f memo] = args
     coll.reduce(f memo)
   }
   else {
-    def [f] = args
+    const [f] = args
     coll.reduce(f)
   }
 }
 
-def filter = fn(coll f) {
+const filter = #(coll f) =>
   // TODO change this to check if it's keyed and call entrySeq
   toImmutable(coll).filter(f)
-}
 
-def range = fn (start = 0 stop = Infinity step = 1) {
+
+const range = #(start = 0 stop = Infinity step = 1) =>
   Immutable.Range(start stop step)
-}
 
-def slice = fn (coll begin end) {
-  let coll = toImmutable(coll)
+
+const slice = #(coll begin end) => {
+  coll = toImmutable(coll)
   coll.slice(begin end)
 }
 
-def partition = fn (coll n) {
-  let coll = toImmutable(coll)
-  map(range(0 count(coll) n) fn(index) {
+const partition = #(coll n) => {
+  coll = toImmutable(coll)
+  map(range(0 count(coll) n) #(index) => {
     slice(coll index index + n)
   })
 }
 
-def first = fn (coll) {
+const first = #(coll) => {
   if (coll.first) {
     coll.first()
   }
@@ -229,7 +184,7 @@ def first = fn (coll) {
   }
 }
 
-def last = fn (coll) {
+const last = #(coll) => {
   if (coll.last) {
     coll.last()
   }
@@ -238,36 +193,36 @@ def last = fn (coll) {
   }
 }
 
-def drop = fn (coll n = 1) {
+const drop = #(coll n = 1) =>
   slice(coll n)
-}
 
-def dropLast = fn (coll n = 1) {
+
+const dropLast = #(coll n = 1) =>
   slice(coll 0 count(coll) - n)
-}
 
-def groupBy = fn (coll f) {
-  let coll = toImmutable(coll)
+
+const groupBy = #(coll f) => {
+  coll = toImmutable(coll)
   coll.groupBy(f)
 }
 
-def concat = fn (...args) {
+const concat = #(...args) => {
   if (isEmpty(args)) {
     Immutable.List([])
   }
   else {
-    def [coll ...iterables] = args
-    let coll = toImmutable(coll)
+    const [coll ...iterables] = args
+    coll = toImmutable(coll)
     coll.concat(...iterables)
   }
 }
 
-def keys = fn (coll) {
+const keys = #(coll) =>
   toImmutable(coll).keySeq()
-}
 
-def toSeq = fn (coll) {
-  let coll = toImmutable(coll)
+
+const toSeq = #(coll) => {
+  coll = toImmutable(coll)
   if (Immutable.isKeyed(coll)) {
     coll.entrySeq()
   }
@@ -276,54 +231,49 @@ def toSeq = fn (coll) {
   }
 }
 
-def fromPairs = fn (kvPairs) {
+const fromPairs = #(kvPairs) =>
   Immutable.Map(kvPairs)
-}
 
-def indexOf = fn (coll item) {
-  let coll = toImmutable(coll)
+
+const indexOf = #(coll item) => {
+  coll = toImmutable(coll)
   if (!coll.indexOf) {
     raise("Not an indexed collection")
   }
   coll.indexOf(item)
 }
 
-def get = fn (coll key) {
+
+const get = #(coll key) =>
   toImmutable(coll).get(key)
-}
 
-def getIn = fn (coll path defaultVal = undefined) {
-  toImmutable(coll).getIn(path defaultVal)
-}
 
-def set = fn (coll key) {
+const getIn = #(coll path constaultVal = unconstined) =>
+  toImmutable(coll).getIn(path constaultVal)
+
+
+const set = #(coll key) =>
   toImmutable(coll).set(key)
-}
 
-def setIn = fn (coll path defaultVal = undefined) {
-  toImmutable(coll).setIn(path defaultVal)
-}
 
-def update = fn (coll key f) {
+const setIn = #(coll path constaultVal = unconstined) =>
+  toImmutable(coll).setIn(path constaultVal)
+
+
+const update = #(coll key f) =>
   toImmutable(coll).update(key f)
-}
 
-def updateIn = fn (coll path f) {
+
+const updateIn = #(coll path f) =>
   toImmutable(coll).updateIn(path f)
-}
 
-def isPromise = fn (p) {
+
+const isPromise = #(p) =>
   instanceof(p Promise)
-}
 
-// Creates an async function. Eventually I'd like to consider a better way to do this.
-// "afn" isn't very guessable.
-defmacro afn = fn (block ...args) {
-  dsl.func(args, block, true)
-}
 
-defmacro cond = fn(block) {
-  def blockWrap = fn(v) {
+defmacro cond = #(block) => {
+  const blockWrap = #(v) => {
     if (v.type == "Block") {
       dsl.block(...get(v "statements"))
     }
@@ -331,8 +281,8 @@ defmacro cond = fn(block) {
       dsl.block(v)
     }
   }
-  def pairs = partition(get(block "statements") 2)
-  dsl.ifList(...map(pairs, fn ([conditional result] index) {
+  const pairs = partition(get(block "statements") 2)
+  dsl.ifList(...map(pairs, #([conditional result] index) => {
     if (index == 0) {
       dsl.ifNode(conditional blockWrap(result))
     }
@@ -345,10 +295,10 @@ defmacro cond = fn(block) {
   }))
 }
 
-defmacro chain = fn(block ...args) {
-  def calls = get(block "statements")
-  reduce(calls fn (result call) {
-    def newCall = cond {
+defmacro chain = #(block ...args) => {
+  const calls = get(block "statements")
+  reduce(calls #(result call) => {
+    const newCall = cond {
       get(call "type") == "ValueSequence" && getIn(call ["values" 1 "type"]) == "FunctionCall"
       call
 
@@ -359,69 +309,33 @@ defmacro chain = fn(block ...args) {
       // TODO add support for macro context argument that will allow better error reporting
       raise("Invalid arguments passed to chain")
     }
-    let result = cond { Immutable.List.isList(result) result else [result] }
+    result = cond { Immutable.List.isList(result) result else [result] }
 
-    updateIn(newCall ["values" 1 "args"] fn(v) { concat(result v) })
+    updateIn(newCall ["values" 1 "args"] #(v) => concat(result v))
   } args)
 }
 
-defmacro try = #{
-  terms: [
-    #{
-      term: "try$wlt"
-      acceptsArgs: false
-      acceptsBlock: true
-    }
-    #{
-      term: "catch$wlt"
-      acceptsArgs: true
-      acceptsBlock: true
-      optional: true
-    }
-    #{
-      term: "finally$wlt"
-      acceptsArgs: false
-      acceptsBlock: true
-      optional: true
-    }
-  ]
-  handler: fn (parts) {
-    def catch = get(parts "catch")
-    def errorSymbol
-    def catchBlock
-    if (catch) {
-      let errorSymbol = getIn(catch ["args" 0 "symbol"])
-      let catchBlock = get(catch "block")
-    }
-    def finallyBlock
-    if (get(parts "finally")) {
-      let finallyBlock = getIn(parts ["finally" "block"])
-    }
-    dsl.tryCatch(getIn(parts ["try" "block"]), errorSymbol, catchBlock, finallyBlock)
-  }
-}
-
-def processPairs = fn (block [pair ...rest]) {
-  def [target collection] = pair
+const processPairs = #(block [pair ...rest]) => {
+  const [target collection] = pair
   if (isEmpty(rest)) {
-    def fun = dsl.func([target] block)
+    const fun = dsl.func([target] block)
     quote(map(unquote(collection) unquote(fun)))
   }
   else {
-    def fun = dsl.func([target] [processPairs(block rest)])
+    const fun = dsl.func([target] [processPairs(block rest)])
     quote(map(unquote(collection) unquote(fun)))
   }
 }
 
-// FUTURE support when, let etc
-defmacro fore = fn (block ...args) {
-  def pairs = partition(args 2)
+// FUTURE support when, etc
+defmacro fore = #(block ...args) => {
+  const pairs = partition(args 2)
   processPairs(block pairs)
 }
 
 // TODO equals (and should accept multiple arguments)
 
-let module.exports = jsObject(#{
+module.exports = jsObject(#{
   falsey
   truthy
   isNil
@@ -459,9 +373,6 @@ let module.exports = jsObject(#{
 
   isPromise
   // macros
-  afn
-  if
-  try
   fore
   cond
   chain

@@ -1,7 +1,7 @@
 const chai = require('chai');
 const expect = chai.expect;
 const fs = require('fs');
-const parser = require('../parser');
+const parser = require('../lib/chevrotain-parser');
 const { dsl } = require('../lib/ast-helper');
 
 const fullExampleCode = fs.readFileSync(`${__dirname}/examples/full_parser_example.wlt`);

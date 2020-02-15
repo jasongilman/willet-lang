@@ -1,12 +1,14 @@
 const chai = require('chai');
 const expect = chai.expect;
 const fs = require('fs');
-const parser = require('../parser');
+const parser = require('../lib/chevrotain-parser');
 const semanticParser = require('../lib/semantic-parser');
 const keywordReplacer = require('../lib/keyword-replacer');
 const { dsl } = require('../lib/ast-helper');
 
 const fullExampleCode = fs.readFileSync(`${__dirname}/examples/full_semantic_parser_example.wlt`);
+
+const block = (...statements) => dsl.nonSoloBlock(dsl.block(...statements));
 
 const expected = dsl.program(
   dsl.def(
@@ -14,7 +16,7 @@ const expected = dsl.program(
     dsl.reference('logger'),
     dsl.func(
       [dsl.funcArg(dsl.spread(dsl.reference('parts')))],
-      dsl.block(
+      block(
         dsl.valueSeq(
           dsl.reference('console'),
           dsl.getProperty('log'),
@@ -32,19 +34,19 @@ const expected = dsl.program(
         dsl.funcArg(dsl.reference('beta')),
         dsl.funcArg(dsl.reference('cappa'), dsl.plus(dsl.number(45), dsl.number(7)))
       ],
-      dsl.block(
+      block(
         dsl.valueSeq(
           dsl.reference('logger'),
           dsl.functionCall(dsl.reference('alpha'), dsl.reference('beta'))
         ),
         dsl.ifList(
-          dsl.ifNode(dsl.greaterThan(dsl.reference('cappa'), dsl.number(45)), dsl.block(
+          dsl.ifNode(dsl.greaterThan(dsl.reference('cappa'), dsl.number(45)), block(
             dsl.reference('alpha')
           )),
-          dsl.elseIfNode(dsl.lessThan(dsl.reference('cappa'), dsl.number(45)), dsl.block(
+          dsl.elseIfNode(dsl.lessThan(dsl.reference('cappa'), dsl.number(45)), block(
             dsl.reference('beta')
           )),
-          dsl.elseNode(dsl.block(dsl.reference('cappa')))
+          dsl.elseNode(block(dsl.reference('cappa')))
         )
       )
     ),
@@ -53,14 +55,14 @@ const expected = dsl.program(
   dsl.def(
     'const',
     dsl.reference('singleResponseFn'),
-    dsl.func([dsl.funcArg(dsl.reference('v'))], dsl.block(dsl.reference('v')))
+    dsl.func([dsl.funcArg(dsl.reference('v'))], block(dsl.reference('v')))
   ),
   dsl.def(
     'defmacro',
     dsl.reference('myMacro'),
     dsl.func(
       [dsl.funcArg(dsl.reference('blok')), dsl.funcArg(dsl.reference('argv'))],
-      dsl.block(dsl.array(dsl.reference('blok'), dsl.reference('argv')))
+      block(dsl.array(dsl.reference('blok'), dsl.reference('argv')))
     )
   ),
   dsl.def(
@@ -94,27 +96,27 @@ const expected = dsl.program(
           dsl.reference('d')
         ))
       ],
-      dsl.block(dsl.Null)
+      block(dsl.Null)
     ),
   ),
   dsl.quote(dsl.string('with args')),
-  dsl.quote(dsl.block(dsl.string('with block'))),
+  dsl.quote(block(dsl.string('with block'))),
   dsl.unquote(dsl.string('with args')),
-  dsl.unquote(dsl.block(dsl.string('with block'))),
+  dsl.unquote(block(dsl.string('with block'))),
   dsl.tryCatch(
-    dsl.block(dsl.valueSeq(dsl.reference('foo'), dsl.functionCall())),
+    block(dsl.valueSeq(dsl.reference('foo'), dsl.functionCall())),
     dsl.reference('err'),
-    dsl.block(dsl.valueSeq(
+    block(dsl.valueSeq(
       dsl.reference('logger'),
       dsl.functionCall(dsl.reference('err'))
     )),
-    dsl.block(dsl.valueSeq(dsl.reference('bar'), dsl.functionCall())),
+    block(dsl.valueSeq(dsl.reference('bar'), dsl.functionCall())),
   ),
   dsl.reference('middle'),
   dsl.tryCatch(
-    dsl.block(dsl.valueSeq(dsl.reference('foo'), dsl.functionCall())),
+    block(dsl.valueSeq(dsl.reference('foo'), dsl.functionCall())),
     dsl.reference('err'),
-    dsl.block(dsl.valueSeq(
+    block(dsl.valueSeq(
       dsl.reference('logger'),
       dsl.functionCall(dsl.reference('err'))
     ))
