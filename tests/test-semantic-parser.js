@@ -127,8 +127,6 @@ describe('Semantic Parsing', () => {
     let ast = parser.parse(fullExampleCode.toString());
     ast = keywordReplacer.replaceJsKeywords(ast);
     const result = semanticParser.parse(ast);
-    console.log('-----------------------------------');
-    console.log(`result: ${JSON.stringify(result, null, 2)}`);
     expect(result.toJS()).to.deep.equal(expected.toJS());
   });
 });
