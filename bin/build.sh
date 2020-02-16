@@ -13,6 +13,8 @@ if [ $? != 0 ]; then
   exit 1
 fi
 
+mkdir -p $ROOT_DIR/dist-tests
+
 $ROOT_DIR/bin/compile.js $ROOT_DIR/wlt-tests $ROOT_DIR/dist-tests
 if [ $? != 0 ]; then
   printf "Failed to compile willet tests code"

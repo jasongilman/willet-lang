@@ -48,7 +48,8 @@ const expected = dsl.program(
           )),
           dsl.elseNode(block(dsl.reference('cappa')))
         )
-      )
+      ),
+      true
     ),
     dsl.annotationMap(dsl.property('docs', dsl.string('Some kind of documentation')))
   ),
