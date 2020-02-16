@@ -33,6 +33,9 @@ false
 
 1 * 2 + 3 - 4 / 5 % 6 && !#(7 || 8)
 
+throw new Thing()
+await thing()
+
 @{ foo: "bar" }
 foo.bar.[0](){}
 

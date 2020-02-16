@@ -21,7 +21,7 @@ const toImmutable = #(v) => {
 // to_js (or something like that) - returns compiled javascript of code.
 
 const raise = #(error) => {
-  throw(new(Error(error)))
+  throw new Error(error)
 }
 
 const falsey = #(v) =>

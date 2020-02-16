@@ -71,6 +71,8 @@ const expected = dsl.program(
       )
     )
   ),
+  dsl.throwUnary(dsl.newUnary(dsl.valueSeq(dsl.reference('Thing'), dsl.functionCall()))),
+  dsl.awaitUnary(dsl.valueSeq(dsl.reference('thing'), dsl.functionCall())),
   dsl.withAnnotation(
     dsl.valueSeq(
       dsl.reference('foo'),
