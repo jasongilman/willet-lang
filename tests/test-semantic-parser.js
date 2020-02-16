@@ -57,9 +57,8 @@ const expected = dsl.program(
     dsl.reference('singleResponseFn'),
     dsl.func([dsl.funcArg(dsl.reference('v'))], block(dsl.reference('v')))
   ),
-  dsl.def(
-    'defmacro',
-    dsl.reference('myMacro'),
+  dsl.macro(
+    'myMacro',
     dsl.func(
       [dsl.funcArg(dsl.reference('blok')), dsl.funcArg(dsl.reference('argv'))],
       block(dsl.array(dsl.reference('blok'), dsl.reference('argv')))

@@ -1,7 +1,9 @@
 const Immutable = require("immutable")
 // Path to ast-helper works from lib or from compiled dist
 const astHelper = require("../lib/ast-helper")
-const #{ dsl } = astHelper
+const #{
+  dsl isMapLiteral isArrayLiteral isBlock isReference isValueSequence isFunctionCall
+} = astHelper
 
 const isImmutable = Immutable.isImmutable
 
@@ -39,7 +41,7 @@ defmacro jsObject = #(block obj) => {
   if (block) {
     raise("jsObject macro does not take a block")
   }
-  if (obj.get("type") != "MapLiteral") {
+  if (!isMapLiteral(obj)) {
     raise("jsObject macro must contain a map literal")
   }
   obj.set("js" true)
@@ -51,7 +53,7 @@ defmacro jsArray = #(block list) => {
   if (block) {
     raise("jsArray macro does not take a block")
   }
-  if (list.get("type") != "ArrayLiteral") {
+  if (!isArrayLiteral(list)) {
     raise("jsArray macro must contain a array literal")
   }
   list.set("js" true)
@@ -274,7 +276,7 @@ const isPromise = #(p) =>
 
 defmacro cond = #(block) => {
   const blockWrap = #(v) => {
-    if (v.type == "Block") {
+    if (isBlock(v)) {
       dsl.block(...get(v "statements"))
     }
     else {
@@ -286,7 +288,7 @@ defmacro cond = #(block) => {
     if (index == 0) {
       dsl.ifNode(conditional blockWrap(result))
     }
-    elseif (get(conditional "type") == "Reference" && get(conditional "symbol") == "else$wlt") {
+    elseif (isReference(conditional) && get(conditional "symbol") == "else$wlt") {
       dsl.elseNode(blockWrap(result))
     }
     else {
@@ -299,10 +301,10 @@ defmacro chain = #(block ...args) => {
   const calls = get(block "statements")
   reduce(calls #(result call) => {
     const newCall = cond {
-      get(call "type") == "ValueSequence" && getIn(call ["values" 1 "type"]) == "FunctionCall"
+      isValueSequence(call) && isFunctionCall(getIn(call ["values" 1]))
       call
 
-      get(call "type") == "Reference"
+      isReference(call)
       dsl.valueSeq(call dsl.functionCall())
 
       else
