@@ -5,7 +5,7 @@
 
 "before2/* */"/* a mutiline
 
-comment */ "after"
+comment */ :after
 
 `string ${true} interpolation
 can be multiplelines.
@@ -36,7 +36,7 @@ false
 throw new Thing()
 await thing()
 
-@{ foo: "bar" }
+@{ foo: :bar }
 foo.bar.[0](){}
 
 foo()
