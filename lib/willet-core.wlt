@@ -94,7 +94,7 @@ defmacro and = #(block ...args) => {
       }
     }
 
-    quote() {
+    quote {
       const formR = unquote(form)
       if (!formR) {
         false
@@ -312,9 +312,8 @@ defmacro chain = #(block ...args) => {
       raise("Invalid arguments passed to chain")
     }
     result = cond { Immutable.List.isList(result) result else [result] }
-
     updateIn(newCall ["values" 1 "args"] #(v) => concat(result v))
-  } args)
+  } Immutable.List(args))
 }
 
 const processPairs = #(block [pair ...rest]) => {

@@ -28,8 +28,29 @@ describe("Function invocation" #() => {
     expect(await complexAsync(1)).to.be.equal(2)
     expect(await complexAsync(-2)).to.be.equal(0)
   })
-
 })
 
+describe("And Or macros", #() => {
+  let called = 0
+  const call = #(v) => {
+    called = called + 1
+    v
+  }
+  it("should correctly handle OR", @async #() => {
+    called = 0;
+    const result = or(call(false) call(false) call(true) call(true))
+    expect(result).to.be.equal(true)
+    expect(called).to.be.equal(3)
+  });
+
+  it("should correctly handle AND", @async #() => {
+    called = 0;
+    const result = and(call(true) call(false) call(true) call(true))
+    expect(result).to.be.equal(false)
+    expect(called).to.be.equal(2)
+  });
+});
+
+// TODO chain macro
 // TODO add try catch
 // TODO add new and throw
