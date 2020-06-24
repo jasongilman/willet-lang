@@ -4,7 +4,7 @@ const expect = chai.expect
 const incrementer = #(v) => v + 1
 const asyncIncrementer = @async #(v) => v + 1
 
-const complexAsync = @async #(v)  => {
+const complexAsync = @async #(v) => {
   if (v < 1) {
     asyncIncrementer(await asyncIncrementer(v))
   }

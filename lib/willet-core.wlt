@@ -59,6 +59,11 @@ defmacro jsArray = #(block list) => {
   list.set("js" true)
 }
 
+const prettyLog = #(v) => {
+  console.log(JSON.stringify(v, null, 2))
+  v
+}
+
 const count = #(v) => {
   if (v.length) {
     v.length
@@ -141,7 +146,6 @@ const map = #(coll f) =>
   // TODO change this to check if it's keyed and call entrySeq
   toImmutable(coll).map(f)
 
-
 const reduce = #(coll ...args) => {
   if (!coll.reduce) {
     raise("Not a reduceable collection")
@@ -163,7 +167,6 @@ const filter = #(coll f) =>
 
 const range = #(start = 0 stop = Infinity step = 1) =>
   Immutable.Range(start stop step)
-
 
 const slice = #(coll begin end) => {
   coll = toImmutable(coll)
@@ -195,13 +198,23 @@ const last = #(coll) => {
   }
 }
 
+const sort = #(coll ...args) =>
+  toImmutable(coll).sort(...args)
+
+const sortBy = #(coll f) =>
+  toImmutable(coll).sortBy(f)
+
+const take = #(coll n) =>
+  toImmutable(coll).take(n)
+
 const drop = #(coll n = 1) =>
   slice(coll n)
-
 
 const dropLast = #(coll n = 1) =>
   slice(coll 0 count(coll) - n)
 
+const reverse = #(coll) =>
+  toImmutable(coll).reverse()
 
 const groupBy = #(coll f) => {
   coll = toImmutable(coll)
@@ -221,7 +234,6 @@ const concat = #(...args) => {
 
 const keys = #(coll) =>
   toImmutable(coll).keySeq()
-
 
 const toSeq = #(coll) => {
   coll = toImmutable(coll)
@@ -246,6 +258,16 @@ const indexOf = #(coll item) => {
 }
 
 
+const pick = #(m ...keys) => {
+  const keySet = Immutable.Set(keys)
+  toImmutable(m).filter(#(v k) => keySet.has(k))
+}
+
+const omit = #(m ...keys) => {
+  const keySet = Immutable.Set(keys)
+  toImmutable(m).filterNot(#(v k) => keySet.has(k))
+}
+
 const get = #(coll key) =>
   toImmutable(coll).get(key)
 
@@ -254,12 +276,12 @@ const getIn = #(coll path defaultVal = undefined) =>
   toImmutable(coll).getIn(path defaultVal)
 
 
-const set = #(coll key) =>
-  toImmutable(coll).set(key)
+const set = #(coll key value) =>
+  toImmutable(coll).set(key value)
 
 
-const setIn = #(coll path defaultVal = undefined) =>
-  toImmutable(coll).setIn(path defaultVal)
+const setIn = #(coll path value) =>
+  toImmutable(coll).setIn(path value)
 
 
 const update = #(coll key f) =>
@@ -272,7 +294,6 @@ const updateIn = #(coll path f) =>
 
 const isPromise = #(p) =>
   instanceof(p Promise)
-
 
 defmacro cond = #(block) => {
   const blockWrap = #(v) => {
@@ -343,6 +364,7 @@ module.exports = jsObject(#{
   raise
   jsObject
   jsArray
+  prettyLog
   count
   isEmpty
   and
@@ -358,15 +380,23 @@ module.exports = jsObject(#{
   partition
   first
   last
+  sort
+  sortBy
+  take
   drop
   dropLast
+  reverse
   groupBy
   concat
   keys
   toSeq
   fromPairs
   indexOf
+  pick
+  omit
   get
+  set
+  setIn
   update
   getIn
   updateIn
