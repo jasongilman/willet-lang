@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 const _ = require('lodash');
-const compiler = require('../compiler');
+const compiler = require('./lib/compiler');
 const fs = require('fs');
 const path = require('path');
 const program = require('commander');
@@ -51,11 +51,11 @@ if (!fs.existsSync(src)) {
 
 if (fs.existsSync(target)) {
   if (!fs.lstatSync(target).isDirectory()) {
-    fail(`target [${target}] is not a directory`);
+    fail(`Target [${target}] is not a directory`);
   }
 }
 else {
-  fail(`target [${target}] does not exist`);
+  fail(`Target directory [${target}] does not exist`);
 }
 
 let filesToCompile;

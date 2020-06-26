@@ -4,6 +4,15 @@
 
 Willet is an experimental functional programming language that compiles to JavaScript. Willet is heavily inspired by Clojure and tries to bridge the gap between JavaScript and Lisp without going all the way to a full Lisp syntax. Willet provides easy use persistent immutable data structures, a macro system, and a full featured standard library.
 
+## Install and Use
+
+```
+npm install willet
+echo 'console.log("Hello Willet!")' > index.wlt
+willet-compile index.wlt .
+node index.js
+```
+
 ## Features
 
 * A fast and _extensible*_ compiler written in JavaScript
@@ -16,7 +25,7 @@ Willet is an experimental functional programming language that compiles to JavaS
     * In Willet "false" is only literal `false`, `null`, and `undefined`
 * Persistent immutable data structures natively supported by language
   * Powered by [Immutable](https://immutable-js.github.io/immutable-js/)
-  * Literal syntax for maps, _sets*_, and lists
+  * Literal syntax for maps, sets, and lists
   * Works with standard library functions
   * _Equality by value*_
 * Macro System allowing language level extensions
@@ -31,9 +40,9 @@ Willet is an experimental functional programming language that compiles to JavaS
   * _Data structure walking_*
   * Get, set, update deeply nested structures.  
   * Partition, slice, and group data
-  * Many others
+  * And more
 
-(_* future planned feature_)
+(_* future feature_)
 
 ## Why Willet?
 
@@ -66,16 +75,15 @@ Things to note:
   * No return statement necessary. Blocks always return the last result.
 * `if` is a macro.
 
+TODO link to syntax diagram
 
-More examples coming...
-
-## Setting Jupyter Notebook and Hydrogen
+## Setting Jupyter Notebook and Hydrogen in Atom Editor
 
 Setting up [jp-willet](https://github.com/jasongilman/jp-willet).
 
 ```Bash
 # Install willet lang globally
-npm install -g
+npm install -g willet-lang
 
 # Install jupyter package
 cd jp-willet

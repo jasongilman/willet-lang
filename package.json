@@ -1,6 +1,6 @@
 {
   "name": "willet",
-  "version": "0.0.1",
+  "version": "0.0.1-alpha2",
   "description": "Willet Programming Language",
   "scripts": {
     "lint": "node_modules/.bin/eslint .",
@@ -8,7 +8,13 @@
     "test": "npm run lint && npm run mocha",
     "build": "bin/build.sh"
   },
-  "main": "compiler.js",
+  "bin": {
+    "willet-compile": "./willet-compile.js"
+  },
+  "files": [
+    "dist/*",
+    "lib/*",
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/jasongilman/willet-lang.git"

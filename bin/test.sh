@@ -11,7 +11,7 @@ fi
 
 mkdir -p $CUR_DIR/../dist-tests
 
-node bin/compile.js $CUR_DIR/../wlt-tests $CUR_DIR/../dist-tests
+node willet-compile.js $CUR_DIR/../wlt-tests $CUR_DIR/../dist-tests
 
 if [ $? != 0 ]; then
   printf "Failed to compile tests"
