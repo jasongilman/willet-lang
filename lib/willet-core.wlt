@@ -143,7 +143,7 @@ defmacro or = #(block ...args) => {
 const identity = #(v) => v
 
 const map = #(coll f) =>
-  // TODO change this to check if it's keyed and call entrySeq
+  // FUTURE change this to check if it's keyed and call entrySeq
   toImmutable(coll).map(f)
 
 const reduce = #(coll ...args) => {
@@ -161,7 +161,7 @@ const reduce = #(coll ...args) => {
 }
 
 const filter = #(coll f) =>
-  // TODO change this to check if it's keyed and call entrySeq
+  // FUTURE change this to check if it's keyed and call entrySeq
   toImmutable(coll).filter(f)
 
 
@@ -329,7 +329,8 @@ defmacro chain = #(block ...args) => {
       dsl.valueSeq(call dsl.functionCall())
 
       else
-      // TODO add support for macro context argument that will allow better error reporting
+      // FUTURE add support for macro context argument that will allow better error reporting
+      // We want to indicate the location of the problem in the code like other compilation problems
       raise("Invalid arguments passed to chain")
     }
     result = cond { Immutable.List.isList(result) result else [result] }
@@ -355,7 +356,7 @@ defmacro fore = #(block ...args) => {
   processPairs(block pairs)
 }
 
-// TODO equals (and should accept multiple arguments)
+// FUTURE equals (and should accept multiple arguments)
 
 module.exports = jsObject(#{
   falsey

@@ -1,10 +1,9 @@
 const chai = require("chai")
 const expect = chai.expect
+// Requiring willet code to make sure that works
 const helper = require("./test-helper")
+// FUTURE add another require to make sure more than one works
 
-
-// TODO add another require to make sure more than one works
-// TODO test recursive functions
 
 const incrementer = #(v) => v + 1
 const asyncIncrementer = @async #(v) => v + 1
@@ -60,6 +59,7 @@ describe("And Or macros", #() => {
   });
 });
 
-// TODO chain macro
-// TODO add try catch
-// TODO add new and throw
+// FUTURE test recursive functions
+// FUTURE chain macro
+// FUTURE add try catch
+// FUTURE add new and throw

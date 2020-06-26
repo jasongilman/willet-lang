@@ -2,7 +2,12 @@
 
 CUR_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
-# TODO add linting
+node_modules/.bin/eslint .
+
+if [ $? != 0 ]; then
+  printf "Lint failure"
+  exit 1
+fi
 
 mkdir -p $CUR_DIR/../dist-tests
 
@@ -13,6 +18,4 @@ if [ $? != 0 ]; then
   exit 1
 fi
 
-# TODO temporary only testing willet code.
 node_modules/.bin/mocha --timeout 0 -b tests/ dist-tests/
-# node_modules/.bin/mocha --timeout 0 -b dist-tests/
