@@ -6,4 +6,4 @@ const parser = require('../lib/chevrotain-parser');
 
 const serializedGrammar = parser.parserInstance.getSerializedGastProductions();
 const htmlText = chevrotain.createSyntaxDiagramsCode(serializedGrammar);
-fs.writeFileSync('dist/grammar.html', htmlText);
+fs.writeFileSync('grammar.html', htmlText);
