@@ -3,6 +3,7 @@ const semanticParser = require('./lib/semantic-parser');
 const macroExpander = require('./lib/macro-expander');
 const keywordReplacer = require('./lib/keyword-replacer');
 const jsCompiler = require('./lib/javascript-compiler');
+const pirates = require('pirates');
 
 // TODO change context to be immutable.
 const createContext = (dirname = '.') => ({
@@ -26,6 +27,12 @@ const compile = (context, source) => {
   const compiled = jsCompiler.compile(ast);
   return compiled;
 };
+
+// Hooks into require so that requires for willet code can be automatically compiled
+pirates.addHook(
+  (code, _filename) => compile(createContext(), code),
+  { exts: ['.wlt'], matcher: () => true }
+);
 
 module.exports = {
   createContext,

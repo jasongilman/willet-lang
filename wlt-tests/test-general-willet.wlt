@@ -1,5 +1,10 @@
 const chai = require("chai")
 const expect = chai.expect
+const helper = require("./test-helper")
+
+
+// TODO add another require to make sure more than one works
+// TODO test recursive functions
 
 const incrementer = #(v) => v + 1
 const asyncIncrementer = @async #(v) => v + 1
@@ -28,6 +33,10 @@ describe("Function invocation" #() => {
     expect(await complexAsync(1)).to.be.equal(2)
     expect(await complexAsync(-2)).to.be.equal(0)
   })
+
+  it("should allow calling a function in a willet required module", @async #() => {
+    expect(helper.increment(1)).to.be.equal(2)
+  });
 })
 
 describe("And Or macros", #() => {

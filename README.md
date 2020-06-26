@@ -92,11 +92,3 @@ Before Willet Grammar is available in atom set syntax to Java of some willet cod
 ```JSON
 { "willet": "Java" }
 ```
-
-## Automatically Compiling Willet Core on Save
-
-Requires entr to be installed
-
-```
-ls lib/willet-core.wlt | entr bin/build.sh
-```

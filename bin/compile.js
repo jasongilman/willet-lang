@@ -77,7 +77,7 @@ for (let i = 0; i < filesToCompile.length; i += 1) {
   console.log(`Compiling ${file} to ${targetFile}`);
   const contents = fs.readFileSync(file).toString();
   try {
-    const context = compiler.createContext(process.cwd());
+    const context = compiler.createContext(src);
     context.skipCore = skipCore;
     const jsContents = compiler.compile(context, contents);
     fs.writeFileSync(targetFile, `${generatedHeader}${jsContents}`);
