@@ -75,7 +75,9 @@ Things to note:
   * No return statement necessary. Blocks always return the last result.
 * `if` is a macro.
 
-TODO link to syntax diagram
+## More Information
+
+* [Generated Grammar Diagram](https://jasongilman.github.io/willet-lang/grammar)
 
 ## Setting Jupyter Notebook and Hydrogen in Atom Editor
 
