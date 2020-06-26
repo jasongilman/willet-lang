@@ -2,6 +2,9 @@
 
 echo "Building Willet"
 
+npm link
+npm link willet
+
 CUR_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 ROOT_DIR="$CUR_DIR/.."
 
