@@ -8,6 +8,7 @@
     "test": "npm run lint && npm run mocha",
     "build": "bin/build.sh"
   },
+  "main": "compiler.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/jasongilman/willet-lang.git"
