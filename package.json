@@ -28,6 +28,7 @@
   "homepage": "https://github.com/jasongilman/willet-lang#readme",
   "devDependencies": {
     "chai": "^4.2.0",
+    "chai-immutable": "^2.1.0",
     "eslint": "^4.19.1",
     "eslint-config-airbnb": "^16.1.0",
     "eslint-plugin-import": "^2.13.0",

@@ -3,6 +3,7 @@ const Immutable = require("immutable")
 const astHelper = require("../lib/ast-helper")
 const #{
   dsl isMapLiteral isArrayLiteral isBlock isReference isValueSequence isFunctionCall
+  isStringLiteral
 } = astHelper
 
 const isImmutable = Immutable.isImmutable
@@ -146,6 +147,10 @@ const map = #(coll f) =>
   // FUTURE change this to check if it's keyed and call entrySeq
   toImmutable(coll).map(f)
 
+const flatMap = #(coll f) =>
+  // FUTURE change this to check if it's keyed and call entrySeq
+  toImmutable(coll).flatMap(f)
+
 const reduce = #(coll ...args) => {
   if (!coll.reduce) {
     raise("Not a reduceable collection")
@@ -212,6 +217,12 @@ const drop = #(coll n = 1) =>
 
 const dropLast = #(coll n = 1) =>
   slice(coll 0 count(coll) - n)
+
+const takeWhile = #(coll cond) =>
+  toImmutable(coll).takeWhile(cond)
+
+const dropWhile = #(coll cond) =>
+  toImmutable(coll).skipWhile(cond)
 
 const reverse = #(coll) =>
   toImmutable(coll).reverse()
@@ -338,20 +349,57 @@ defmacro chain = #(block ...args) => {
   } Immutable.List(args))
 }
 
-const processPairs = #(block [pair ...rest]) => {
-  const [target collection] = pair
+const isWhen = #(target) => isStringLiteral(target) && target.value == :when
+
+const processWhens = #(target sequence [pair ...rest]) => {
+  const condition = last(pair)
+
+  const fun = dsl.func([target] condition)
+  let newSeq = quote(filter(unquote(sequence) unquote(fun)))
   if (isEmpty(rest)) {
-    const fun = dsl.func([target] block)
-    quote(map(unquote(collection) unquote(fun)))
+    newSeq
   }
   else {
-    const fun = dsl.func([target] [processPairs(block rest)])
-    quote(map(unquote(collection) unquote(fun)))
+    processWhens(target newSeq rest)
+  }
+}
+
+const processPairs = #(block [pair ...rest]) => {
+  const whenPairs = takeWhile(rest, #([target]) => isWhen(target))
+  const afterWhenPairs = dropWhile(rest, #([target]) => isWhen(target))
+
+  let [target sequence] = pair
+
+  // TODO the semantic parser isn't handling this. The way it handles if else is that they
+  // both need to be top level statements. We need a better way to do this.
+  // Also add a test where the value from an if/else is passed to a function
+  // foo (if (a) { a } else { 0 })
+  // That would probably look like the if and else where separate arguments when parsing.
+  // This would likely fail for try/catch as well since that's a multi-statement thing.
+
+  // sequence = if (isEmpty(whenPairs)) {
+  //   sequence
+  // }
+  // else {
+  //   processWhens(target sequence whenPairs)
+  // }
+  // Alternative avoiding if for assignment
+  if (!isEmpty(whenPairs)) {
+    sequence = processWhens(target sequence whenPairs)
+  }
+
+  if (isEmpty(afterWhenPairs)) {
+    const fun = dsl.func([target] block)
+    quote(map(unquote(sequence) unquote(fun)))
+  }
+  else {
+    const fun = dsl.func([target] processPairs(block afterWhenPairs))
+    quote(flatMap(unquote(sequence) unquote(fun)))
   }
 }
 
 // FUTURE support when, etc
-defmacro fore = #(block ...args) => {
+defmacro for = #(block ...args) => {
   const pairs = partition(args 2)
   processPairs(block pairs)
 }
@@ -374,6 +422,7 @@ module.exports = jsObject(#{
   isImmutable
   toImmutable
   map
+  flatMap
   reduce
   filter
   range
@@ -405,7 +454,7 @@ module.exports = jsObject(#{
 
   isPromise
   // macros
-  fore
+  for
   cond
   chain
 })
