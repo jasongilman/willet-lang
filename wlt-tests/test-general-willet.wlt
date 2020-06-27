@@ -103,8 +103,7 @@ describe("for macro", #() => {
     ])
   });
 
-  // TODO async bug is present here if @async is added
-  it("should support :when", #() => {
+  it("should support :when", @async #() => {
     const result = for(i range(0 5)
                        :when i % 2 == 0) {
       i
