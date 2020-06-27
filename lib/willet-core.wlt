@@ -370,22 +370,14 @@ const processPairs = #(block [pair ...rest]) => {
 
   let [target sequence] = pair
 
-  // TODO the semantic parser isn't handling this. The way it handles if else is that they
-  // both need to be top level statements. We need a better way to do this.
-  // Also add a test where the value from an if/else is passed to a function
-  // foo (if (a) { a } else { 0 })
-  // That would probably look like the if and else where separate arguments when parsing.
-  // This would likely fail for try/catch as well since that's a multi-statement thing.
-
-  // sequence = if (isEmpty(whenPairs)) {
-  //   sequence
-  // }
-  // else {
-  //   processWhens(target sequence whenPairs)
-  // }
-  // Alternative avoiding if for assignment
-  if (!isEmpty(whenPairs)) {
-    sequence = processWhens(target sequence whenPairs)
+  // In order to group together the if else it has to be wrapped in a block
+  sequence = {
+    if (isEmpty(whenPairs)) {
+      sequence
+    }
+    else {
+      processWhens(target sequence whenPairs)
+    }
   }
 
   if (isEmpty(afterWhenPairs)) {

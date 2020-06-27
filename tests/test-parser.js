@@ -101,7 +101,7 @@ const expected = dsl.program(
       dsl.Null,
       dsl.Undefined
     ))
-  ),
+  )
 );
 
 describe('Parsing', () => {

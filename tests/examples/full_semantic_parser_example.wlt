@@ -57,3 +57,8 @@ catch (err) {
 }
 
 after
+
+foo(
+  if (true) { 1 } else { 0 }
+  try { 2 } catch(e) { 3 }
+)

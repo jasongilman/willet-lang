@@ -121,7 +121,23 @@ const expected = dsl.program(
       dsl.functionCall(dsl.reference('err'))
     ))
   ),
-  dsl.reference('after')
+  dsl.reference('after'),
+  dsl.valueSeq(
+    dsl.reference('foo'),
+    dsl.functionCall(
+      dsl.ifList(
+        dsl.ifNode(dsl.literal(true), block(
+          dsl.literal(1)
+        )),
+        dsl.elseNode(block(dsl.literal(0)))
+      ),
+      dsl.tryCatch(
+        block(dsl.literal(2)),
+        dsl.reference('e'),
+        block(dsl.literal(3))
+      )
+    )
+  )
 );
 
 describe('Semantic Parsing', () => {
