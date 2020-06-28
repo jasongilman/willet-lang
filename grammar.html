@@ -795,6 +795,16 @@
                 "definition": [
                   {
                     "type": "NonTerminal",
+                    "name": "GetPropertyImmutable",
+                    "idx": 0
+                  }
+                ]
+              },
+              {
+                "type": "Flat",
+                "definition": [
+                  {
+                    "type": "NonTerminal",
                     "name": "GetProperty",
                     "idx": 0
                   }
@@ -970,6 +980,46 @@
         "label": "Dot",
         "idx": 0,
         "pattern": "\\."
+      },
+      {
+        "type": "Alternation",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "NonTerminal",
+                "name": "KeywordToken",
+                "idx": 0
+              }
+            ]
+          },
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "NonTerminal",
+                "name": "symbol",
+                "idx": 0
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "GetPropertyImmutable",
+    "orgText": "",
+    "definition": [
+      {
+        "type": "Terminal",
+        "name": "DotColon",
+        "label": "DotColon",
+        "idx": 0,
+        "pattern": "\\.:"
       },
       {
         "type": "Alternation",

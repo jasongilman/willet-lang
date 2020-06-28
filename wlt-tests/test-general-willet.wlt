@@ -19,6 +19,16 @@ const complexAsync = @async #(v) => {
   }
 }
 
+describe("Immutable property lookup", #() => {
+  const obj = #{ alpha: 5 bar: 6 }
+  it("should allow retrieving a property that exists", @async #() => {
+    expect(obj.:alpha).to.be.equal(5)
+  });
+  it("should return undefined for a property that doesn't exist", @async #() => {
+    expect(obj.:foo).to.be.equal(undefined)
+  });
+});
+
 describe("Function invocation" #() => {
   it("should allow calling a function" #() => {
     expect(incrementer(1)).to.be.equal(2)
@@ -62,7 +72,6 @@ describe("And Or macros", #() => {
 });
 
 describe("for macro", #() => {
-
   it("should handle simplest case", @async #() => {
     const result = for(i range(0 3)) {
       i
@@ -135,7 +144,6 @@ describe("for macro", #() => {
       [2 :c]
     ])
   });
-
 });
 
 // FUTURE test recursive functions

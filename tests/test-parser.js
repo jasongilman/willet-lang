@@ -84,6 +84,11 @@ const expected = dsl.program(
   ),
   dsl.valueSeq(
     dsl.reference('foo'),
+    dsl.getPropertyImmutable('bar'),
+    dsl.getPropertyImmutable('alpha'),
+  ),
+  dsl.valueSeq(
+    dsl.reference('foo'),
     dsl.functionCall()
   ),
   dsl.valueSeq(

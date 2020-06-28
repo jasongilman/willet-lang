@@ -39,6 +39,8 @@ await thing()
 @{ foo: :bar }
 foo.bar.[0](){}
 
+foo.:bar.:alpha
+
 foo()
 foo {}
 foo(1 2 ...rest) {
