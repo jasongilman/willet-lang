@@ -3,7 +3,7 @@
 "//before1"// A comment
 // A comment
 
-"before2/* */"/* a mutiline
+'before2/* */'/* a mutiline
 
 comment */ :after
 

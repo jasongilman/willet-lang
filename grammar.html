@@ -690,6 +690,16 @@
             "definition": [
               {
                 "type": "NonTerminal",
+                "name": "stringLiteralSingle",
+                "idx": 0
+              }
+            ]
+          },
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "NonTerminal",
                 "name": "MapLiteral",
                 "idx": 0
               }
@@ -1319,6 +1329,20 @@
   },
   {
     "type": "Rule",
+    "name": "stringLiteralSingle",
+    "orgText": "",
+    "definition": [
+      {
+        "type": "Terminal",
+        "name": "StringLiteralSingle",
+        "label": "StringLiteralSingle",
+        "idx": 0,
+        "pattern": "'(\\\\.|[^'\\\\])*'"
+      }
+    ]
+  },
+  {
+    "type": "Rule",
     "name": "keywordLiteral",
     "orgText": "",
     "definition": [
@@ -1472,6 +1496,16 @@
                           {
                             "type": "NonTerminal",
                             "name": "stringLiteral",
+                            "idx": 0
+                          }
+                        ]
+                      },
+                      {
+                        "type": "Flat",
+                        "definition": [
+                          {
+                            "type": "NonTerminal",
+                            "name": "stringLiteralSingle",
                             "idx": 0
                           }
                         ]
@@ -1649,6 +1683,16 @@
                           {
                             "type": "NonTerminal",
                             "name": "stringLiteral",
+                            "idx": 0
+                          }
+                        ]
+                      },
+                      {
+                        "type": "Flat",
+                        "definition": [
+                          {
+                            "type": "NonTerminal",
+                            "name": "stringLiteralSingle",
                             "idx": 0
                           }
                         ]

@@ -19,15 +19,42 @@ const complexAsync = @async #(v) => {
   }
 }
 
+describe("Strings with special characters", #() => {
+  it("should be equal with different quotes",#() => {
+    expect("foo").to.be.equal('foo')
+  })
+  it("should be handle double quotes inside strings",#() => {
+    expect("f\"oo\"").to.be.equal('f"oo"')
+  })
+  it("should be handle escaped double quotes inside single quote strings",#() => {
+    expect("f\"oo\"").to.be.equal('f\"oo\"')
+  })
+  it("should be handle single quotes inside strings",#() => {
+    expect("f'oo'").to.be.equal('f\'oo\'')
+  })
+  it("should be handle escaped single quotes inside double quote strings",#() => {
+    expect("f\'oo\'").to.be.equal('f\'oo\'')
+  })
+  it("should be handle escaped slashes inside strings",#() => {
+    expect("f\\oo\\").to.be.equal('f\\oo\\')
+  })
+  it("should be handle all combinations",#() => {
+    const double = "\nNewline \\ \"other \" 'foo'"
+    const single = '\nNewline \\ "other \" \'foo\''
+    expect(double).to.be.equal(single)
+  })
+
+})
+
 describe("Immutable property lookup", #() => {
   const obj = #{ alpha: 5 bar: 6 }
   it("should allow retrieving a property that exists", @async #() => {
     expect(obj.:alpha).to.be.equal(5)
-  });
+  })
   it("should return undefined for a property that doesn't exist", @async #() => {
     expect(obj.:foo).to.be.equal(undefined)
-  });
-});
+  })
+})
 
 describe("Function invocation" #() => {
   it("should allow calling a function" #() => {
@@ -47,7 +74,7 @@ describe("Function invocation" #() => {
 
   it("should allow calling a function in a willet required module", @async #() => {
     expect(helper.increment(1)).to.be.equal(2)
-  });
+  })
 })
 
 describe("And Or macros", #() => {
@@ -57,19 +84,19 @@ describe("And Or macros", #() => {
     v
   }
   it("should correctly handle OR", @async #() => {
-    called = 0;
+    called = 0
     const result = or(call(false) call(false) call(true) call(true))
     expect(result).to.be.equal(true)
     expect(called).to.be.equal(3)
-  });
+  })
 
   it("should correctly handle AND", @async #() => {
-    called = 0;
+    called = 0
     const result = and(call(true) call(false) call(true) call(true))
     expect(result).to.be.equal(false)
     expect(called).to.be.equal(2)
-  });
-});
+  })
+})
 
 describe("for macro", #() => {
   it("should handle simplest case", @async #() => {
@@ -77,7 +104,7 @@ describe("for macro", #() => {
       i
     }
     expect(result).to.be.equal([0 1 2])
-  });
+  })
 
   it("should handle multiple levels of iteration", @async #() => {
     const result = for(i range(0 3)
@@ -95,7 +122,7 @@ describe("for macro", #() => {
       [2 :b]
       [2 :c]
     ])
-  });
+  })
 
   it("should make earlier declared vars available for subsequent steps", @async #() => {
     const result = for(i range(0 3)
@@ -110,7 +137,7 @@ describe("for macro", #() => {
       [2 2]
       [2 3]
     ])
-  });
+  })
 
   it("should support :when", @async #() => {
     const result = for(i range(0 5)
@@ -118,7 +145,7 @@ describe("for macro", #() => {
       i
     }
     expect(result).to.be.equal([0 2 4])
-  });
+  })
 
   it("should support multiple :whens", #() => {
     const result = for(i range(0 10)
@@ -127,7 +154,7 @@ describe("for macro", #() => {
       i
     }
     expect(result).to.be.equal([2 4 6])
-  });
+  })
 
   it("should support all features at once", #() => {
     const result = for(i range(0 3)
@@ -143,8 +170,8 @@ describe("for macro", #() => {
       [2 :b]
       [2 :c]
     ])
-  });
-});
+  })
+})
 
 // FUTURE test recursive functions
 // FUTURE chain macro
