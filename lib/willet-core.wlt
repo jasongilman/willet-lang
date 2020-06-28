@@ -86,6 +86,16 @@ const isEmpty = #(v) => {
   }
 }
 
+// Forces evaluation if s is a lazy sequence.
+const doAll = #(s) => {
+  if (Immutable.Seq.isSeq(s)) {
+    s.cacheResult()
+  }
+  else {
+    s
+  }
+}
+
 defmacro and = #(block ...args) => {
   if (block) {
     raise("and macro does not take a block")
@@ -330,10 +340,9 @@ defmacro cond = #(block) => {
 }
 
 defmacro chain = #(block ...args) => {
-  const calls = get(block "statements")
-  reduce(calls #(result call) => {
+  reduce(block.:statements #(result call) => {
     const newCall = cond {
-      isValueSequence(call) && isFunctionCall(getIn(call ["values" 1]))
+      isValueSequence(call) && isFunctionCall(getIn(call [:values 1]))
       call
 
       isReference(call)
@@ -345,8 +354,8 @@ defmacro chain = #(block ...args) => {
       raise("Invalid arguments passed to chain")
     }
     result = cond { Immutable.List.isList(result) result else [result] }
-    updateIn(newCall ["values" 1 "args"] #(v) => concat(result v))
-  } Immutable.List(args))
+    updateIn(newCall [:values 1 :args] #(v) => concat(result v))
+  } toImmutable(args))
 }
 
 const isWhen = #(target) => isStringLiteral(target) && target.value == :when
@@ -407,6 +416,7 @@ module.exports = jsObject(#{
   jsArray
   prettyLog
   count
+  doAll
   isEmpty
   and
   or

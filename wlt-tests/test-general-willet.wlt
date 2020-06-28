@@ -6,7 +6,8 @@ const expect = chai.expect
 const helper = require("./test-helper")
 // FUTURE add another require to make sure more than one works
 
-
+const adder = #(a b) => a + b
+const subtractor = #(a b) => a - b
 const incrementer = #(v) => v + 1
 const asyncIncrementer = @async #(v) => v + 1
 
@@ -170,6 +171,40 @@ describe("for macro", #() => {
       [2 :b]
       [2 :c]
     ])
+  })
+})
+
+describe('chain macro' #() => {
+  it('should handle no calls to chain' #() => {
+    expect(chain(5) {}).to.be.equal(5)
+  })
+  it('should handle a call with no parentheses' #() => {
+    expect(chain(5) {
+      incrementer
+    }).to.be.equal(6)
+  })
+  it('should handle a call with parentheses and no args' #() => {
+    expect(chain(5) {
+      incrementer()
+    }).to.be.equal(6)
+  })
+  it('should handle a call with args' #() => {
+    expect(chain(5) {
+      adder(6)
+    }).to.be.equal(11)
+  })
+  it('should handle a call and place args in correct position' #() => {
+    expect(chain(5) {
+      subtractor(6)
+    }).to.be.equal(-1)
+  })
+  it('should chain multiple calls' #() => {
+    expect(chain(20) {
+      incrementer
+      subtractor(6)
+      incrementer
+      adder(3)
+    }).to.be.equal(19)
   })
 })
 
