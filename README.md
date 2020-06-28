@@ -71,9 +71,10 @@ const quicksort = #([pivot ...others]) => {
 Things to note:
 
 * No commas or semicolons needed.
-  - Optional for readability or to remove ambiguity in certain situations.
-  * No return statement necessary. Blocks always return the last result.
-* `if` is a macro.
+  * Optional for readability or to remove ambiguity in certain situations.
+* No return statement necessary. Blocks always return the last result.
+* Data structures are immutable records automatically.
+* A built in standard library provides many functions like `concat`
 
 ## More Information
 
