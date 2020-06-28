@@ -78,6 +78,7 @@ Things to note:
 ## More Information
 
 * [Generated Grammar Diagram](https://jasongilman.github.io/willet-lang/grammar)
+* [Example Project "Willet Breakout"](https://github.com/jasongilman/willet-breakout)
 
 ## Setting Jupyter Notebook and Hydrogen in Atom Editor
 
