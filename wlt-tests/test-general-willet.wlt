@@ -208,7 +208,22 @@ describe('chain macro' #() => {
   })
 })
 
+describe('quicksort example from README' #() => {
+  const quicksort = #([pivot ...others]) => {
+    if (pivot) {
+      concat(
+        quicksort(filter(others #(v) => pivot >= v ))
+        [pivot]
+        quicksort(filter(others #(v) => pivot < v ))
+      )
+    }
+  }
+
+  it('should sort' #() => {
+    expect(quicksort([3 2 4 9 0 8 7])).to.be.equal([0 2 3 4 7 8 9])
+  })
+})
+
 // FUTURE test recursive functions
-// FUTURE chain macro
 // FUTURE add try catch
 // FUTURE add new and throw

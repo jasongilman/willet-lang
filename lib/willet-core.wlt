@@ -9,7 +9,10 @@ const #{
 const isImmutable = Immutable.isImmutable
 
 const toImmutable = #(v) => {
-  if (isImmutable(v)) {
+  if (v == null || v == undefined) {
+    []
+  }
+  elseif (isImmutable(v)) {
     v
   }
   else {
@@ -247,8 +250,7 @@ const concat = #(...args) => {
     Immutable.List([])
   }
   else {
-    const [coll ...iterables] = args
-    coll = toImmutable(coll)
+    const [coll ...iterables] = map(args toImmutable)
     coll.concat(...iterables)
   }
 }

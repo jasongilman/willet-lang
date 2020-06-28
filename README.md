@@ -57,12 +57,12 @@ Other languages have done this like Elixir and there are other well supported la
 ## What does Willet Look Like?
 
 ```
-def quicksort = fn ([pivot ...others]) {
+const quicksort = #([pivot ...others]) => {
   if (pivot) {
     concat(
-      quicksort(filter(others fn(v) { pivot >= v }))
+      quicksort(filter(others #(v) => pivot >= v ))
       [pivot]
-      quicksort(filter(others fn(v) { pivot < v }))
+      quicksort(filter(others #(v) => pivot < v ))
     )
   }
 }
