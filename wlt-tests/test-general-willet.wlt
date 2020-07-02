@@ -20,6 +20,41 @@ const complexAsync = @async #(v) => {
   }
 }
 
+describe('truthy and falsey' #() => {
+  const falseyValues = [
+    null
+    undefined
+    false
+  ]
+  const truthyValues = [
+    1
+    0
+    ""
+    "something"
+    true
+    NaN
+    jsArray([])
+  ]
+
+  doAll(for(v falseyValues) {
+    it(`${v} should be falsey` #() => {
+      expect(falsey(v)).to.be.true
+    })
+    it(`${v} should not be truthy` #() => {
+      expect(truthy(v)).to.be.false
+    })
+  })
+
+  doAll(for(v truthyValues) {
+    it(`${v} should not be falsey` #() => {
+      expect(falsey(v)).to.be.false
+    })
+    it(`${v} should be truthy` #() => {
+      expect(truthy(v)).to.be.true
+    })
+  })
+})
+
 describe("Strings with special characters", #() => {
   it("should be equal with different quotes",#() => {
     expect("foo").to.be.equal('foo')
