@@ -81,6 +81,10 @@ Things to note:
 * [Generated Grammar Diagram](https://jasongilman.github.io/willet-lang/grammar)
 * [Example Project "Willet Breakout"](https://github.com/jasongilman/willet-breakout)
 
+## Syntax Highlighting in Editors
+
+Syntax highlighting is available for the Atom editor using the [atom-language-willet package](https://github.com/jasongilman/atom-language-willet).
+
 ## Setting Jupyter Notebook and Hydrogen in Atom Editor
 
 Setting up [jp-willet](https://github.com/jasongilman/jp-willet).
@@ -97,10 +101,4 @@ npm install -g
 npm link willet
 # Install the Jupyter Kernel
 jp-willet-install
-```
-
-Before Willet Grammar is available in atom set syntax to Java of some willet code and then configure hydrogen with this
-
-```JSON
-{ "willet": "Java" }
 ```
