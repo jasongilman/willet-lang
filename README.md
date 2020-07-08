@@ -4,6 +4,8 @@
 
 Willet is an experimental functional programming language that compiles to JavaScript. Willet is heavily inspired by Clojure and tries to bridge the gap between JavaScript and Lisp without going all the way to a full Lisp syntax. Willet provides easy use persistent immutable data structures, a macro system, and a full featured standard library.
 
+<b>[Try Willet in your browser](https://jasongilman.github.io/try-willet)</b>
+
 ## Install and Use
 
 ```
