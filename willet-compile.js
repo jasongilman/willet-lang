@@ -80,6 +80,16 @@ for (let i = 0; i < filesToCompile.length; i += 1) {
     const context = compiler.createContext(src);
     context.skipCore = skipCore;
     const jsContents = compiler.compile(context, contents);
+    const dirName = path.dirname(targetFile);
+    try {
+      fs.mkdirSync(dirName, { recursive: true });
+    }
+    catch (err) {
+      if (err.code !== 'EEXIST') { // curDir already exists!
+        throw err;
+      }
+    }
+
     fs.writeFileSync(targetFile, `${generatedHeader}${jsContents}`);
   }
   catch (e) {

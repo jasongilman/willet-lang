@@ -75,7 +75,7 @@ const expected = dsl.program(
       dsl.property('foo', dsl.reference('bar')),
       dsl.property('alpha', dsl.reference('alpha'))
     ),
-    dsl.Null
+    dsl.map()
   ),
   dsl.def(
     'let',
@@ -84,7 +84,7 @@ const expected = dsl.program(
       dsl.reference('b'),
       dsl.spread(dsl.reference('c'))
     ),
-    dsl.Null
+    dsl.map()
   ),
   dsl.def(
     'let',

@@ -24,10 +24,10 @@ defmacro myMacro = #(context blok argv) => {
 }
 
 // map destructuring
-let #{ foo: bar alpha } = null
+let #{ foo: bar alpha } = #{}
 
 // array destructuring
-let [ a b ...c] = null
+let [ a b ...c] = #{}
 
 // function arg destructuring
 let myFun = #(#{ a b } [c d]) => null
