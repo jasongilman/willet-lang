@@ -8,7 +8,7 @@ Willet is an experimental functional programming language that compiles to JavaS
 
 ## Install and Use
 
-```
+```Shell
 npm install willet
 echo 'console.log("Hello Willet!")' > index.wlt
 willet-compile index.wlt .

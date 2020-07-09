@@ -21,7 +21,6 @@ const toImmutable = #(v) => {
 }
 
 // FUTURE core methods to add
-// macroexpand
 // to_js (or something like that) - returns compiled javascript of code.
 
 const raise = #(error) => {
@@ -154,6 +153,13 @@ defmacro or = #(block ...args) => {
   orhelper(args)
 }
 
+defmacro macroexpand = #(block ...args) => {
+  if (block) {
+    raise("macroexpand does not take a block")
+  }
+  dsl.jsObjectLiteral(first(args))
+}
+
 const identity = #(v) => v
 
 const map = #(coll f) =>
@@ -199,20 +205,24 @@ const partition = #(coll n) => {
 }
 
 const first = #(coll) => {
-  if (coll.first) {
-    coll.first()
-  }
-  else {
-    coll.[0]
+  if (coll) {
+    if (coll.first) {
+      coll.first()
+    }
+    else {
+      coll.[0]
+    }
   }
 }
 
 const last = #(coll) => {
-  if (coll.last) {
-    coll.last()
-  }
-  else {
-    coll.[count(coll) - 1]
+  if (coll) {
+    if (coll.last) {
+      coll.last()
+    }
+    else {
+      coll.[count(coll) - 1]
+    }
   }
 }
 
@@ -458,6 +468,7 @@ module.exports = jsObject(#{
 
   isPromise
   // macros
+  macroexpand
   for
   cond
   chain

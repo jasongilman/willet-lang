@@ -259,6 +259,128 @@ describe('quicksort example from README' #() => {
   })
 })
 
-// FUTURE test recursive functions
+describe('macroexpand' #() => {
+  it('should handle simple values' #() => {
+    expect(macroexpand(1)).to.deep.equal(jsObject(#{ _type: 'NumberLiteral' value: 1 }))
+  })
+  it('should expand macros' #() => {
+    const expected = #{
+      _type: "Block"
+      statements: [
+        #{
+          _type: "Def"
+          defType: "const"
+          target: #{
+            _type: "Reference"
+            symbol: "formR"
+          }
+          value: #{
+            _type: "BooleanLiteral"
+            value: true
+          }
+          annotation: null
+        }
+        #{
+          _type: "IfList"
+          items: [
+            #{
+              _type: "If"
+              cond: #{
+                _type: "UnaryExpression"
+                operator: "!"
+                target: #{
+                  _type: "Reference"
+                  symbol: "formR"
+                }
+              }
+              block: #{
+                _type: "Block"
+                statements: [
+                  #{
+                    _type: "BooleanLiteral"
+                    value: false
+                  }
+                ]
+                solo: false
+              }
+            }
+            #{
+              _type: "Else"
+              block: #{
+                _type: "Block"
+                statements: [
+                  #{
+                    _type: "Block"
+                    statements: [
+                      #{
+                        _type: "Def"
+                        defType: "const"
+                        target: #{
+                          _type: "Reference"
+                          symbol: "formR"
+                        }
+                        value: #{
+                          _type: "BooleanLiteral"
+                          value: false
+                        }
+                        annotation: null
+                      }
+                      #{
+                        _type: "IfList"
+                        items: [
+                          #{
+                            _type: "If"
+                            cond: #{
+                              _type: "UnaryExpression"
+                              operator: "!"
+                              target: #{
+                                _type: "Reference"
+                                symbol: "formR"
+                              }
+                            }
+                            block: #{
+                              _type: "Block"
+                              statements: [
+                                #{
+                                  _type: "BooleanLiteral"
+                                  value: false
+                                }
+                              ]
+                              solo: false
+                            }
+                          }
+                          #{
+                            _type: "Else"
+                            block: #{
+                              _type: "Block"
+                              statements: [
+                                #{
+                                  _type: "BooleanLiteral"
+                                  value: true
+                                }
+                              ]
+                              solo: false
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                    solo: true
+                  }
+                ]
+                solo: false
+              }
+            }
+          ]
+        }
+      ]
+      solo: true
+    }
+    const expanded = macroexpand(and(true false))
+    expect(expanded).to.deep.equal(expected.toJS())
+  })
+})
+
+
 // FUTURE add try catch
 // FUTURE add new and throw

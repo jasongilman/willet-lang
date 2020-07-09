@@ -343,7 +343,11 @@ myFunc(1 ...array 5)
 // my func is passed 1, 2, 3, 4, 5 as arguments
 ```
 
+## Macros
 
-TODO Macros
+Macros are code that run at compile time to create new code. It's like extending the Willet compiler to extend support new forms of code. Several of the existing parts of Willet are implemented as macros like `chain` and `for`.
+
+TODO more docs
+
 
 TODO Willet Standard library
