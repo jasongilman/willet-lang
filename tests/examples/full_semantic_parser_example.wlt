@@ -19,7 +19,7 @@ const multilineFunction = @async #(alpha beta cappa = 45 + 7) => {
 
 const singleResponseFn = #(v) => v
 
-defmacro myMacro = #(blok argv) => {
+defmacro myMacro = #(context blok argv) => {
   [blok argv]
 }
 

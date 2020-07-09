@@ -61,7 +61,11 @@ const expected = dsl.program(
   dsl.macro(
     'myMacro',
     dsl.func(
-      [dsl.funcArg(dsl.reference('blok')), dsl.funcArg(dsl.reference('argv'))],
+      [
+        dsl.funcArg(dsl.reference('context')),
+        dsl.funcArg(dsl.reference('blok')),
+        dsl.funcArg(dsl.reference('argv'))
+      ],
       block(dsl.array(dsl.reference('blok'), dsl.reference('argv')))
     )
   ),

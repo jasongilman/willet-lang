@@ -1,4 +1,6 @@
 const Immutable = require("immutable")
+const wltCompiler = require("../lib/willet-compiler")
+const macroExpander = require("../lib/macro-expander")
 // Path to ast-helper works from lib or from compiled dist
 const astHelper = require("../lib/ast-helper")
 const #{
@@ -19,7 +21,6 @@ const toImmutable = #(v) => {
     Immutable.fromJS(v)
   }
 }
-
 // FUTURE core methods to add
 // to_js (or something like that) - returns compiled javascript of code.
 
@@ -30,17 +31,13 @@ const raise = #(error) => {
 const falsey = #(v) =>
   staticjs("v === false || v === null || v === undefined")
 
-
 const truthy = #(v) =>
   staticjs("v !== false && v !== null && v !== undefined")
-
 
 const isNil = #(v) =>
   staticjs("v === null || v === undefined")
 
-
-// Allows creating a regular javascript object.
-defmacro jsObject = #(block obj) => {
+defmacro jsObject = #(context block obj) => {
   if (block) {
     raise("jsObject macro does not take a block")
   }
@@ -51,8 +48,7 @@ defmacro jsObject = #(block obj) => {
 }
 
 // Allows creating a regular javascript array from a wilarray.
-// Must be passed
-defmacro jsArray = #(block list) => {
+defmacro jsArray = #(context block list) => {
   if (block) {
     raise("jsArray macro does not take a block")
   }
@@ -63,7 +59,7 @@ defmacro jsArray = #(block list) => {
 }
 
 const prettyLog = #(v) => {
-  console.log(JSON.stringify(v, null, 2))
+  console.log(JSON.stringify(v null 2))
   v
 }
 
@@ -98,7 +94,7 @@ const doAll = #(s) => {
   }
 }
 
-defmacro and = #(block ...args) => {
+defmacro and = #(context block ...args) => {
   if (block) {
     raise("and macro does not take a block")
   }
@@ -126,7 +122,7 @@ defmacro and = #(block ...args) => {
   andhelper(args)
 }
 
-defmacro or = #(block ...args) => {
+defmacro or = #(context block ...args) => {
   if (block) {
     raise("or macro does not take a block")
   }
@@ -153,11 +149,19 @@ defmacro or = #(block ...args) => {
   orhelper(args)
 }
 
-defmacro macroexpand = #(block ...args) => {
+defmacro macroexpandRaw = #(context block ...args) => {
   if (block) {
     raise("macroexpand does not take a block")
   }
   dsl.jsObjectLiteral(first(args))
+}
+
+defmacro macroexpand = #(context block ...args) => {
+  if (block) {
+    raise("macroexpand does not take a block")
+  }
+  const expanded = macroExpander.expandMacros(context first(args))
+  dsl.string(wltCompiler.compile(expanded))
 }
 
 const identity = #(v) => v
@@ -187,7 +191,6 @@ const reduce = #(coll ...args) => {
 const filter = #(coll f) =>
   // FUTURE change this to check if it's keyed and call entrySeq
   toImmutable(coll).filter(f)
-
 
 const range = #(start = 0 stop = Infinity step = 1) =>
   Immutable.Range(start stop step)
@@ -281,7 +284,6 @@ const toSeq = #(coll) => {
 const fromPairs = #(kvPairs) =>
   Immutable.Map(kvPairs)
 
-
 const indexOf = #(coll item) => {
   coll = toImmutable(coll)
   if (!coll.indexOf) {
@@ -289,7 +291,6 @@ const indexOf = #(coll item) => {
   }
   coll.indexOf(item)
 }
-
 
 const pick = #(m ...keys) => {
   const keySet = Immutable.Set(keys)
@@ -304,31 +305,25 @@ const omit = #(m ...keys) => {
 const get = #(coll key) =>
   toImmutable(coll).get(key)
 
-
 const getIn = #(coll path defaultVal = undefined) =>
   toImmutable(coll).getIn(path defaultVal)
-
 
 const set = #(coll key value) =>
   toImmutable(coll).set(key value)
 
-
 const setIn = #(coll path value) =>
   toImmutable(coll).setIn(path value)
-
 
 const update = #(coll key f) =>
   toImmutable(coll).update(key f)
 
-
 const updateIn = #(coll path f) =>
   toImmutable(coll).updateIn(path f)
-
 
 const isPromise = #(p) =>
   instanceof(p Promise)
 
-defmacro cond = #(block) => {
+defmacro cond = #(context block) => {
   const blockWrap = #(v) => {
     if (isBlock(v)) {
       dsl.block(...get(v "statements"))
@@ -338,7 +333,7 @@ defmacro cond = #(block) => {
     }
   }
   const pairs = partition(get(block "statements") 2)
-  dsl.ifList(...map(pairs, #([conditional result] index) => {
+  dsl.ifList(...map(pairs #([conditional result] index) => {
     if (index == 0) {
       dsl.ifNode(conditional blockWrap(result))
     }
@@ -351,7 +346,7 @@ defmacro cond = #(block) => {
   }))
 }
 
-defmacro chain = #(block ...args) => {
+defmacro chain = #(context block ...args) => {
   reduce(block.:statements #(result call) => {
     const newCall = cond {
       isValueSequence(call) && isFunctionCall(getIn(call [:values 1]))
@@ -386,8 +381,8 @@ const processWhens = #(target sequence [pair ...rest]) => {
 }
 
 const processPairs = #(block [pair ...rest]) => {
-  const whenPairs = takeWhile(rest, #([target]) => isWhen(target))
-  const afterWhenPairs = dropWhile(rest, #([target]) => isWhen(target))
+  const whenPairs = takeWhile(rest #([target]) => isWhen(target))
+  const afterWhenPairs = dropWhile(rest #([target]) => isWhen(target))
 
   let [target sequence] = pair
 
@@ -411,8 +406,7 @@ const processPairs = #(block [pair ...rest]) => {
   }
 }
 
-// FUTURE support when, etc
-defmacro for = #(block ...args) => {
+defmacro for = #(context block ...args) => {
   const pairs = partition(args 2)
   processPairs(block pairs)
 }
@@ -465,9 +459,9 @@ module.exports = jsObject(#{
   getIn
   updateIn
 
-
   isPromise
   // macros
+  macroexpandRaw
   macroexpand
   for
   cond

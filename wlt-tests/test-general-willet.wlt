@@ -2,7 +2,9 @@ const chai = require("chai")
 const chaiImmutable = require("chai-immutable")
 chai.use(chaiImmutable)
 const expect = chai.expect
-// Requiring willet code to make sure that works
+const #{ dsl } = require("../lib/ast-helper")
+
+// Requiring willet code in test-helper to make sure that works
 const helper = require("./test-helper")
 // FUTURE add another require to make sure more than one works
 
@@ -259,11 +261,16 @@ describe('quicksort example from README' #() => {
   })
 })
 
-describe('macroexpand' #() => {
+
+defmacro localMacro = #(context block ...args) =>
+  dsl.number(count(args))
+
+describe('macroexpandRaw' #() => {
   it('should handle simple values' #() => {
-    expect(macroexpand(1)).to.deep.equal(jsObject(#{ _type: 'NumberLiteral' value: 1 }))
+    expect(macroexpandRaw(1)).to.deep.equal(#{ _type: 'NumberLiteral' value: 1 })
   })
-  it('should expand macros' #() => {
+
+  it('should expand core macros' #() => {
     const expected = #{
       _type: "Block"
       statements: [
@@ -376,8 +383,43 @@ describe('macroexpand' #() => {
       ]
       solo: true
     }
+    const expanded = macroexpandRaw(and(true false))
+    expect(expanded).to.deep.equal(expected)
+  })
+
+  it('should expand macros defined in local scope' #() => {
+    expect(macroexpandRaw(localMacro(1 1 1))).to.deep.equal(#{ _type: 'NumberLiteral' value: 3 })
+  })
+})
+
+describe('macroexpand' #() => {
+  it('should handle simple values' #() => {
+    expect(macroexpand(1)).to.deep.equal('1')
+  })
+
+  it('should expand core macros' #() => {
+    const expected = `
+{
+    let formR = true
+    if (!formR) {
+        false
+    } else {
+        {
+            let formR = false
+            if (!formR) {
+                false
+            } else {
+                true
+            }
+        }
+    }
+}`.trim()
     const expanded = macroexpand(and(true false))
-    expect(expanded).to.deep.equal(expected.toJS())
+    expect(expanded).to.deep.equal(expected)
+  })
+
+  it('should expand macros defined in local scope' #() => {
+    expect(macroexpand(localMacro(1 1 1))).to.deep.equal('3')
   })
 })
 
