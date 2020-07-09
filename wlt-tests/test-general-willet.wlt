@@ -400,19 +400,19 @@ describe('macroexpand' #() => {
   it('should expand core macros' #() => {
     const expected = `
 {
-const formR = true
-if (! formR) {
-false
-}else {
-{
-const formR = false
-if (! formR) {
-false
-}else {
-true
-}
-}
-}
+  const formR = true
+  if (! formR) {
+    false
+  }else {
+    {
+      const formR = false
+      if (! formR) {
+        false
+      }else {
+        true
+      }
+    }
+  }
 }`.trim()
     const expanded = macroexpand(and(true false))
     expect(expanded).to.deep.equal(expected)

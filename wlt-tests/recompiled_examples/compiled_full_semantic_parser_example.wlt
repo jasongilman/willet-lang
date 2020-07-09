@@ -1,108 +1,106 @@
 const logger = #(
-...parts
+  ...parts
 ) => {
-console.log(
-parts
-)
+  console.log(
+    parts
+  )
 }
 @{
-docs: "Some kind of documentation"
+  docs: "Some kind of documentation"
 }
 const multilineFunction = @async #(
-alpha beta cappa = 45 + 7
+  alpha beta cappa = 45 + 7
 ) => {
-logger(
-alpha beta
-)
-if (cappa > 45) {
-alpha
-}elseif (cappa < 45) {
-beta
-}else {
-cappa
-}
+  logger(
+    alpha beta
+  )
+  if (cappa > 45) {
+    alpha
+  }elseif (cappa < 45) {
+    beta
+  }else {
+    cappa
+  }
 }
 const singleResponseFn = #(
-v
+  v
 ) => {
-v
+  v
 }
 defmacro myMacro = #(
-context blok argv
+  context blok argv
 ) => {
-[
-blok argv
-]
+  [
+    blok argv
+  ]
 }
 let #{
-foo: bar
-alpha: alpha
+  foo: bar
+  alpha: alpha
 } = #{}
 let [
-a b ...c
+  a b ...c
 ] = #{}
 let myFun = #(
-#{
-a: a
-b: b
-} [
-c d
-]
+  #{
+    a: a
+    b: b
+  } [
+    c d
+  ]
 ) => {
-null
+  null
 }
 #{
-_type: "StringLiteral"
-value: "with args"
+  _type: "StringLiteral"
+  value: "with args"
 }
 #{
-_type: "Block"
-statements: [
-#{
-_type: "StringLiteral"
-value: "with block"
-}
-]
-solo: true
+  _type: "Block"
+  statements: [
+    #{
+      _type: "StringLiteral"
+      value: "with block"
+    }
+  ]
+  solo: true
 }
 unquote(
-"with args"
+  "with args"
 )
 unquote{
-"with block"
+  "with block"
 }
 try {
-foo()
+  foo()
 }
 catch(err) {
-logger(
-err
-)
+  logger(
+    err
+  )
 }
 finally {
-bar()
+  bar()
 }
 middle
 try {
-foo()
+  foo()
 }
 catch(err) {
-logger(
-err
-)
+  logger(
+    err
+  )
 }
-
 after
 foo(
-if (true) {
-1
-}else {
-0
-} try {
-2
-}
-catch(e) {
-3
-}
-
+  if (true) {
+    1
+  }else {
+    0
+  } try {
+    2
+  }
+  catch(e) {
+    3
+  }
 )

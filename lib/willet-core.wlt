@@ -153,7 +153,7 @@ defmacro macroexpandRaw = #(context block ...args) => {
   if (block) {
     raise("macroexpand does not take a block")
   }
-  dsl.jsObjectLiteral(first(args))
+  dsl.immutableLiteral(first(args))
 }
 
 defmacro macroexpand = #(context block ...args) => {
