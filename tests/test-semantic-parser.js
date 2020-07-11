@@ -103,10 +103,6 @@ const expected = dsl.program(
       block(dsl.Null)
     ),
   ),
-  dsl.quote(dsl.string('with args')),
-  dsl.quote(dsl.block(dsl.string('with block'))),
-  dsl.unquote(dsl.string('with args')),
-  dsl.unquote(dsl.block(dsl.string('with block'))),
   dsl.tryCatch(
     block(dsl.valueSeq(dsl.reference('foo'), dsl.functionCall())),
     dsl.reference('err'),

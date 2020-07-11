@@ -32,11 +32,6 @@ let [ a b ...c] = #{}
 // function arg destructuring
 let myFun = #(#{ a b } [c d]) => null
 
-quote("with args")
-quote { "with block" }
-unquote("with args")
-unquote { "with block" }
-
 try {
   foo()
 }

@@ -51,26 +51,6 @@ let myFun = #(
 ) => {
   null
 }
-#{
-  _type: "StringLiteral"
-  value: "with args"
-}
-#{
-  _type: "Block"
-  statements: [
-    #{
-      _type: "StringLiteral"
-      value: "with block"
-    }
-  ]
-  solo: true
-}
-unquote(
-  "with args"
-)
-unquote{
-  "with block"
-}
 try {
   foo()
 }
