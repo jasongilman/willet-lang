@@ -308,7 +308,7 @@ describe('macroexpandRaw' #() => {
                     value: false
                   }
                 ]
-                solo: false
+                solo: true
               }
             }
             #{
@@ -353,7 +353,7 @@ describe('macroexpandRaw' #() => {
                                   value: false
                                 }
                               ]
-                              solo: false
+                              solo: true
                             }
                           }
                           #{
@@ -366,7 +366,7 @@ describe('macroexpandRaw' #() => {
                                   value: true
                                 }
                               ]
-                              solo: false
+                              solo: true
                             }
                           }
                         ]
@@ -375,7 +375,7 @@ describe('macroexpandRaw' #() => {
                     solo: true
                   }
                 ]
-                solo: false
+                solo: true
               }
             }
           ]

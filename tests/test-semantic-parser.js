@@ -8,7 +8,7 @@ const { dsl } = require('../lib/ast-helper');
 
 const fullExampleCode = fs.readFileSync(`${__dirname}/examples/full_semantic_parser_example.wlt`);
 
-const block = (...statements) => dsl.nonSoloBlock(dsl.block(...statements));
+const block = (...statements) => dsl.block(...statements);
 
 const expected = dsl.program(
   dsl.def(

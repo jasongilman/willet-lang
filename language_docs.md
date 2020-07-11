@@ -347,6 +347,20 @@ myFunc(1 ...array 5)
 
 Macros are code that run at compile time to create new code. It's like extending the Willet compiler to extend support new forms of code. Several of the existing parts of Willet are implemented as macros like `chain` and `for`.
 
+### A Basic Macro
+
+```
+defmacro unless = #(context block ...args) => {
+
+}
+```
+
+```
+
+* Must be defined at the top level
+* Passed compilation context, block, and arguments
+
+
 TODO more docs
 
 

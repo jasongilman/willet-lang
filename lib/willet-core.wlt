@@ -411,6 +411,41 @@ defmacro for = #(context block ...args) => {
   processPairs(block pairs)
 }
 
+// defmacro unless = #(context block condition) => {
+//   quote {
+//     if (! unquote(condition)) {
+//       unquote(block)
+//     }
+//   }
+// }
+//
+// block = quote {
+//   console.log('running')
+// }
+//
+// macroexpandRaw(
+// unquote(block)
+// )
+//
+// v = quote {
+//   if (! unquote(condition)) {
+//     unquote(block)
+//   }
+// }
+//
+// console.log(macroexpand(unless(false) {
+//   console.log('hello')
+// }))
+//
+// unless(false) {
+//   console.log('Running')
+// }
+//
+// v = macroexpandRaw(unless(false) {
+//   console.log('hello')
+// })
+// console.log(JSON.stringify(v null 2))
+
 // FUTURE equals (and should accept multiple arguments)
 
 module.exports = jsObject(#{
