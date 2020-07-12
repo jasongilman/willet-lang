@@ -10,14 +10,6 @@ const #{ dsl } = require("../lib/ast-helper")
 const helper = require("./test-helper")
 // FUTURE add another require to make sure more than one works
 
-// defmacro unless = #(context block condition) => {
-//   quote {
-//     if (! unquote(condition)) {
-//       unquote(block)
-//     }
-//   }
-// }
-
 const dslEqual = #(actual expected) =>
   expect(actual).to.deep.equal(Immutable.fromJS(expected.toJS()))
 
@@ -68,8 +60,7 @@ describe('unquote' #() => {
       unquote({
         if (true) { 5 }
       })
-    )
-    .to.deep.equal(5)
+    ).to.deep.equal(5)
   })
 })
 
@@ -233,7 +224,3 @@ describe('macroexpand' #() => {
     expect(macroexpand(localMacro(1 1 1))).to.deep.equal('3')
   })
 })
-
-
-// FUTURE add try catch
-// FUTURE add new and throw
