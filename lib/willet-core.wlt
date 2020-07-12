@@ -59,9 +59,8 @@ defmacro jsArray = #(context block list) => {
 }
 
 defmacro unquote = #(context block value) => {
-  // TODO do we support blocks for unquote?
   if (block) {
-    value = block
+    raise("unquote does not take a block")
   }
   dsl.unquote(value)
 }

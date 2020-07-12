@@ -73,10 +73,6 @@ describe('unquote' #() => {
   })
 })
 
-describe('unquote splice' #() => {
-  // TODO
-})
-
 defmacro localMacro = #(context block ...args) =>
   dsl.number(count(args))
 
