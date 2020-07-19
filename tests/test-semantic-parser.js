@@ -8,7 +8,7 @@ const { dsl } = require('../lib/ast-helper');
 
 const fullExampleCode = fs.readFileSync(`${__dirname}/examples/full_semantic_parser_example.wlt`);
 
-const block = (...statements) => dsl.nonSoloBlock(dsl.block(...statements));
+const block = (...statements) => dsl.block(...statements);
 
 const expected = dsl.program(
   dsl.def(
@@ -61,7 +61,11 @@ const expected = dsl.program(
   dsl.macro(
     'myMacro',
     dsl.func(
-      [dsl.funcArg(dsl.reference('blok')), dsl.funcArg(dsl.reference('argv'))],
+      [
+        dsl.funcArg(dsl.reference('context')),
+        dsl.funcArg(dsl.reference('blok')),
+        dsl.funcArg(dsl.reference('argv'))
+      ],
       block(dsl.array(dsl.reference('blok'), dsl.reference('argv')))
     )
   ),
@@ -71,7 +75,7 @@ const expected = dsl.program(
       dsl.property('foo', dsl.reference('bar')),
       dsl.property('alpha', dsl.reference('alpha'))
     ),
-    dsl.Null
+    dsl.map()
   ),
   dsl.def(
     'let',
@@ -80,7 +84,7 @@ const expected = dsl.program(
       dsl.reference('b'),
       dsl.spread(dsl.reference('c'))
     ),
-    dsl.Null
+    dsl.map()
   ),
   dsl.def(
     'let',
@@ -99,10 +103,6 @@ const expected = dsl.program(
       block(dsl.Null)
     ),
   ),
-  dsl.quote(dsl.string('with args')),
-  dsl.quote(dsl.block(dsl.string('with block'))),
-  dsl.unquote(dsl.string('with args')),
-  dsl.unquote(dsl.block(dsl.string('with block'))),
   dsl.tryCatch(
     block(dsl.valueSeq(dsl.reference('foo'), dsl.functionCall())),
     dsl.reference('err'),

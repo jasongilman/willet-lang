@@ -2,7 +2,9 @@ const chai = require("chai")
 const chaiImmutable = require("chai-immutable")
 chai.use(chaiImmutable)
 const expect = chai.expect
-// Requiring willet code to make sure that works
+const #{ dsl } = require("../lib/ast-helper")
+
+// Requiring willet code in test-helper to make sure that works
 const helper = require("./test-helper")
 // FUTURE add another require to make sure more than one works
 
@@ -258,7 +260,5 @@ describe('quicksort example from README' #() => {
     expect(quicksort([3 2 4 9 0 8 7])).to.be.equal([0 2 3 4 7 8 9])
   })
 })
-
-// FUTURE test recursive functions
 // FUTURE add try catch
 // FUTURE add new and throw

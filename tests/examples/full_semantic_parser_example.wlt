@@ -19,23 +19,18 @@ const multilineFunction = @async #(alpha beta cappa = 45 + 7) => {
 
 const singleResponseFn = #(v) => v
 
-defmacro myMacro = #(blok argv) => {
+defmacro myMacro = #(context blok argv) => {
   [blok argv]
 }
 
 // map destructuring
-let #{ foo: bar alpha } = null
+let #{ foo: bar alpha } = #{}
 
 // array destructuring
-let [ a b ...c] = null
+let [ a b ...c] = #{}
 
 // function arg destructuring
 let myFun = #(#{ a b } [c d]) => null
-
-quote("with args")
-quote { "with block" }
-unquote("with args")
-unquote { "with block" }
 
 try {
   foo()
