@@ -508,5 +508,22 @@ macroexpandRaw(
 }
 ```
 
+```javascript
+macroexpand(
+  unless (false) {
+    console.log('running')
+  }
+)
+
+// Produces
+{
+  if (! false) {
+    {
+      console.log("running")
+    }
+  }
+}
+```
+
 
 TODO Willet Standard library
