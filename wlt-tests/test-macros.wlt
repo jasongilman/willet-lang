@@ -4,11 +4,8 @@ chai.use(chaiImmutable)
 const expect = chai.expect
 const #{ dsl } = require("../lib/ast-helper")
 
-// TODO try using macro defined in another file
-
-// Requiring willet code in test-helper to make sure that works
+// Contains another macro to test macros in other files.
 const helper = require("./test-helper")
-// FUTURE add another require to make sure more than one works
 
 const dslEqual = #(actual expected) =>
   expect(actual).to.deep.equal(Immutable.fromJS(expected.toJS()))
@@ -61,6 +58,12 @@ describe('unquote' #() => {
         if (true) { 5 }
       })
     ).to.deep.equal(5)
+  })
+})
+
+describe('run macro defined in another file' #() => {
+  it('should work' #() => {
+    expect(helper.macroInRequiredFile(1 1 1 1)).to.be.equal(4)
   })
 })
 
