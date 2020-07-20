@@ -1,6 +1,6 @@
 {
   "name": "willet",
-  "version": "0.0.1-alpha10",
+  "version": "0.0.1-alpha11",
   "description": "Willet Programming Language",
   "scripts": {
     "lint": "node_modules/.bin/eslint .",
