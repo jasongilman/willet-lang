@@ -62,6 +62,12 @@ catch(err) {
 finally {
   bar()
 }
+try {
+  foo()
+}
+finally {
+  bar()
+}
 middle
 try {
   foo()

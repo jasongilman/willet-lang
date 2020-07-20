@@ -175,7 +175,8 @@ defmacro macroexpand = #(context block ...args) => {
     raise("macroexpand does not take a block")
   }
   const expanded = macroExpander.expandMacros(context first(args))
-  dsl.string(wltCompiler.compile(expanded))
+  const code = dsl.string(wltCompiler.compile(expanded))
+  quote(console.log(unquote(code)))
 }
 
 const identity = #(v) => v

@@ -42,6 +42,13 @@ finally {
   bar()
 }
 
+try {
+  foo()
+}
+finally {
+  bar()
+}
+
 middle
 
 try {

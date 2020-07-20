@@ -11,6 +11,7 @@ comment */ :after
 can be multiplelines.
 Can have ${ `Another interpolation ${5 + 7}.`}
 `
+`Escaped chars\\n in \tstring interp\n`
 @someAnnotation
 1
 2.3

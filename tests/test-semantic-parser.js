@@ -112,6 +112,12 @@ const expected = dsl.program(
     )),
     block(dsl.valueSeq(dsl.reference('bar'), dsl.functionCall())),
   ),
+  dsl.tryCatch(
+    block(dsl.valueSeq(dsl.reference('foo'), dsl.functionCall())),
+    null,
+    null,
+    block(dsl.valueSeq(dsl.reference('bar'), dsl.functionCall())),
+  ),
   dsl.reference('middle'),
   dsl.tryCatch(
     block(dsl.valueSeq(dsl.reference('foo'), dsl.functionCall())),

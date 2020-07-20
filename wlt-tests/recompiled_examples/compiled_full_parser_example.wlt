@@ -1,10 +1,8 @@
 "//before1"
 "before2/* */"
 "after"
-`string ${true} interpolation
-can be multiplelines.
-Can have ${`Another interpolation ${5 + 7}.`}
-`
+`string ${true} interpolation\ncan be multiplelines.\nCan have ${`Another interpolation ${5 + 7}.`}\n`
+`Escaped chars\\n in \tstring interp\n`
 @{
   someAnnotation: true
 }

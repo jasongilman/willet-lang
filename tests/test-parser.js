@@ -21,6 +21,9 @@ const expected = dsl.program(
     ),
     dsl.literal('\n')
   ),
+  dsl.stringInterpolation(
+    dsl.literal('Escaped chars\\n in \tstring interp\n'),
+  ),
   dsl.withAnnotation(dsl.literal(1), dsl.singleAnnotation('someAnnotation')),
   dsl.literal(2.3),
   dsl.literal('4'),
