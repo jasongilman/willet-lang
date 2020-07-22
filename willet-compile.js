@@ -68,7 +68,10 @@ let filesToCompile;
 
 if (fs.lstatSync(src).isDirectory()) {
   const files = readFilesFromDir(src);
-  filesToCompile = _.filter(files, (f) => f.endsWith('.wlt'));
+  filesToCompile = _(files)
+    .filter((f) => !f.includes('node_modules'))
+    .filter((f) => f.endsWith('.wlt'))
+    .value();
 }
 else {
   filesToCompile = [src];
