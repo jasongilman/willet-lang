@@ -44,7 +44,8 @@ const expected = dsl.program(
         )
       )
     ),
-    dsl.property('chew', dsl.map())
+    dsl.property('chew', dsl.map()),
+    dsl.property(dsl.literal('bar'), dsl.literal('bar'))
   ),
   dsl.and(
     // Left and
