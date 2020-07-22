@@ -35,6 +35,8 @@ false
 
 1 * 2 + 3 - 4 / 5 % 6 && !#(7 || 8)
 
+$.foo // jquery style vars can work
+
 throw new Thing()
 await thing()
 

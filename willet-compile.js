@@ -48,11 +48,17 @@ if (typeof target === 'undefined') {
 if (!fs.existsSync(src)) {
   fail(`source [${src}] does not exist`);
 }
+else {
+  // Make src an absolute path.
+  src = path.resolve(src);
+}
 
 if (fs.existsSync(target)) {
   if (!fs.lstatSync(target).isDirectory()) {
     fail(`Target [${target}] is not a directory`);
   }
+  // Make target an absolute path.
+  target = path.resolve(target);
 }
 else {
   fail(`Target directory [${target}] does not exist`);
@@ -73,9 +79,12 @@ const generatedHeader = '// Generated from Willet source\n';
 
 for (let i = 0; i < filesToCompile.length; i += 1) {
   const file = filesToCompile[i];
-  const targetFile = path.join(process.cwd(), target,
-    path.relative(src, file).replace(/\.wlt$/, '.js'));
+  const pathToSourceFile = path.relative(src, file);
+
+  const targetFile = path.join(target, pathToSourceFile.replace(/\.wlt$/, '.js'));
+
   console.log(`Compiling ${file} to ${targetFile}`);
+
   const contents = fs.readFileSync(file).toString();
   try {
     const context = compiler.createContext(src);
