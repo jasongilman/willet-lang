@@ -17,10 +17,26 @@ const complexAsync = @async #(v) => {
   if (v < 1) {
     asyncIncrementer(await asyncIncrementer(v))
   }
+  elseif ( v > 1000 ){
+    throw new Error('Big v')
+  }
   else {
     asyncIncrementer(v)
   }
 }
+
+describe('Promise functions' #() => {
+  it('should be able to manipulate promises and catch error' #(done) => {
+    const p = complexAsync(1001)
+    p.then(#() => {
+      done(new Error('Should have thrown an error'))
+    })
+    .catch(#() => {
+      done()
+    })
+    null
+  })
+})
 
 describe('truthy and falsey' #() => {
   const falseyValues = [
