@@ -201,7 +201,7 @@ defmacro captureConsoleLog = #(context block) => {
   quote {
     const oldLog = console.log
     const oldError = console.log
-    const output = ''
+    let output = ''
     console.log = #(...args) => {
       output = `${output}\n${args.join(' ')}`
       null
@@ -251,5 +251,41 @@ describe('macroexpand' #() => {
   it('should expand macros defined in local scope' #() => {
     const [expanded] = captureConsoleLog { macroexpand(localMacro(1 1 1)) }
     expect(expanded.trim()).to.deep.equal('3')
+  })
+})
+
+describe('toJavaScript' #() => {
+  it('should handle simple values' #() => {
+    expect(toJavaScript(1)).to.deep.equal('1')
+  })
+
+  it('should expand core macros' #() => {
+    const expected = `
+(() => {
+    const formR = true;
+    return (() => {
+        if (truthy(!truthy(formR))) {
+            return false;
+        } else {
+            return (() => {
+                const formR = false;
+                return (() => {
+                    if (truthy(!truthy(formR))) {
+                        return false;
+                    } else {
+                        return true;
+                    }
+                    return null;
+                })();
+            })();
+        }
+        return null;
+    })();
+})()`.trim()
+    expect(toJavaScript(and(true false))).to.deep.equal(expected)
+  })
+
+  it('should expand macros defined in local scope' #() => {
+    expect(toJavaScript(localMacro(1 1 1))).to.deep.equal('3')
   })
 })

@@ -1,5 +1,6 @@
 const Immutable = require("immutable")
 const wltCompiler = require("../lib/willet-compiler")
+const jsCompiler = require("../lib/javascript-compiler")
 const macroExpander = require("../lib/macro-expander")
 // Path to ast-helper works from lib or from compiled dist
 const astHelper = require("../lib/ast-helper")
@@ -184,6 +185,14 @@ defmacro macroexpand = #(context block ...args) => {
   const expanded = macroExpander.expandMacros(context first(args))
   const code = dsl.string(wltCompiler.compile(expanded))
   quote(console.log(unquote(code)))
+}
+
+defmacro toJavaScript = #(context block ...args) => {
+  if (block) {
+    raise("toJavaScript does not take a block")
+  }
+  const expanded = macroExpander.expandMacros(context first(args))
+  dsl.string(jsCompiler.compile(context expanded))
 }
 
 const identity = #(v) => v
@@ -488,6 +497,7 @@ module.exports = jsObject(#{
   // macros
   macroexpandRaw
   macroexpand
+  toJavaScript
   for
   cond
   chain
