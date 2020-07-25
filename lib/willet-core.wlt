@@ -21,8 +21,15 @@ const toImmutable = #(v) => {
     Immutable.fromJS(v)
   }
 }
-// FUTURE core methods to add
-// to_js (or something like that) - returns compiled javascript of code.
+
+const toJS = #(v) => {
+  if (isImmutable(v)) {
+    v.toJS()
+  }
+  else {
+    v
+  }
+}
 
 const raise = #(error) => {
   throw new Error(error)
@@ -446,6 +453,7 @@ module.exports = jsObject(#{
   identity
   isImmutable
   toImmutable
+  toJS
   map
   flatMap
   reduce

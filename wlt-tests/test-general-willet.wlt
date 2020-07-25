@@ -110,6 +110,43 @@ describe("Immutable property lookup", #() => {
   })
 })
 
+describe('immutable conversion' #() => {
+  const immutableValue = #{
+    a: #{ b: 5}
+    c: [ 1 2 #{}]
+    d: #[:set 2]
+  }
+  const mutableValue = toJS(immutableValue)
+  const reimmutable = toImmutable(mutableValue)
+
+  describe('isImmutable' #() => {
+    it('should be able to detect immutable values' #() => {
+      expect(isImmutable(immutableValue)).to.be.true
+    })
+    it('should be able to detect mutable values' #() => {
+      expect(isImmutable(mutableValue)).to.be.false
+    })
+  })
+
+  describe('toJS' #() => {
+    it('should deeply convert to mutable values' #() => {
+      expect(isImmutable(mutableValue)).to.be.false
+      expect(isImmutable(mutableValue.a)).to.be.false
+      expect(isImmutable(mutableValue.c)).to.be.false
+      expect(isImmutable(mutableValue.d)).to.be.false
+    })
+  })
+
+  describe('toImmutable' #() => {
+    it('should deeply convert to immutable values' #() => {
+      expect(isImmutable(reimmutable)).to.be.true
+      expect(isImmutable(reimmutable.:a)).to.be.true
+      expect(isImmutable(reimmutable.:c)).to.be.true
+      expect(isImmutable(reimmutable.:d)).to.be.true
+    })
+  })
+})
+
 describe("Function invocation" #() => {
   it("should allow calling a function" #() => {
     expect(incrementer(1)).to.be.equal(2)
