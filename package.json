@@ -39,7 +39,7 @@
   },
   "dependencies": {
     "chevrotain": "^6.3.1",
-    "commander": "^3.0.1",
+    "commander": "^6.0.0",
     "immutable": "^4.0.0-rc.12",
     "js-beautify": "^1.10.2",
     "lodash": "^4.17.15",

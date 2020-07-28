@@ -25,18 +25,30 @@ const readFilesFromDir = (dir) =>
 let src;
 let target;
 let skipCore = false;
+let ignorePaths;
 
 program
   .version('0.0.1')
   .arguments('<source> <targetDir>')
   .option('-c, --skipcore', 'Skip including Willet Core')
+  .option('-i, --ignore [paths...]', 'Specify paths to ignore during compilation')
   .action((source, targetDir, cmdObj) => {
     src = source;
     target = targetDir;
     skipCore = !!cmdObj.skipcore;
+    ignorePaths = cmdObj.ignore;
   });
 
 program.parse(process.argv);
+
+if (typeof ignorePaths === 'undefined') {
+  ignorePaths = [];
+}
+else if (!_.isArray(ignorePaths)) {
+  ignorePaths = [ignorePaths];
+}
+// Make ignore paths aboslute
+ignorePaths = _.map(ignorePaths, (p) => path.resolve(p));
 
 if (typeof src === 'undefined') {
   fail('no source given');
@@ -69,7 +81,8 @@ let filesToCompile;
 if (fs.lstatSync(src).isDirectory()) {
   const files = readFilesFromDir(src);
   filesToCompile = _(files)
-    .filter((f) => !f.includes('node_modules'))
+    .filter((f) => _.isEmpty(ignorePaths) ||
+      !_.some(ignorePaths, (ignorePath) => f.startsWith(ignorePath)))
     .filter((f) => f.endsWith('.wlt'))
     .value();
 }
