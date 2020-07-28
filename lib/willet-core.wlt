@@ -66,20 +66,6 @@ defmacro jsArray = #(context block list) => {
   list.set("js" true)
 }
 
-defmacro unquote = #(context block value) => {
-  if (block) {
-    raise("unquote does not take a block")
-  }
-  dsl.unquote(value)
-}
-
-defmacro quote = #(context block value) => {
-  if (block) {
-    value = block
-  }
-  dsl.quote(value)
-}
-
 const prettyLog = #(v) => {
   console.log(JSON.stringify(v null 2))
   v
@@ -451,8 +437,6 @@ module.exports = jsObject(#{
   raise
   jsObject
   jsArray
-  unquote
-  quote
   prettyLog
   count
   doAll

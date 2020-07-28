@@ -61,6 +61,22 @@ describe('unquote' #() => {
   })
 })
 
+defmacro toJavaScriptWrapper = #(context block) => {
+  quote {
+    const code = toJavaScript(unquote(block))
+    #{
+      code
+    }
+  }
+}
+
+describe('macro calls in macros' #() => {
+  it('should not invoke a macro within a quote block' #() => {
+    const result = toJavaScriptWrapper {5 + 5}
+    expect(result).to.equal(#{ code: '(() => {\n    return (5 + 5);\n})()' })
+  })
+})
+
 describe('run macro defined in another file' #() => {
   it('should work' #() => {
     expect(helper.macroInRequiredFile(1 1 1 1)).to.be.equal(4)
