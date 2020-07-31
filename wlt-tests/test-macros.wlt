@@ -61,19 +61,26 @@ describe('unquote' #() => {
   })
 })
 
-defmacro toJavaScriptWrapper = #(context block) => {
+defmacro parseWilletWrapper = #(context block) => {
   quote {
-    const code = toJavaScript(unquote(block))
+    const node = parseWillet(unquote(block))
     #{
-      code
+      node
     }
   }
 }
 
 describe('macro calls in macros' #() => {
   it('should not invoke a macro within a quote block' #() => {
-    const result = toJavaScriptWrapper {5 + 5}
-    expect(result).to.equal(#{ code: '(() => {\n    return (5 + 5);\n})()' })
+    const result = parseWilletWrapper {5 + 5}
+    dslEqual(result.:node, dsl.block(
+        dsl.infix(
+          dsl.literal(5)
+          '+'
+          dsl.literal(5)
+        )
+      )
+    )
   })
 })
 
@@ -86,9 +93,9 @@ describe('run macro defined in another file' #() => {
 defmacro localMacro = #(context block ...args) =>
   dsl.number(count(args))
 
-describe('macroexpandRaw' #() => {
+describe('parseWillet' #() => {
   it('should handle simple values' #() => {
-    expect(macroexpandRaw(1)).to.deep.equal(#{ _type: 'NumberLiteral' value: 1 })
+    expect(parseWillet(1)).to.deep.equal(#{ _type: 'NumberLiteral' value: 1 })
   })
 
   it('should expand core macros' #() => {
@@ -204,12 +211,12 @@ describe('macroexpandRaw' #() => {
       ]
       solo: true
     }
-    const expanded = macroexpandRaw(and(true false))
+    const expanded = parseWillet(and(true false))
     expect(expanded).to.deep.equal(expected)
   })
 
   it('should expand macros defined in local scope' #() => {
-    expect(macroexpandRaw(localMacro(1 1 1))).to.deep.equal(#{ _type: 'NumberLiteral' value: 3 })
+    expect(parseWillet(localMacro(1 1 1))).to.deep.equal(#{ _type: 'NumberLiteral' value: 3 })
   })
 })
 
@@ -272,7 +279,7 @@ describe('macroexpand' #() => {
 
 describe('toJavaScript' #() => {
   it('should handle simple values' #() => {
-    expect(toJavaScript(1)).to.deep.equal('1')
+    expect(toJavaScript(parseWillet(1))).to.deep.equal('1')
   })
 
   it('should expand core macros' #() => {
@@ -298,10 +305,10 @@ describe('toJavaScript' #() => {
         return null;
     })();
 })()`.trim()
-    expect(toJavaScript(and(true false))).to.deep.equal(expected)
+    expect(toJavaScript(parseWillet(and(true false)))).to.deep.equal(expected)
   })
 
   it('should expand macros defined in local scope' #() => {
-    expect(toJavaScript(localMacro(1 1 1))).to.deep.equal('3')
+    expect(toJavaScript(parseWillet(localMacro(1 1 1)))).to.deep.equal('3')
   })
 })

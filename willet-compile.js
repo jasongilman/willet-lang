@@ -5,6 +5,7 @@ const compiler = require('./lib/compiler');
 const fs = require('fs');
 const path = require('path');
 const program = require('commander');
+const { createContext } = require('./lib/context');
 
 const fail = (msg) => {
   console.error(msg);
@@ -103,7 +104,7 @@ for (let i = 0; i < filesToCompile.length; i += 1) {
 
   const contents = fs.readFileSync(file).toString();
   try {
-    const context = compiler.createContext(src);
+    const context = createContext(src);
     context.skipCore = skipCore;
     const jsContents = compiler.compile(context, contents);
     const dirName = path.dirname(targetFile);

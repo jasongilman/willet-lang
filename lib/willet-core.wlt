@@ -3,6 +3,7 @@ const wltCompiler = require("../lib/willet-compiler")
 const jsCompiler = require("../lib/javascript-compiler")
 const macroExpander = require("../lib/macro-expander")
 // Path to ast-helper works from lib or from compiled dist
+const #{ createContext } = require('../lib/context')
 const astHelper = require("../lib/ast-helper")
 const #{
   dsl isMapLiteral isArrayLiteral isBlock isReference isValueSequence isFunctionCall
@@ -157,11 +158,23 @@ defmacro or = #(context block ...args) => {
   orhelper(args)
 }
 
-defmacro macroexpandRaw = #(context block ...args) => {
+defmacro parseWillet = #(context block node) => {
   if (block) {
-    raise("macroexpand does not take a block")
+    raise("parseWillet does not take a block")
   }
-  dsl.immutableLiteral(first(args))
+  dsl.immutableLiteral(node)
+}
+
+const toJavaScript = #(willetAstNode) => {
+  const context = createContext()
+  const expanded = macroExpander.expandMacros(context willetAstNode)
+  jsCompiler.compile(context expanded)
+}
+
+const toWillet = #(willetAstNode) => {
+  const context = createContext()
+  const expanded = macroExpander.expandMacros(context willetAstNode)
+  wltCompiler.compile(expanded)
 }
 
 defmacro macroexpand = #(context block ...args) => {
@@ -172,15 +185,6 @@ defmacro macroexpand = #(context block ...args) => {
   const code = dsl.string(wltCompiler.compile(expanded))
   quote(console.log(unquote(code)))
 }
-
-defmacro toJavaScript = #(context block ...args) => {
-  if (block) {
-    raise("toJavaScript does not take a block")
-  }
-  const expanded = macroExpander.expandMacros(context first(args))
-  dsl.string(jsCompiler.compile(context expanded))
-}
-
 const identity = #(v) => v
 
 const map = #(coll f) =>
@@ -479,7 +483,7 @@ module.exports = jsObject(#{
 
   isPromise
   // macros
-  macroexpandRaw
+  parseWillet
   macroexpand
   toJavaScript
   for

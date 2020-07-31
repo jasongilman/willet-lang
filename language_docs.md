@@ -467,14 +467,14 @@ defmacro multipleByPi = #(context block value) => {
 
 There are two macros built into Willet that help in debugging macros. They expand calls to a macro and return the new AST.
 
-* `macroexpandRaw` - Returns the raw AST of an expanded macro call.
+* `parseWillet` - Returns the raw AST of an expanded macro call.
 * `macroexpand` - Returns the expanded Willet code of a macro call.
 
-`macroexpandRaw` is good when you want to see the literal AST nodes for detailed debugging. `macroexpand` produced easier to read Willet code.
+`parseWillet` is good when you want to see the literal AST nodes for detailed debugging. `macroexpand` produced easier to read Willet code.
 
 
 ```javascript
-macroexpandRaw(
+parseWillet(
   unless (false) {
     console.log('running')
   }
