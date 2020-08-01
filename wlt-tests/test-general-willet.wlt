@@ -25,6 +25,16 @@ const complexAsync = @async #(v) => {
   }
 }
 
+
+describe('functionOnlyWithDeclaration' #() => {
+  const functionOnlyWithDeclaration = #() => {
+    const foo = 5
+  }
+  it('should return undefined' #() => {
+    expect(functionOnlyWithDeclaration()).to.be.equal(undefined)
+  })
+})
+
 describe('Promise functions' #() => {
   it('should be able to manipulate promises and catch error' #(done) => {
     const p = complexAsync(1001)
