@@ -51,6 +51,9 @@ finally {
 
 middle
 
+quote(unquote(myFun) + 1)
+quote(unquote(myFun).val + 1).foo
+
 try {
   foo()
 }

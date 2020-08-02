@@ -119,6 +119,17 @@ const expected = dsl.program(
     block(dsl.valueSeq(dsl.reference('bar'), dsl.functionCall())),
   ),
   dsl.reference('middle'),
+  dsl.quote(dsl.plus(dsl.unquote(dsl.reference('myFun')), dsl.literal(1))),
+  dsl.valueSeq(
+    dsl.quote(dsl.plus(
+      dsl.valueSeq(
+        dsl.unquote(dsl.reference('myFun')),
+        dsl.getProperty('val')
+      ),
+      dsl.literal(1)
+    )),
+    dsl.getProperty('foo')
+  ),
   dsl.tryCatch(
     block(dsl.valueSeq(dsl.reference('foo'), dsl.functionCall())),
     dsl.reference('err'),

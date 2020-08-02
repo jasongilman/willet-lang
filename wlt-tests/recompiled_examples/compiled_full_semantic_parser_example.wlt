@@ -69,6 +69,32 @@ finally {
   bar()
 }
 middle
+#{
+  _type: "InfixExpression"
+  operator: "+"
+  left: myFun
+  right: #{
+    _type: "NumberLiteral"
+    value: 1
+  }
+}
+#{
+  _type: "InfixExpression"
+  operator: "+"
+  left: #{
+    _type: "ValueSequence"
+    values: [
+      myFun #{
+        _type: "GetProperty"
+        attrib: "val"
+      }
+    ]
+  }
+  right: #{
+    _type: "NumberLiteral"
+    value: 1
+  }
+}.foo
 try {
   foo()
 }
