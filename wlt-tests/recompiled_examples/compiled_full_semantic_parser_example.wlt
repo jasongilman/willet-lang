@@ -76,6 +76,22 @@ middle
   right: #{
     _type: "NumberLiteral"
     value: 1
+    pos: #{
+      startOffset: 681
+      endOffset: 681
+      startLine: 54
+      endLine: 54
+      startColumn: 24
+      endColumn: 24
+    }
+  }
+  pos: #{
+    startOffset: 664
+    startLine: 54
+    startColumn: 7
+    endOffset: 681
+    endLine: 54
+    endColumn: 24
   }
 }
 #{
@@ -87,12 +103,37 @@ middle
       myFun #{
         _type: "GetProperty"
         attrib: "val"
+        pos: #{
+          startOffset: 704
+          startLine: 55
+          startColumn: 21
+          endOffset: 707
+          endLine: 55
+          endColumn: 24
+        }
       }
     ]
+    pos: null
   }
   right: #{
     _type: "NumberLiteral"
     value: 1
+    pos: #{
+      startOffset: 711
+      endOffset: 711
+      startLine: 55
+      endLine: 55
+      startColumn: 28
+      endColumn: 28
+    }
+  }
+  pos: #{
+    startOffset: 690
+    startLine: 55
+    startColumn: 7
+    endOffset: 711
+    endLine: 55
+    endColumn: 28
   }
 }.foo
 try {

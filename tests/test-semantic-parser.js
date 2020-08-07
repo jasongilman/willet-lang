@@ -4,7 +4,7 @@ const fs = require('fs');
 const parser = require('../lib/chevrotain-parser');
 const semanticParser = require('../lib/semantic-parser');
 const keywordReplacer = require('../lib/keyword-replacer');
-const { dsl } = require('../lib/ast-helper');
+const { dsl, removePositions } = require('../lib/ast-helper');
 
 const fullExampleCode = fs.readFileSync(`${__dirname}/examples/full_semantic_parser_example.wlt`);
 
@@ -162,6 +162,6 @@ describe('Semantic Parsing', () => {
     let ast = parser.parse(fullExampleCode.toString());
     ast = keywordReplacer.replaceJsKeywords(ast);
     const result = semanticParser.parse(ast);
-    expect(result.toJS()).to.deep.equal(expected.toJS());
+    expect(removePositions(result).toJS()).to.deep.equal(expected.toJS());
   });
 });

@@ -1,0 +1,884 @@
+{
+  "_type": "Program",
+  "statements": [
+    {
+      "_type": "AnnotatedNode",
+      "node": {
+        "_type": "NumberLiteral",
+        "value": 1,
+        "pos": {
+          "startOffset": 16,
+          "endOffset": 16,
+          "startLine": 2,
+          "endLine": 2,
+          "startColumn": 1,
+          "endColumn": 1
+        }
+      },
+      "annotation": {
+        "_type": "AnnotationMap",
+        "properties": [
+          {
+            "_type": "Property",
+            "key": "someAnnotation",
+            "value": {
+              "_type": "BooleanLiteral",
+              "value": true,
+              "pos": null
+            },
+            "pos": null
+          }
+        ],
+        "pos": {
+          "startOffset": 0,
+          "endOffset": 14,
+          "startLine": 1,
+          "endLine": 1,
+          "startColumn": 1,
+          "endColumn": 15
+        }
+      },
+      "pos": {
+        "startOffset": 0,
+        "startLine": 1,
+        "startColumn": 1,
+        "endOffset": 16,
+        "endLine": 2,
+        "endColumn": 1
+      }
+    },
+    {
+      "_type": "NumberLiteral",
+      "value": 2.3,
+      "pos": {
+        "startOffset": 18,
+        "startLine": 3,
+        "startColumn": 1,
+        "endOffset": 20,
+        "endLine": 3,
+        "endColumn": 3
+      }
+    },
+    {
+      "_type": "StringLiteral",
+      "value": "4",
+      "pos": {
+        "startOffset": 22,
+        "startLine": 4,
+        "startColumn": 1,
+        "endOffset": 24,
+        "endLine": 4,
+        "endColumn": 3
+      }
+    },
+    {
+      "_type": "BooleanLiteral",
+      "value": true,
+      "pos": {
+        "startOffset": 26,
+        "startLine": 5,
+        "startColumn": 1,
+        "endOffset": 29,
+        "endLine": 5,
+        "endColumn": 4
+      }
+    },
+    {
+      "_type": "BooleanLiteral",
+      "value": false,
+      "pos": {
+        "startOffset": 31,
+        "startLine": 6,
+        "startColumn": 1,
+        "endOffset": 35,
+        "endLine": 6,
+        "endColumn": 5
+      }
+    },
+    {
+      "_type": "MapLiteral",
+      "properties": [],
+      "js": false,
+      "pos": {
+        "startOffset": 37,
+        "startLine": 7,
+        "startColumn": 1,
+        "endOffset": 39,
+        "endLine": 7,
+        "endColumn": 3
+      }
+    },
+    {
+      "_type": "ArrayLiteral",
+      "values": [],
+      "js": false,
+      "pos": {
+        "startOffset": 53,
+        "startLine": 8,
+        "startColumn": 1,
+        "endOffset": 54,
+        "endLine": 8,
+        "endColumn": 2
+      }
+    },
+    {
+      "_type": "SetLiteral",
+      "values": [],
+      "js": false,
+      "pos": {
+        "startOffset": 71,
+        "startLine": 9,
+        "startColumn": 1,
+        "endOffset": 73,
+        "endLine": 9,
+        "endColumn": 3
+      }
+    },
+    {
+      "_type": "ListLiteral",
+      "values": [],
+      "js": false,
+      "pos": {
+        "startOffset": 88,
+        "startLine": 10,
+        "startColumn": 1,
+        "endOffset": 90,
+        "endLine": 10,
+        "endColumn": 3
+      }
+    },
+    {
+      "_type": "MapLiteral",
+      "properties": [
+        {
+          "_type": "Property",
+          "key": "foo",
+          "value": {
+            "_type": "ArrayLiteral",
+            "values": [
+              {
+                "_type": "SetLiteral",
+                "values": [
+                  {
+                    "_type": "ListLiteral",
+                    "values": [
+                      {
+                        "_type": "StringLiteral",
+                        "value": "bar",
+                        "pos": {
+                          "startOffset": 133,
+                          "endOffset": 137,
+                          "startLine": 14,
+                          "endLine": 14,
+                          "startColumn": 9,
+                          "endColumn": 13
+                        }
+                      }
+                    ],
+                    "js": false,
+                    "pos": {
+                      "startOffset": 131,
+                      "startLine": 14,
+                      "startColumn": 7,
+                      "endOffset": 138,
+                      "endLine": 14,
+                      "endColumn": 14
+                    }
+                  }
+                ],
+                "js": false,
+                "pos": {
+                  "startOffset": 122,
+                  "startLine": 13,
+                  "startColumn": 5,
+                  "endOffset": 144,
+                  "endLine": 15,
+                  "endColumn": 5
+                }
+              }
+            ],
+            "js": false,
+            "pos": {
+              "startOffset": 116,
+              "startLine": 12,
+              "startColumn": 8,
+              "endOffset": 148,
+              "endLine": 16,
+              "endColumn": 3
+            }
+          },
+          "pos": null
+        },
+        {
+          "_type": "Property",
+          "key": "chew",
+          "value": {
+            "_type": "MapLiteral",
+            "properties": [],
+            "js": false,
+            "pos": {
+              "startOffset": 158,
+              "startLine": 17,
+              "startColumn": 9,
+              "endOffset": 160,
+              "endLine": 17,
+              "endColumn": 11
+            }
+          },
+          "pos": null
+        },
+        {
+          "_type": "Property",
+          "key": {
+            "_type": "StringLiteral",
+            "value": "bar",
+            "pos": {
+              "startOffset": 164,
+              "endOffset": 168,
+              "startLine": 18,
+              "endLine": 18,
+              "startColumn": 3,
+              "endColumn": 7
+            }
+          },
+          "value": {
+            "_type": "StringLiteral",
+            "value": "bar",
+            "pos": {
+              "startOffset": 171,
+              "endOffset": 174,
+              "startLine": 18,
+              "endLine": 18,
+              "startColumn": 10,
+              "endColumn": 13
+            }
+          },
+          "pos": null
+        }
+      ],
+      "js": false,
+      "pos": {
+        "startOffset": 106,
+        "startLine": 11,
+        "startColumn": 1,
+        "endOffset": 176,
+        "endLine": 19,
+        "endColumn": 1
+      }
+    },
+    {
+      "_type": "InfixExpression",
+      "operator": "+",
+      "left": {
+        "_type": "InfixExpression",
+        "operator": "*",
+        "left": {
+          "_type": "NumberLiteral",
+          "value": 1,
+          "pos": {
+            "startOffset": 179,
+            "endOffset": 179,
+            "startLine": 21,
+            "endLine": 21,
+            "startColumn": 1,
+            "endColumn": 1
+          }
+        },
+        "right": {
+          "_type": "NumberLiteral",
+          "value": 2,
+          "pos": {
+            "startOffset": 183,
+            "endOffset": 183,
+            "startLine": 21,
+            "endLine": 21,
+            "startColumn": 5,
+            "endColumn": 5
+          }
+        },
+        "pos": {
+          "startOffset": 179,
+          "startLine": 21,
+          "startColumn": 1,
+          "endOffset": 183,
+          "endLine": 21,
+          "endColumn": 5
+        }
+      },
+      "right": {
+        "_type": "ListLiteral",
+        "values": [
+          {
+            "_type": "InfixExpression",
+            "operator": "-",
+            "left": {
+              "_type": "NumberLiteral",
+              "value": 3,
+              "pos": {
+                "startOffset": 189,
+                "endOffset": 189,
+                "startLine": 21,
+                "endLine": 21,
+                "startColumn": 11,
+                "endColumn": 11
+              }
+            },
+            "right": {
+              "_type": "NumberLiteral",
+              "value": 4,
+              "pos": {
+                "startOffset": 193,
+                "endOffset": 193,
+                "startLine": 21,
+                "endLine": 21,
+                "startColumn": 15,
+                "endColumn": 15
+              }
+            },
+            "pos": {
+              "startOffset": 189,
+              "startLine": 21,
+              "startColumn": 11,
+              "endOffset": 193,
+              "endLine": 21,
+              "endColumn": 15
+            }
+          }
+        ],
+        "js": false,
+        "pos": {
+          "startOffset": 187,
+          "startLine": 21,
+          "startColumn": 9,
+          "endOffset": 194,
+          "endLine": 21,
+          "endColumn": 16
+        }
+      },
+      "pos": {
+        "startOffset": 179,
+        "startLine": 21,
+        "startColumn": 1,
+        "endOffset": 194,
+        "endLine": 21,
+        "endColumn": 16
+      }
+    },
+    {
+      "_type": "UnaryExpression",
+      "operator": "throw",
+      "target": {
+        "_type": "UnaryExpression",
+        "operator": "new",
+        "target": {
+          "_type": "ValueSequence",
+          "values": [
+            {
+              "_type": "Reference",
+              "symbol": "Thing",
+              "pos": {
+                "startOffset": 207,
+                "endOffset": 211,
+                "startLine": 23,
+                "endLine": 23,
+                "startColumn": 11,
+                "endColumn": 15
+              }
+            },
+            {
+              "_type": "FunctionCall",
+              "args": [],
+              "block": null,
+              "pos": {
+                "startOffset": 212,
+                "startLine": 23,
+                "startColumn": 16,
+                "endOffset": 213,
+                "endLine": 23,
+                "endColumn": 17
+              }
+            }
+          ],
+          "pos": {
+            "startOffset": 207,
+            "startLine": 23,
+            "startColumn": 11,
+            "endOffset": 213,
+            "endLine": 23,
+            "endColumn": 17
+          }
+        },
+        "pos": {
+          "startOffset": 203,
+          "startLine": 23,
+          "startColumn": 7,
+          "endOffset": 213,
+          "endLine": 23,
+          "endColumn": 17
+        }
+      },
+      "pos": {
+        "startOffset": 197,
+        "startLine": 23,
+        "startColumn": 1,
+        "endOffset": 213,
+        "endLine": 23,
+        "endColumn": 17
+      }
+    },
+    {
+      "_type": "UnaryExpression",
+      "operator": "await",
+      "target": {
+        "_type": "ValueSequence",
+        "values": [
+          {
+            "_type": "Reference",
+            "symbol": "thing",
+            "pos": {
+              "startOffset": 221,
+              "endOffset": 225,
+              "startLine": 24,
+              "endLine": 24,
+              "startColumn": 7,
+              "endColumn": 11
+            }
+          },
+          {
+            "_type": "FunctionCall",
+            "args": [],
+            "block": null,
+            "pos": {
+              "startOffset": 226,
+              "startLine": 24,
+              "startColumn": 12,
+              "endOffset": 227,
+              "endLine": 24,
+              "endColumn": 13
+            }
+          }
+        ],
+        "pos": {
+          "startOffset": 221,
+          "startLine": 24,
+          "startColumn": 7,
+          "endOffset": 227,
+          "endLine": 24,
+          "endColumn": 13
+        }
+      },
+      "pos": {
+        "startOffset": 215,
+        "startLine": 24,
+        "startColumn": 1,
+        "endOffset": 227,
+        "endLine": 24,
+        "endColumn": 13
+      }
+    },
+    {
+      "_type": "AnnotatedNode",
+      "node": {
+        "_type": "ValueSequence",
+        "values": [
+          {
+            "_type": "Reference",
+            "symbol": "foo",
+            "pos": {
+              "startOffset": 245,
+              "endOffset": 247,
+              "startLine": 27,
+              "endLine": 27,
+              "startColumn": 1,
+              "endColumn": 3
+            }
+          },
+          {
+            "_type": "GetProperty",
+            "attrib": "bar",
+            "pos": {
+              "startOffset": 248,
+              "startLine": 27,
+              "startColumn": 4,
+              "endOffset": 251,
+              "endLine": 27,
+              "endColumn": 7
+            }
+          },
+          {
+            "_type": "GetPropertyDynamic",
+            "attrib": {
+              "_type": "NumberLiteral",
+              "value": 0,
+              "pos": {
+                "startOffset": 254,
+                "endOffset": 254,
+                "startLine": 27,
+                "endLine": 27,
+                "startColumn": 10,
+                "endColumn": 10
+              }
+            },
+            "pos": {
+              "startOffset": 252,
+              "startLine": 27,
+              "startColumn": 8,
+              "endOffset": 255,
+              "endLine": 27,
+              "endColumn": 11
+            }
+          },
+          {
+            "_type": "FunctionCall",
+            "args": [],
+            "block": {
+              "_type": "Block",
+              "statements": [],
+              "solo": true,
+              "pos": {
+                "startOffset": 258,
+                "startLine": 27,
+                "startColumn": 14,
+                "endOffset": 259,
+                "endLine": 27,
+                "endColumn": 15
+              }
+            },
+            "pos": {
+              "startOffset": 256,
+              "startLine": 27,
+              "startColumn": 12,
+              "endOffset": 259,
+              "endLine": 27,
+              "endColumn": 15
+            }
+          }
+        ],
+        "pos": {
+          "startOffset": 245,
+          "startLine": 27,
+          "startColumn": 1,
+          "endOffset": 259,
+          "endLine": 27,
+          "endColumn": 15
+        }
+      },
+      "annotation": {
+        "_type": "AnnotationMap",
+        "properties": [
+          {
+            "_type": "Property",
+            "key": "foo",
+            "value": {
+              "_type": "StringLiteral",
+              "value": "bar",
+              "pos": {
+                "startOffset": 238,
+                "endOffset": 241,
+                "startLine": 26,
+                "endLine": 26,
+                "startColumn": 9,
+                "endColumn": 12
+              }
+            },
+            "pos": null
+          }
+        ],
+        "pos": {
+          "startOffset": 230,
+          "startLine": 26,
+          "startColumn": 1,
+          "endOffset": 243,
+          "endLine": 26,
+          "endColumn": 14
+        }
+      },
+      "pos": {
+        "startOffset": 230,
+        "startLine": 26,
+        "startColumn": 1,
+        "endOffset": 259,
+        "endLine": 27,
+        "endColumn": 15
+      }
+    },
+    {
+      "_type": "ValueSequence",
+      "values": [
+        {
+          "_type": "Reference",
+          "symbol": "foo",
+          "pos": {
+            "startOffset": 262,
+            "endOffset": 264,
+            "startLine": 29,
+            "endLine": 29,
+            "startColumn": 1,
+            "endColumn": 3
+          }
+        },
+        {
+          "_type": "GetPropertyImmutable",
+          "attrib": "bar",
+          "pos": {
+            "startOffset": 265,
+            "startLine": 29,
+            "startColumn": 4,
+            "endOffset": 269,
+            "endLine": 29,
+            "endColumn": 8
+          }
+        },
+        {
+          "_type": "GetPropertyImmutable",
+          "attrib": "alpha",
+          "pos": {
+            "startOffset": 270,
+            "startLine": 29,
+            "startColumn": 9,
+            "endOffset": 276,
+            "endLine": 29,
+            "endColumn": 15
+          }
+        }
+      ],
+      "pos": {
+        "startOffset": 262,
+        "startLine": 29,
+        "startColumn": 1,
+        "endOffset": 276,
+        "endLine": 29,
+        "endColumn": 15
+      }
+    },
+    {
+      "_type": "ValueSequence",
+      "values": [
+        {
+          "_type": "Reference",
+          "symbol": "foo",
+          "pos": {
+            "startOffset": 279,
+            "endOffset": 281,
+            "startLine": 31,
+            "endLine": 31,
+            "startColumn": 1,
+            "endColumn": 3
+          }
+        },
+        {
+          "_type": "FunctionCall",
+          "args": [],
+          "block": null,
+          "pos": {
+            "startOffset": 282,
+            "startLine": 31,
+            "startColumn": 4,
+            "endOffset": 283,
+            "endLine": 31,
+            "endColumn": 5
+          }
+        }
+      ],
+      "pos": {
+        "startOffset": 279,
+        "startLine": 31,
+        "startColumn": 1,
+        "endOffset": 283,
+        "endLine": 31,
+        "endColumn": 5
+      }
+    },
+    {
+      "_type": "ValueSequence",
+      "values": [
+        {
+          "_type": "Reference",
+          "symbol": "foo",
+          "pos": {
+            "startOffset": 285,
+            "endOffset": 287,
+            "startLine": 32,
+            "endLine": 32,
+            "startColumn": 1,
+            "endColumn": 3
+          }
+        },
+        {
+          "_type": "FunctionCall",
+          "args": [],
+          "block": {
+            "_type": "Block",
+            "statements": [],
+            "solo": true,
+            "pos": {
+              "startOffset": 289,
+              "startLine": 32,
+              "startColumn": 5,
+              "endOffset": 290,
+              "endLine": 32,
+              "endColumn": 6
+            }
+          },
+          "pos": {
+            "startOffset": 289,
+            "startLine": 32,
+            "startColumn": 5,
+            "endOffset": 290,
+            "endLine": 32,
+            "endColumn": 6
+          }
+        }
+      ],
+      "pos": {
+        "startOffset": 285,
+        "startLine": 32,
+        "startColumn": 1,
+        "endOffset": 290,
+        "endLine": 32,
+        "endColumn": 6
+      }
+    },
+    {
+      "_type": "ValueSequence",
+      "values": [
+        {
+          "_type": "Reference",
+          "symbol": "foo",
+          "pos": {
+            "startOffset": 292,
+            "endOffset": 294,
+            "startLine": 33,
+            "endLine": 33,
+            "startColumn": 1,
+            "endColumn": 3
+          }
+        },
+        {
+          "_type": "FunctionCall",
+          "args": [
+            {
+              "_type": "NumberLiteral",
+              "value": 1,
+              "pos": {
+                "startOffset": 296,
+                "endOffset": 296,
+                "startLine": 33,
+                "endLine": 33,
+                "startColumn": 5,
+                "endColumn": 5
+              }
+            },
+            {
+              "_type": "NumberLiteral",
+              "value": 2,
+              "pos": {
+                "startOffset": 298,
+                "endOffset": 298,
+                "startLine": 33,
+                "endLine": 33,
+                "startColumn": 7,
+                "endColumn": 7
+              }
+            },
+            {
+              "_type": "Spread",
+              "item": {
+                "_type": "Reference",
+                "symbol": "rest",
+                "pos": {
+                  "startOffset": 303,
+                  "endOffset": 306,
+                  "startLine": 33,
+                  "endLine": 33,
+                  "startColumn": 12,
+                  "endColumn": 15
+                }
+              },
+              "pos": {
+                "startOffset": 300,
+                "startLine": 33,
+                "startColumn": 9,
+                "endOffset": 306,
+                "endLine": 33,
+                "endColumn": 15
+              }
+            }
+          ],
+          "block": {
+            "_type": "Block",
+            "statements": [
+              {
+                "_type": "Reference",
+                "symbol": "bar",
+                "pos": {
+                  "startOffset": 313,
+                  "startLine": 34,
+                  "startColumn": 3,
+                  "endOffset": 315,
+                  "endLine": 34,
+                  "endColumn": 5
+                }
+              },
+              {
+                "_type": "Null",
+                "pos": {
+                  "startOffset": 319,
+                  "startLine": 35,
+                  "startColumn": 3,
+                  "endOffset": 322,
+                  "endLine": 35,
+                  "endColumn": 6
+                }
+              },
+              {
+                "_type": "Undefined",
+                "pos": {
+                  "startOffset": 326,
+                  "startLine": 36,
+                  "startColumn": 3,
+                  "endOffset": 334,
+                  "endLine": 36,
+                  "endColumn": 11
+                }
+              }
+            ],
+            "solo": true,
+            "pos": {
+              "startOffset": 309,
+              "startLine": 33,
+              "startColumn": 18,
+              "endOffset": 336,
+              "endLine": 37,
+              "endColumn": 1
+            }
+          },
+          "pos": {
+            "startOffset": 295,
+            "startLine": 33,
+            "startColumn": 4,
+            "endOffset": 336,
+            "endLine": 37,
+            "endColumn": 1
+          }
+        }
+      ],
+      "pos": {
+        "startOffset": 292,
+        "startLine": 33,
+        "startColumn": 1,
+        "endOffset": 336,
+        "endLine": 37,
+        "endColumn": 1
+      }
+    }
+  ],
+  "pos": {
+    "startOffset": 0,
+    "startLine": 1,
+    "startColumn": 1,
+    "endOffset": 336,
+    "endLine": 37,
+    "endColumn": 1
+  }
+}

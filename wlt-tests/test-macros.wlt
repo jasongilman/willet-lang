@@ -2,13 +2,13 @@ const chai = require("chai")
 const chaiImmutable = require("chai-immutable")
 chai.use(chaiImmutable)
 const expect = chai.expect
-const #{ dsl } = require("../lib/ast-helper")
+const #{ dsl removePositions } = require("../lib/ast-helper")
 
 // Contains another macro to test macros in other files.
 const helper = require("./test-helper")
 
 const dslEqual = #(actual expected) =>
-  expect(actual).to.deep.equal(Immutable.fromJS(expected.toJS()))
+  expect(removePositions(actual)).to.deep.equal(removePositions(Immutable.fromJS(expected.toJS())))
 
 describe('quote' #() => {
   describe('simple values' #() => {
@@ -95,7 +95,7 @@ defmacro localMacro = #(context block ...args) =>
 
 describe('parseWillet' #() => {
   it('should handle simple values' #() => {
-    expect(parseWillet(1)).to.deep.equal(#{ _type: 'NumberLiteral' value: 1 })
+    dslEqual(parseWillet(1) #{ _type: 'NumberLiteral' pos: null value: 1 })
   })
 
   it('should expand core macros' #() => {
@@ -212,11 +212,11 @@ describe('parseWillet' #() => {
       solo: true
     }
     const expanded = parseWillet(and(true false))
-    expect(expanded).to.deep.equal(expected)
+    dslEqual(expanded expected)
   })
 
   it('should expand macros defined in local scope' #() => {
-    expect(parseWillet(localMacro(1 1 1))).to.deep.equal(#{ _type: 'NumberLiteral' value: 3 })
+    dslEqual(parseWillet(localMacro(1 1 1)) #{ _type: 'NumberLiteral' pos: null value: 3 })
   })
 })
 

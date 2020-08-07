@@ -3,6 +3,7 @@ const chai = require("chai")
 const chaiImmutable = require("chai-immutable")
 chai.use(chaiImmutable)
 const expect = chai.expect
+const #{ removePositions } = require("../lib/ast-helper")
 
 const parser = require('../lib/chevrotain-parser')
 const semanticParser = require('../lib/semantic-parser');

@@ -2,9 +2,13 @@ const chai = require('chai');
 const expect = chai.expect;
 const fs = require('fs');
 const parser = require('../lib/chevrotain-parser');
-const { dsl } = require('../lib/ast-helper');
+const { dsl, removePositions } = require('../lib/ast-helper');
 
 const fullExampleCode = fs.readFileSync(`${__dirname}/examples/full_parser_example.wlt`);
+const positionExampleCode = fs.readFileSync(`${__dirname}/examples/position_parser_example.wlt`);
+
+const expectedPositionExampleParsed =
+  JSON.parse(fs.readFileSync(`${__dirname}/examples/position_parser_example_expected.json`));
 
 const expected = dsl.program(
   dsl.literal('//before1'),
@@ -117,6 +121,10 @@ const expected = dsl.program(
 describe('Parsing', () => {
   it('should parse full example', async () => {
     const result = parser.parse(fullExampleCode.toString());
-    expect(result.toJS()).to.deep.equal(expected.toJS());
+    expect(removePositions(result).toJS()).to.deep.equal(expected.toJS());
+  });
+  it('should parse example and get correct positions of all code', async () => {
+    const result = parser.parse(positionExampleCode.toString());
+    expect(result.toJS()).to.deep.equal(expectedPositionExampleParsed);
   });
 });
