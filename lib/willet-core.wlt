@@ -213,6 +213,12 @@ const filter = #(coll f) =>
   // FUTURE change this to check if it's keyed and call entrySeq
   toImmutable(coll).filter(f)
 
+const find = #(coll f) =>
+  toImmutable(coll).find(f)
+
+const findLast = #(coll f) =>
+  toImmutable(coll).findLast(f)
+
 const range = #(start = 0 stop = Infinity step = 1) =>
   Immutable.Range(start stop step)
 
@@ -455,6 +461,8 @@ module.exports = jsObject(#{
   flatMap
   reduce
   filter
+  find
+  findLast
   range
   slice
   partition

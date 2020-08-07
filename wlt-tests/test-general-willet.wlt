@@ -323,5 +323,26 @@ describe('quicksort example from README' #() => {
     expect(quicksort([3 2 4 9 0 8 7])).to.be.equal([0 2 3 4 7 8 9])
   })
 })
+
+describe('find and findLast' #() => {
+  const values = range(0 10)
+
+  it('should find the first value' #() => {
+    expect(find(values #(v) => v > 1)).to.be.equal(2)
+    expect(find(values #(v) => v > 8)).to.be.equal(9)
+  })
+
+  it('should handle not finding a value' #() => {
+    expect(find(values #(v) => v > 9)).to.be.equal(undefined)
+    expect(findLast(values #(v) => v > 9)).to.be.equal(undefined)
+  })
+
+  it('should find the last value' #() => {
+    expect(findLast(values #(v) => v > 1)).to.be.equal(9)
+    expect(findLast(values #(v) => v > 8)).to.be.equal(9)
+  })
+})
+
+
 // FUTURE add try catch
 // FUTURE add new and throw
