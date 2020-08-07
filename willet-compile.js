@@ -106,7 +106,9 @@ for (let i = 0; i < filesToCompile.length; i += 1) {
   try {
     const context = createContext(src);
     context.skipCore = skipCore;
+    const start = Date.now();
     const jsContents = compiler.compile(context, contents);
+    console.log(`Compiled in ${Date.now() - start} ms.`);
     const dirName = path.dirname(targetFile);
     try {
       fs.mkdirSync(dirName, { recursive: true });
